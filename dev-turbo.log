@@ -1,0 +1,17 @@
+
+> landing-hackathon-creativa@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.4 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.22:3000
+- Environments: .env
+✓ Ready in 1288ms
+Creating turbopack project {
+  dir: 'C:\\Users\\chris\\Documents\\Programming\\C3\\LandingHackathonCreativa\\landing-hackathon-creativa',
+  testMode: true
+}
+⚠ Turbopack's filesystem cache has been deleted because we previously detected an internal error in Turbopack. Builds or page loads may be slower as a result.
+
+○ Compiling / ...
+REQUEST_ERROR: No es posible conectar con el servidor remoto

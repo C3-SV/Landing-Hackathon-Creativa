@@ -1,26 +1,91 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --brand-bg: #0a1f3d;
+  --brand-surface: #0d2d5e;
+  --brand-electric: #1a82ff;
+  --brand-orange: #ff6b00;
+  --brand-orange-soft: #ffa726;
+  --brand-white: #f8f9fa;
+  --brand-muted: #adb5bd;
+  --brand-action: #e65100;
+  --status-submitted: #1a82ff;
+  --status-approved: #2e9b49;
+  --status-waitlist: #ffb020;
+  --status-rejected: #ff4d4f;
+  --status-needs-fix: #ff7a00;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sora);
+  --font-mono: var(--font-jetbrains);
+  --font-display: var(--font-pressstart);
+  --color-brand-bg: var(--brand-bg);
+  --color-brand-surface: var(--brand-surface);
+  --color-brand-electric: var(--brand-electric);
+  --color-brand-orange: var(--brand-orange);
+  --color-brand-orange-soft: var(--brand-orange-soft);
+  --color-brand-white: var(--brand-white);
+  --color-brand-muted: var(--brand-muted);
+  --color-brand-action: var(--brand-action);
+  --color-status-submitted: var(--status-submitted);
+  --color-status-approved: var(--status-approved);
+  --color-status-waitlist: var(--status-waitlist);
+  --color-status-rejected: var(--status-rejected);
+  --color-status-needs-fix: var(--status-needs-fix);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: rgba(26, 130, 255, 0.35);
+}
+
+html,
+body {
+  min-height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(26, 130, 255, 0.17), transparent 45%),
+    radial-gradient(circle at 85% 0%, rgba(255, 107, 0, 0.12), transparent 42%),
+    linear-gradient(180deg, #071830 0%, #0a1f3d 48%, #0b2241 100%);
+  color: var(--brand-white);
+  font-family: var(--font-sora), sans-serif;
+}
+
+a {
+  color: inherit;
+}
+
+.font-display {
+  font-family: var(--font-pressstart), monospace;
+  letter-spacing: 0.06em;
+}
+
+.font-mono {
+  font-family: var(--font-jetbrains), monospace;
+}
+
+.pixel-divider {
+  height: 8px;
+  width: 100%;
+  background-image:
+    linear-gradient(
+      90deg,
+      var(--brand-electric) 0 12.5%,
+      transparent 12.5% 25%,
+      var(--brand-orange) 25% 37.5%,
+      transparent 37.5% 50%,
+      var(--brand-electric) 50% 62.5%,
+      transparent 62.5% 75%,
+      var(--brand-orange-soft) 75% 87.5%,
+      transparent 87.5% 100%
+    );
+  opacity: 0.85;
+}
+
+.container-shell {
+  margin-inline: auto;
+  width: min(1120px, calc(100% - 2rem));
 }

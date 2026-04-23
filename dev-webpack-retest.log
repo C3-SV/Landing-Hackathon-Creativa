@@ -1,0 +1,14 @@
+
+> landing-hackathon-creativa@0.1.0 dev
+> next dev --webpack
+
+â–² Next.js 16.2.4 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.22:3000
+- Environments: .env
+âœ“ Ready in 1858ms
+
+â—‹ Compiling / ...
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: RangeError: Array buffer allocation failed
+[?25h
+REQUEST_ERROR: La operación sobrepasó el tiempo de espera.
