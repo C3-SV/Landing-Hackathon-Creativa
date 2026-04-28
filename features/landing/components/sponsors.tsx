@@ -1,3 +1,4 @@
+﻿import { BRANDING } from "@/lib/constants/branding";
 import { Card, SectionHeading } from "@/lib/ui";
 
 export function SponsorsSection() {
@@ -6,7 +7,7 @@ export function SponsorsSection() {
       <SectionHeading
         eyebrow="Sponsors / aliados"
         title="Aliados por anunciar"
-        description="La convocatoria de aliados está abierta. Este espacio se actualizará con logos y categorías."
+        description={`Convocatoria abierta para ${BRANDING.eventName}. Este espacio se actualizará con logos y categorías.`}
       />
       <Card className="border-dashed border-brand-electric/45 p-8 text-center">
         <p className="font-mono text-xs uppercase tracking-wider text-brand-electric">

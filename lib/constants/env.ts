@@ -4,7 +4,7 @@ import type { RepositoryMode } from "@/lib/types/domain";
 export const APP_ENV = {
   dataMode: (process.env.DATA_MODE ?? "mock") as RepositoryMode,
   currentEditionId: process.env.CURRENT_EDITION_ID ?? CURRENT_EDITION_FALLBACK,
-  adminEmails: (process.env.ADMIN_EMAILS ?? "admin@hackathoncreativa.dev")
+  adminEmails: (process.env.ADMIN_EMAILS ?? "admin@festivaldecodigo.dev")
     .split(",")
     .map((item) => item.trim().toLowerCase())
     .filter(Boolean),

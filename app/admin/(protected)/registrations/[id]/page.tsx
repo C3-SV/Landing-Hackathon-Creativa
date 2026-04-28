@@ -1,5 +1,6 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BRANDING } from "@/lib/constants/branding";
 import { RegistrationDetail } from "@/features/admin/components";
 import { registrationRepository } from "@/lib/repositories";
 import { ButtonLink, Card } from "@/lib/ui";
@@ -24,7 +25,10 @@ export default async function RegistrationDetailPage({ params }: PageProps) {
       <Card className="flex items-center justify-between gap-3">
         <div>
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-brand-electric">
-            Detalle equipo
+            {BRANDING.conceptUpper}
+          </p>
+          <p className="mt-2 font-mono text-xs uppercase tracking-wide text-brand-orange-soft">
+            {BRANDING.eventName} · Detalle de equipo
           </p>
           <Link
             href="/admin/registrations"

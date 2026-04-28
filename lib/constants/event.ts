@@ -1,13 +1,14 @@
+﻿import { BRANDING } from "@/lib/constants/branding";
 import type { Challenge, Edition } from "@/lib/types/domain";
 
-export const CURRENT_EDITION_FALLBACK = "hackathon-creativa-2026";
+export const CURRENT_EDITION_FALLBACK = BRANDING.editionFallbackId;
 
 export const LANDING_QUICK_FACTS = [
-  { label: "FECHA", value: "20-21 JUN 2026" },
-  { label: "SEDE", value: "Key Institute · San Salvador, SV" },
-  { label: "MODALIDAD", value: "Build-first presencial" },
-  { label: "EQUIPOS", value: "3 personas · Hacker/Hipster/Hustler" },
-  { label: "ENFOQUE", value: "Turismo · Economía creativa · Tecnología" },
+  { label: "EVENTO", value: BRANDING.eventName },
+  { label: "FECHA", value: "20 - 21 Junio" },
+  { label: "SEDE", value: "Key Institute" },
+  { label: "LÍNEA", value: BRANDING.thematicLine },
+  { label: "ORGANIZAN", value: BRANDING.organizers },
 ] as const;
 
 export const LANDING_BULLETS = [
@@ -28,15 +29,15 @@ export const FAQ_ITEMS = [
   {
     question: "¿Quién puede participar?",
     answer:
-      "Personas de perfiles técnicos, creativos y de negocio interesadas en construir soluciones para turismo y economía creativa.",
+      "Personas de perfiles técnicos, creativos y de negocio interesadas en construir soluciones para turismo, código y cultura.",
   },
   {
     question: "¿La inscripción es por equipos?",
     answer:
-      "Sí. Solo se aceptan equipos de 3 integrantes: Hacker, Hipster y Hustler.",
+      "Sí. Se aceptan equipos de 3 o 4 integrantes, manteniendo al menos un Hacker, un Hipster y un Hustler.",
   },
   {
-    question: "¿Cuánto dura la hackathon?",
+    question: "¿Cuánto dura el festival-hackathon?",
     answer:
       "La experiencia se desarrolla durante dos días intensivos de construcción y demo.",
   },
@@ -116,10 +117,10 @@ export const CHALLENGE_SEEDS: Challenge[] = [
 export const EDITION_SEEDS: Edition[] = [
   {
     id: CURRENT_EDITION_FALLBACK,
-    name: "Hackathon Creativa 2026",
+    name: BRANDING.editionName,
     isCurrent: true,
     startsAt: "2026-06-20",
     endsAt: "2026-06-21",
-    location: "Key Institute, San Salvador, SV",
+    location: "Key Institute",
   },
 ];

@@ -1,4 +1,4 @@
-import { cert, getApps, initializeApp } from "firebase-admin/app";
+﻿import { cert, getApps, initializeApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 
 const requiredEnv = ["FIREBASE_PROJECT_ID", "FIREBASE_CLIENT_EMAIL", "FIREBASE_PRIVATE_KEY"];
@@ -73,13 +73,13 @@ const challenges = [
   },
 ];
 
-const editionId = process.env.CURRENT_EDITION_ID ?? "hackathon-creativa-2026";
+const editionId = process.env.CURRENT_EDITION_ID ?? "festival-de-codigo-i-2026";
 const edition = {
-  name: "Hackathon Creativa 2026",
+  name: "Festival de Código - I 2026",
   isCurrent: true,
   startsAt: "2026-06-20",
   endsAt: "2026-06-21",
-  location: "Key Institute, San Salvador, SV",
+  location: "Key Institute",
 };
 
 const now = new Date().toISOString();
@@ -238,7 +238,7 @@ const registrations = [
       {
         id: "note_seed_001",
         message: "Equipo con propuesta solida para fase de mentoria tecnica.",
-        authorEmail: "admin@hackathoncreativa.dev",
+        authorEmail: "admin@festivaldecodigo.dev",
         createdAt: now,
       },
     ],

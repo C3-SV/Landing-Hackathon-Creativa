@@ -150,7 +150,7 @@ function createSeedRegistrations() {
           ? [
               {
                 id: `note_${index}`,
-                authorEmail: "admin@hackathoncreativa.dev",
+                authorEmail: "admin@festivaldecodigo.dev",
                 message: "Equipo con buena cohesion y propuesta clara.",
                 createdAt: date,
               },

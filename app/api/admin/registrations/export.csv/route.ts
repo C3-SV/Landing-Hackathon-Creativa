@@ -1,4 +1,5 @@
 import { requireAdminUser } from "@/lib/auth/admin";
+import { BRANDING } from "@/lib/constants/branding";
 import { registrationRepository } from "@/lib/repositories";
 
 export async function GET() {
@@ -13,7 +14,7 @@ export async function GET() {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
         "Content-Disposition":
-          'attachment; filename="hackathon-creativa-registrations.csv"',
+          `attachment; filename="${BRANDING.csvFileName}"`,
       },
     });
   } catch (error) {

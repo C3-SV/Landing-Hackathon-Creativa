@@ -1,8 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { BRANDING } from "@/lib/constants/branding";
 import { hasFirebaseClientConfig } from "@/lib/constants/public-env";
 import { getFirebaseClientAuth } from "@/lib/firebase/client";
 import { parseJsonResponse } from "@/lib/http";
@@ -68,11 +69,12 @@ export function AdminLoginForm() {
     <Card className="mx-auto max-w-md space-y-5">
       <div className="space-y-2 text-center">
         <p className="font-mono text-xs uppercase tracking-[0.2em] text-brand-electric">
-          Admin
+          {BRANDING.conceptUpper}
         </p>
         <h1 className="font-display text-base uppercase leading-relaxed text-brand-white">
-          Acceso de revisión
+          Admin · {BRANDING.eventName}
         </h1>
+        <p className="text-sm text-brand-muted">{BRANDING.eventSubtitle}</p>
         <p className="text-sm text-brand-muted">Modo autenticación: {modeLabel}</p>
       </div>
 

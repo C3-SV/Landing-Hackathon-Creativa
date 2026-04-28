@@ -1,4 +1,5 @@
-import Link from "next/link";
+﻿import Link from "next/link";
+import { BRANDING } from "@/lib/constants/branding";
 import { LogoutButton } from "@/features/admin/components/logout-button";
 
 type AdminShellProps = {
@@ -18,7 +19,7 @@ export function AdminShell({ userEmail, children }: AdminShellProps) {
         <div className="container-shell flex flex-wrap items-center justify-between gap-3 py-4">
           <div className="flex items-center gap-4">
             <Link href="/admin" className="font-display text-xs uppercase text-brand-white">
-              Admin HC
+              Admin {BRANDING.eventName}
             </Link>
             <nav className="flex gap-2">
               {navItems.map((item) => (
@@ -38,6 +39,11 @@ export function AdminShell({ userEmail, children }: AdminShellProps) {
             </p>
             <LogoutButton />
           </div>
+        </div>
+        <div className="container-shell pb-3">
+          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-brand-electric">
+            {BRANDING.conceptUpper} · {BRANDING.eventSubtitle} · {BRANDING.thematicLine}
+          </p>
         </div>
       </header>
       <main className="container-shell py-6">{children}</main>

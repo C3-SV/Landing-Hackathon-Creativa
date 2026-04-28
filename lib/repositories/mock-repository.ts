@@ -2,6 +2,7 @@ import {
   CURRENT_EDITION_FALLBACK,
   EDITION_SEEDS,
 } from "@/lib/constants/event";
+import { BRANDING } from "@/lib/constants/branding";
 import { buildRegistrationsCsv } from "@/lib/repositories/csv-export";
 import { getMockStore } from "@/lib/repositories/mock-store";
 import type {
@@ -134,11 +135,11 @@ export const mockRegistrationRepository: RegistrationRepository = {
       getMockStore().editions.find((edition) => edition.isCurrent) ??
       EDITION_SEEDS[0] ?? {
         id: CURRENT_EDITION_FALLBACK,
-        name: "Hackathon Creativa",
+        name: BRANDING.editionName,
         isCurrent: true,
         startsAt: "2026-06-20",
         endsAt: "2026-06-21",
-        location: "San Salvador, SV",
+        location: "Key Institute",
       }
     );
   },

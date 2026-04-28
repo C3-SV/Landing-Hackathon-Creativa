@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { JetBrains_Mono, Press_Start_2P, Sora } from "next/font/google";
+import { BRANDING } from "@/lib/constants/branding";
 import "./globals.css";
 
 const fontBody = Sora({
@@ -19,9 +20,8 @@ const fontDisplay = Press_Start_2P({
 });
 
 export const metadata: Metadata = {
-  title: "Hackathon Creativa",
-  description:
-    "Cultura + código para construir soluciones reales en turismo, economía creativa y tecnología.",
+  title: `${BRANDING.eventName} · ${BRANDING.eventSubtitle}`,
+  description: `${BRANDING.concept}. ${BRANDING.eventSubtitle}. ${BRANDING.thematicLine}.`,
 };
 
 export default function RootLayout({

@@ -1,4 +1,4 @@
-import { HOW_IT_WORKS } from "@/lib/constants/event";
+﻿import { HOW_IT_WORKS } from "@/lib/constants/event";
 import { Card, SectionHeading } from "@/lib/ui";
 
 export function HowItWorksSection() {
@@ -7,7 +7,7 @@ export function HowItWorksSection() {
       <SectionHeading
         eyebrow="Cómo funciona"
         title="Formato de ejecución en 4 movimientos"
-        description="Registro por equipos, selección de retos, sprint con mentoría y demo final."
+        description="Inscripción por equipos, selección de retos, sprint con mentoría y demo final. Todo suma cuando construimos juntos."
       />
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {HOW_IT_WORKS.map((item, index) => (

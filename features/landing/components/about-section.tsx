@@ -1,3 +1,4 @@
+﻿import { BRANDING } from "@/lib/constants/branding";
 import { LANDING_BULLETS } from "@/lib/constants/event";
 import { Card, SectionHeading } from "@/lib/ui";
 
@@ -6,15 +7,18 @@ export function AboutSection() {
     <section className="grid gap-4 lg:grid-cols-[1.1fr_1fr]">
       <Card>
         <SectionHeading
-          eyebrow="Qué es"
-          title="Hackathon Creativa"
-          description="Una experiencia de construcción enfocada en turismo, economía creativa y tecnología. Menos show, más ejecución."
+          eyebrow={BRANDING.conceptUpper}
+          title={BRANDING.eventName}
+          description={`${BRANDING.eventSubtitle}. ${BRANDING.supportLine}`}
         />
       </Card>
       <Card className="space-y-4">
         <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-brand-electric">
-          Enfoque del evento
+          Ejes del evento
         </h3>
+        <p className="font-mono text-xs uppercase tracking-wide text-brand-orange-soft">
+          {BRANDING.thematicLine}
+        </p>
         <ul className="grid gap-3">
           {LANDING_BULLETS.map((bullet) => (
             <li
