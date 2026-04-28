@@ -20,6 +20,7 @@ function mapToListItem(record: TeamRegistrationDoc): RegistrationListItem {
   return {
     id: record.id,
     status: record.status,
+    teamSize: record.teamSize,
     teamName: record.teamName,
     responsibleName: record.responsibleName,
     responsibleEmail: record.responsibleEmail,
@@ -76,6 +77,10 @@ function buildDashboardStats(records: TeamRegistrationDoc[]): DashboardStats {
     rejected: 0,
     needs_fix: 0,
   };
+  const totalByTeamSize = {
+    3: 0,
+    4: 0,
+  };
 
   const institutionMap = new Map<string, number>();
   const challengeMap = new Map<string, number>();
@@ -83,6 +88,7 @@ function buildDashboardStats(records: TeamRegistrationDoc[]): DashboardStats {
 
   for (const record of records) {
     totalByStatus[record.status] += 1;
+    totalByTeamSize[record.teamSize] += 1;
 
     institutionMap.set(
       record.institution,
@@ -99,6 +105,7 @@ function buildDashboardStats(records: TeamRegistrationDoc[]): DashboardStats {
   return {
     totalTeams: records.length,
     totalByStatus,
+    totalByTeamSize,
     totalByInstitution: [...institutionMap.entries()]
       .map(([institution, count]) => ({ institution, count }))
       .sort((a, b) => b.count - a.count),
@@ -117,11 +124,14 @@ function buildCsv(registrations: TeamRegistrationDoc[]) {
     [
       "id",
       "status",
+      "teamSize",
       "teamName",
       "institution",
       "responsibleName",
       "responsibleEmail",
       "preferredChallenge",
+      "memberRoles",
+      "memberAbouts",
       "createdAt",
     ].join(","),
   );
@@ -131,11 +141,14 @@ function buildCsv(registrations: TeamRegistrationDoc[]) {
       [
         toCsvValue(item.id),
         toCsvValue(item.status),
+        toCsvValue(item.teamSize),
         toCsvValue(item.teamName),
         toCsvValue(item.institution),
         toCsvValue(item.responsibleName),
         toCsvValue(item.responsibleEmail),
         toCsvValue(item.challengePreferences[0]),
+        toCsvValue(item.members.map((member) => member.role3H).join("|")),
+        toCsvValue(item.members.map((member) => member.about).join(" || ")),
         toCsvValue(item.createdAt),
       ].join(","),
     );

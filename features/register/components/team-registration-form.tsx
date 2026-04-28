@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
 import {
   buildDefaultRegistrationValues,
+  createExtraMemberDefault,
   REGISTER_SECTIONS,
   type RegisterSectionId,
 } from "@/features/register/constants";
@@ -14,7 +15,7 @@ import { RegisterSidebar } from "@/features/register/components/register-sidebar
 import { SummaryPanel } from "@/features/register/components/summary-panel";
 import { SOURCE_OPTIONS } from "@/lib/constants/form-options";
 import { parseJsonResponse } from "@/lib/http";
-import type { Challenge } from "@/lib/types/domain";
+import type { Challenge, TeamMember } from "@/lib/types/domain";
 import {
   AlertState,
   Button,
@@ -27,6 +28,7 @@ import {
   Textarea,
 } from "@/lib/ui";
 import {
+  countWords,
   teamRegistrationFormSchema,
   type TeamRegistrationFormValues,
 } from "@/lib/validation/team-registration";
@@ -36,18 +38,11 @@ type TeamRegistrationFormProps = {
   challenges: Challenge[];
 };
 
-function memberIsComplete(member: {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  affiliationType: string;
-  institution: string;
-  degreeOrMajor: string;
-  skillLevel: string;
-  emergencyContactName: string;
-  emergencyContactPhone: string;
-}) {
+function memberIsComplete(member?: Partial<TeamMember>) {
+  if (!member) {
+    return false;
+  }
+
   return Boolean(
     member.firstName &&
       member.lastName &&
@@ -56,15 +51,13 @@ function memberIsComplete(member: {
       member.affiliationType &&
       member.institution &&
       member.degreeOrMajor &&
-      member.skillLevel &&
-      member.emergencyContactName &&
-      member.emergencyContactPhone,
+      member.about &&
+      countWords(member.about) >= 50 &&
+      countWords(member.about) <= 100,
   );
 }
 
-function hasMemberErrors(
-  errors: TeamRegistrationFormValues["hacker"] | undefined | unknown,
-) {
+function hasMemberErrors(errors: unknown) {
   if (!errors || typeof errors !== "object") {
     return false;
   }
@@ -80,6 +73,7 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
     control,
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<TeamRegistrationFormValues>({
     resolver: zodResolver(teamRegistrationFormSchema),
@@ -88,6 +82,17 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
   });
 
   const values = useWatch({ control }) as TeamRegistrationFormValues;
+  const teamSize = Number(values.teamSize || 3) as 3 | 4;
+
+  useEffect(() => {
+    if (teamSize === 4 && !values.extraMember) {
+      setValue("extraMember", createExtraMemberDefault(), { shouldValidate: true });
+    }
+    if (teamSize === 3 && values.extraMember) {
+      setValue("extraMember", undefined, { shouldValidate: true });
+    }
+  }, [setValue, teamSize, values.extraMember]);
+
   const completeMap = useMemo(() => {
     return {
       general: Boolean(
@@ -99,20 +104,22 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
       team: Boolean(
         values.teamName &&
           values.institution &&
-          values.challengePreferences[0] &&
-          values.challengePreferences[1] &&
-          values.challengePreferences[2],
+          values.challengePreferences?.[0] &&
+          values.challengePreferences?.[1] &&
+          values.challengePreferences?.[2] &&
+          (teamSize === 3 || teamSize === 4),
       ),
       hacker: memberIsComplete(values.hacker),
       hipster: memberIsComplete(values.hipster),
       hustler: memberIsComplete(values.hustler),
+      extra: teamSize === 3 ? true : memberIsComplete(values.extraMember ?? undefined),
       confirm: Boolean(
         values.consents.acceptCodeOfConduct &&
           values.consents.acceptPrivacyPolicy &&
           values.consents.authorizationDeclaration,
       ),
     } satisfies Record<RegisterSectionId, boolean>;
-  }, [values]);
+  }, [teamSize, values]);
 
   const errorMap = {
     general: Boolean(
@@ -123,6 +130,7 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
     ),
     team: Boolean(
       errors.teamName ||
+        errors.teamSize ||
         errors.institution ||
         errors.challengePreferences ||
         errors.teamDescription,
@@ -130,6 +138,7 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
     hacker: hasMemberErrors(errors.hacker),
     hipster: hasMemberErrors(errors.hipster),
     hustler: hasMemberErrors(errors.hustler),
+    extra: teamSize === 4 ? hasMemberErrors(errors.extraMember) : false,
     confirm: Boolean(errors.consents),
   } satisfies Record<RegisterSectionId, boolean>;
 
@@ -168,9 +177,9 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
   }
 
   function challengeOptions(position: 0 | 1 | 2) {
-    const selected = values.challengePreferences.filter(Boolean);
+    const selected = (values.challengePreferences ?? []).filter(Boolean);
     return challenges.map((challenge) => {
-      const current = values.challengePreferences[position];
+      const current = values.challengePreferences?.[position];
       const disabled = selected.includes(challenge.id) && current !== challenge.id;
       return (
         <option key={challenge.id} value={challenge.id} disabled={disabled}>
@@ -192,17 +201,13 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
 
         <div className="space-y-4">
           {submitError ? (
-            <AlertState
-              variant="error"
-              title="Error de envío"
-              description={submitError}
-            />
+            <AlertState variant="error" title="Error de envío" description={submitError} />
           ) : null}
 
           {activeSection === "general" ? (
             <SectionWrapper
               title="Datos generales"
-              subtitle="La persona responsable debe ser parte del equipo 3H."
+              subtitle="La persona responsable debe ser parte del equipo."
             >
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
@@ -212,11 +217,7 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
                 </div>
                 <div>
                   <Label htmlFor="responsibleEmail">Correo responsable</Label>
-                  <Input
-                    id="responsibleEmail"
-                    type="email"
-                    {...register("responsibleEmail")}
-                  />
+                  <Input id="responsibleEmail" type="email" {...register("responsibleEmail")} />
                   <FieldError message={errors.responsibleEmail?.message} />
                 </div>
                 <div>
@@ -243,9 +244,9 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
           {activeSection === "team" ? (
             <SectionWrapper
               title="Equipo"
-              subtitle="Debes elegir top 3 de retos sin repetir."
+              subtitle="Define el tamaño del equipo y selecciona tus 3 retos preferidos."
             >
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-4 md:grid-cols-3">
                 <div>
                   <Label htmlFor="teamName">Nombre del equipo</Label>
                   <Input id="teamName" {...register("teamName")} />
@@ -255,6 +256,17 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
                   <Label htmlFor="institution">Institución principal</Label>
                   <Input id="institution" {...register("institution")} />
                   <FieldError message={errors.institution?.message} />
+                </div>
+                <div>
+                  <Label htmlFor="teamSize">Tamaño del equipo</Label>
+                  <Select
+                    id="teamSize"
+                    {...register("teamSize", { valueAsNumber: true })}
+                  >
+                    <option value={3}>3 integrantes</option>
+                    <option value={4}>4 integrantes</option>
+                  </Select>
+                  <FieldError message={errors.teamSize?.message} />
                 </div>
               </div>
 
@@ -292,27 +304,76 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
           ) : null}
 
           {activeSection === "hacker" ? (
-            <SectionWrapper title="Integrante Hacker">
-              <MemberFormCard role="hacker" register={register} errors={errors} />
+            <SectionWrapper
+              title="Integrante Hacker"
+              subtitle="Queremos conocerte mejor. Este perfil es obligatorio."
+            >
+              <MemberFormCard
+                fieldName="hacker"
+                fixedRole="hacker"
+                register={register}
+                errors={errors}
+              />
             </SectionWrapper>
           ) : null}
 
           {activeSection === "hipster" ? (
-            <SectionWrapper title="Integrante Hipster">
-              <MemberFormCard role="hipster" register={register} errors={errors} />
+            <SectionWrapper
+              title="Integrante Hipster"
+              subtitle="Comparte tu perfil y cómo aportarás al equipo."
+            >
+              <MemberFormCard
+                fieldName="hipster"
+                fixedRole="hipster"
+                register={register}
+                errors={errors}
+              />
             </SectionWrapper>
           ) : null}
 
           {activeSection === "hustler" ? (
-            <SectionWrapper title="Integrante Hustler">
-              <MemberFormCard role="hustler" register={register} errors={errors} />
+            <SectionWrapper
+              title="Integrante Hustler"
+              subtitle="Queremos entender tu enfoque de negocio y ejecución."
+            >
+              <MemberFormCard
+                fieldName="hustler"
+                fixedRole="hustler"
+                register={register}
+                errors={errors}
+              />
+            </SectionWrapper>
+          ) : null}
+
+          {activeSection === "extra" ? (
+            <SectionWrapper
+              title="Integrante extra"
+              subtitle="Se habilita solo para equipos de 4. Puede ser Hacker, Hipster o Hustler."
+            >
+              {teamSize === 3 ? (
+                <AlertState
+                  title="Equipo de 3 integrantes"
+                  description="Si quieres agregar un cuarto integrante, cambia el tamaño del equipo a 4 en la sección Equipo."
+                />
+              ) : (
+                <>
+                  <MemberFormCard fieldName="extraMember" register={register} errors={errors} />
+                  <FieldError
+                    message={
+                      typeof errors.extraMember?.message === "string"
+                        ? errors.extraMember.message
+                        : undefined
+                    }
+                  />
+                </>
+              )}
             </SectionWrapper>
           ) : null}
 
           {activeSection === "confirm" ? (
             <SectionWrapper
               title="Confirmación final"
-              subtitle="Revisa el resumen, valida consentimientos y envía."
+              subtitle="Revisa el resumen del equipo y valida consentimientos."
             >
               <SummaryPanel values={values} challenges={challenges} />
               <div className="mt-4 grid gap-3">

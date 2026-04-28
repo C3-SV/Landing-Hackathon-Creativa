@@ -14,10 +14,3 @@ export const AFFILIATION_TYPE_OPTIONS = [
   "Freelancer",
   "Otro",
 ] as const;
-
-export const SKILL_LEVEL_OPTIONS = [
-  "Inicial",
-  "Intermedio",
-  "Avanzado",
-  "Experto",
-] as const;

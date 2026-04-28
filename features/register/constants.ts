@@ -6,6 +6,7 @@ export type RegisterSectionId =
   | "hacker"
   | "hipster"
   | "hustler"
+  | "extra"
   | "confirm";
 
 export const REGISTER_SECTIONS: Array<{
@@ -21,7 +22,7 @@ export const REGISTER_SECTIONS: Array<{
   {
     id: "team",
     title: "Equipo",
-    subtitle: "Identidad del equipo y retos top 3",
+    subtitle: "Identidad del equipo, tamaño y retos top 3",
   },
   {
     id: "hacker",
@@ -31,12 +32,17 @@ export const REGISTER_SECTIONS: Array<{
   {
     id: "hipster",
     title: "Hipster",
-    subtitle: "Perfil de diseño / experiencia",
+    subtitle: "Perfil de diseño y experiencia",
   },
   {
     id: "hustler",
     title: "Hustler",
-    subtitle: "Perfil de negocio / validación",
+    subtitle: "Perfil de negocio y validación",
+  },
+  {
+    id: "extra",
+    title: "Integrante extra",
+    subtitle: "Opcional si el equipo es de 4 integrantes",
   },
   {
     id: "confirm",
@@ -55,14 +61,17 @@ function createMemberBase() {
     affiliationType: "",
     institution: "",
     degreeOrMajor: "",
-    skillLevel: "",
+    about: "",
     linkedinUrl: "",
     githubUrl: "",
     portfolioUrl: "",
-    dietaryRestrictions: "",
-    allergies: "",
-    emergencyContactName: "",
-    emergencyContactPhone: "",
+  };
+}
+
+export function createExtraMemberDefault() {
+  return {
+    role3H: "hacker" as const,
+    ...createMemberBase(),
   };
 }
 
@@ -71,6 +80,7 @@ export function buildDefaultRegistrationValues(
 ): TeamRegistrationFormValues {
   return {
     editionId,
+    teamSize: 3,
     teamName: "",
     institution: "",
     teamDescription: "",
@@ -82,6 +92,7 @@ export function buildDefaultRegistrationValues(
     hacker: { role3H: "hacker", ...createMemberBase() },
     hipster: { role3H: "hipster", ...createMemberBase() },
     hustler: { role3H: "hustler", ...createMemberBase() },
+    extraMember: undefined,
     consents: {
       acceptCodeOfConduct: false,
       acceptPrivacyPolicy: false,

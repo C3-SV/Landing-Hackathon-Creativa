@@ -161,6 +161,7 @@ export function RegistrationsTable({
             <thead className="bg-brand-bg/60">
               <tr className="text-left font-mono text-xs uppercase tracking-wide text-brand-muted">
                 <th className="px-4 py-3">Estado</th>
+                <th className="px-4 py-3">Tamaño</th>
                 <th className="px-4 py-3">Equipo</th>
                 <th className="px-4 py-3">Responsable</th>
                 <th className="px-4 py-3">Correo</th>
@@ -174,6 +175,9 @@ export function RegistrationsTable({
                 <tr key={row.id} className="hover:bg-brand-bg/45">
                   <td className="px-4 py-3">
                     <Badge variant={row.status as RegistrationStatus}>{row.status}</Badge>
+                  </td>
+                  <td className="px-4 py-3 font-mono text-xs text-brand-muted">
+                    {row.teamSize}
                   </td>
                   <td className="px-4 py-3 text-brand-white">
                     <Link href={`/admin/registrations/${row.id}`} className="hover:underline">

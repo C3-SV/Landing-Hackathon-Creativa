@@ -1,6 +1,7 @@
 export const ROLE3H_VALUES = ["hacker", "hipster", "hustler"] as const;
 
 export type Role3H = (typeof ROLE3H_VALUES)[number];
+export type TeamSize = 3 | 4;
 
 export const REGISTRATION_STATUS_VALUES = [
   "submitted",
@@ -41,14 +42,10 @@ export type TeamMember = {
   affiliationType: string;
   institution: string;
   degreeOrMajor: string;
-  skillLevel: string;
+  about: string;
   linkedinUrl?: string;
   githubUrl?: string;
   portfolioUrl?: string;
-  dietaryRestrictions?: string;
-  allergies?: string;
-  emergencyContactName: string;
-  emergencyContactPhone: string;
 };
 
 export type TeamConsents = {
@@ -61,6 +58,7 @@ export type TeamConsents = {
 
 export type TeamRegistrationPayload = {
   editionId: string;
+  teamSize: TeamSize;
   teamName: string;
   institution: string;
   teamDescription?: string;
@@ -69,7 +67,7 @@ export type TeamRegistrationPayload = {
   responsibleEmail: string;
   responsiblePhone: string;
   source: string;
-  members: readonly [TeamMember, TeamMember, TeamMember];
+  members: readonly TeamMember[];
   consents: TeamConsents;
 };
 
@@ -100,6 +98,7 @@ export type RegistrationListFilters = {
 export type RegistrationListItem = {
   id: string;
   status: RegistrationStatus;
+  teamSize: TeamSize;
   teamName: string;
   responsibleName: string;
   responsibleEmail: string;
@@ -111,6 +110,7 @@ export type RegistrationListItem = {
 export type DashboardStats = {
   totalTeams: number;
   totalByStatus: Record<RegistrationStatus, number>;
+  totalByTeamSize: Record<TeamSize, number>;
   totalByInstitution: Array<{ institution: string; count: number }>;
   topChallenges: Array<{ challengeId: string; count: number }>;
   registrationsPerDay: Array<{ date: string; count: number }>;

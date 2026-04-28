@@ -38,9 +38,18 @@ function fromDoc(doc: QueryDocumentSnapshot): TeamRegistrationDoc {
     updatedAt?: string | Timestamp;
   };
 
+  const members = (data.members ?? []).map((member) => ({
+    ...member,
+    about:
+      member.about ??
+      "Perfil pendiente de actualización desde una inscripción anterior.",
+  }));
+
   return {
     ...data,
     id: doc.id,
+    teamSize: data.teamSize ?? (members.length >= 4 ? 4 : 3),
+    members,
     createdAt: timestampToIso(data.createdAt),
     updatedAt: timestampToIso(data.updatedAt),
     adminNotes: data.adminNotes ?? [],
@@ -91,6 +100,10 @@ function buildStats(registrations: TeamRegistrationDoc[]): DashboardStats {
       rejected: 0,
       needs_fix: 0,
     },
+    totalByTeamSize: {
+      3: 0,
+      4: 0,
+    },
     totalByInstitution: [],
     topChallenges: [],
     registrationsPerDay: [],
@@ -102,6 +115,7 @@ function buildStats(registrations: TeamRegistrationDoc[]): DashboardStats {
 
   for (const item of registrations) {
     base.totalByStatus[item.status] += 1;
+    base.totalByTeamSize[item.teamSize] += 1;
     institutionMap.set(item.institution, (institutionMap.get(item.institution) ?? 0) + 1);
     challengesMap.set(
       item.challengePreferences[0],
@@ -128,6 +142,7 @@ function toListItem(doc: TeamRegistrationDoc): RegistrationListItem {
   return {
     id: doc.id,
     status: doc.status,
+    teamSize: doc.teamSize,
     teamName: doc.teamName,
     responsibleName: doc.responsibleName,
     responsibleEmail: doc.responsibleEmail,
@@ -193,6 +208,13 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
     return {
       ...data,
       id: snap.id,
+      teamSize: data.teamSize ?? ((data.members?.length ?? 0) >= 4 ? 4 : 3),
+      members: (data.members ?? []).map((member) => ({
+        ...member,
+        about:
+          member.about ??
+          "Perfil pendiente de actualización desde una inscripción anterior.",
+      })),
       createdAt: timestampToIso(data.createdAt as string | Timestamp | undefined),
       updatedAt: timestampToIso(data.updatedAt as string | Timestamp | undefined),
       adminNotes: data.adminNotes ?? [],
@@ -248,6 +270,13 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
     return {
       ...data,
       id: saved.id,
+      teamSize: data.teamSize ?? ((data.members?.length ?? 0) >= 4 ? 4 : 3),
+      members: (data.members ?? []).map((member) => ({
+        ...member,
+        about:
+          member.about ??
+          "Perfil pendiente de actualización desde una inscripción anterior.",
+      })),
       createdAt: timestampToIso(data.createdAt as string | Timestamp | undefined),
       updatedAt: timestampToIso(data.updatedAt as string | Timestamp | undefined),
       adminNotes: data.adminNotes ?? [],
@@ -262,11 +291,14 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
       [
         "id",
         "status",
+        "teamSize",
         "teamName",
         "institution",
         "responsibleName",
         "responsibleEmail",
         "preferredChallenge",
+        "memberRoles",
+        "memberAbouts",
         "createdAt",
       ].join(","),
     ];
@@ -276,11 +308,14 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
         [
           toCsvValue(item.id),
           toCsvValue(item.status),
+          toCsvValue(item.teamSize),
           toCsvValue(item.teamName),
           toCsvValue(item.institution),
           toCsvValue(item.responsibleName),
           toCsvValue(item.responsibleEmail),
           toCsvValue(item.challengePreferences[0]),
+          toCsvValue(item.members.map((member) => member.role3H).join("|")),
+          toCsvValue(item.members.map((member) => member.about).join(" || ")),
           toCsvValue(item.createdAt),
         ].join(","),
       );

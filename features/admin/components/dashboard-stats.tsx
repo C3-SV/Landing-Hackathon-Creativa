@@ -16,7 +16,11 @@ export function DashboardStatsGrid({ stats, challenges }: DashboardStatsProps) {
         <StatCard label="Total equipos" value={stats.totalTeams} />
         <StatCard label="Submitted" value={stats.totalByStatus.submitted} />
         <StatCard label="Approved" value={stats.totalByStatus.approved} />
-        <StatCard label="Needs fix" value={stats.totalByStatus.needs_fix} />
+        <StatCard
+          label="Equipos de 4"
+          value={stats.totalByTeamSize[4]}
+          hint={`${stats.totalByTeamSize[3]} equipos de 3`}
+        />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">

@@ -86,6 +86,7 @@ export function RegistrationDetail({
           <DataLabel label="Responsable" value={current.responsibleName} />
           <DataLabel label="Correo" value={current.responsibleEmail} />
           <DataLabel label="Institución" value={current.institution} />
+          <DataLabel label="Tamaño equipo" value={`${current.teamSize} integrantes`} />
           <DataLabel label="Enviado" value={formatDateTime(current.createdAt)} />
         </div>
       </Card>
@@ -159,10 +160,10 @@ export function RegistrationDetail({
         <h2 className="font-mono text-xs uppercase tracking-wide text-brand-electric">
           Integrantes 3H
         </h2>
-        <div className="grid gap-3 md:grid-cols-3">
-          {current.members.map((member) => (
+        <div className="grid gap-3 md:grid-cols-2">
+          {current.members.map((member, index) => (
             <div
-              key={member.role3H}
+              key={`${member.role3H}-${member.email}-${index}`}
               className="rounded-xl border border-brand-electric/20 bg-brand-bg/45 p-3"
             >
               <p className="font-mono text-xs uppercase tracking-wide text-brand-orange-soft">
@@ -173,9 +174,10 @@ export function RegistrationDetail({
               </p>
               <p className="text-sm text-brand-muted">{member.email}</p>
               <p className="text-sm text-brand-muted">{member.phone}</p>
-              <p className="mt-2 text-xs text-brand-muted">
-                Emergencia: {member.emergencyContactName} ({member.emergencyContactPhone})
+              <p className="mt-3 font-mono text-xs uppercase tracking-wide text-brand-electric">
+                Cuéntanos de ti
               </p>
+              <p className="mt-1 text-sm text-brand-white/90">{member.about}</p>
             </div>
           ))}
         </div>
