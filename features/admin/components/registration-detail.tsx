@@ -5,6 +5,7 @@ import { REGISTRATION_STATUS_VALUES } from "@/lib/types/domain";
 import type {
   Challenge,
   RegistrationStatus,
+  TeamConsents,
   TeamRegistrationDoc,
 } from "@/lib/types/domain";
 import { parseJsonResponse } from "@/lib/http";
@@ -18,12 +19,38 @@ import {
   Select,
   Textarea,
 } from "@/lib/ui";
-import { formatDateTime, getRepresentativeMember, roleLabel } from "@/lib/utils";
+import {
+  formatDateTime,
+  getRepresentativeMember,
+  registrationStatusLabel,
+  roleLabel,
+} from "@/lib/utils";
 
 type RegistrationDetailProps = {
   registration: TeamRegistrationDoc;
   challenges: Challenge[];
 };
+
+type ConsentColumn = {
+  key: keyof TeamConsents;
+  label: string;
+};
+
+const CONSENT_COLUMNS: ConsentColumn[] = [
+  { key: "acceptCodeOfConduct", label: "Conducta" },
+  { key: "acceptPrivacyPolicy", label: "Privacidad" },
+  { key: "mediaConsent", label: "Media" },
+  { key: "dataSharingConsent", label: "Compartir datos" },
+  { key: "authorizationDeclaration", label: "Autorización" },
+];
+
+function ConsentMark({ value }: { value: boolean }) {
+  if (value) {
+    return <span className="font-mono text-lg text-brand-electric">✓</span>;
+  }
+
+  return <span className="font-mono text-base text-brand-muted">—</span>;
+}
 
 export function RegistrationDetail({
   registration,
@@ -77,32 +104,69 @@ export function RegistrationDetail({
       {feedback ? <AlertState title="Actualización" description={feedback} /> : null}
       {error ? <AlertState title="Error" description={error} variant="error" /> : null}
 
-      <Card className="space-y-3">
+      <Card className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="font-display text-base uppercase text-brand-white sm:text-lg">
             {current.teamName}
           </h1>
-          <Badge variant={current.status}>{current.status}</Badge>
+          <Badge variant={current.status}>{registrationStatusLabel(current.status)}</Badge>
         </div>
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          <DataLabel label="Institución" value={current.institution} />
-          <DataLabel label="Tamaño equipo" value={`${current.teamSize} integrantes`} />
-          <DataLabel label="Canal" value={current.source || "-"} />
-          <DataLabel label="Enviado" value={formatDateTime(current.createdAt)} />
-          <DataLabel
-            label="Representante"
-            value={
-              representative
-                ? `${representative.firstName} ${representative.lastName}`
-                : "Sin definir"
-            }
-          />
-          <DataLabel label="Correo representante" value={representative?.email ?? "-"} />
-          <DataLabel label="Teléfono representante" value={representative?.phone ?? "-"} />
+
+        <div className="grid gap-4 xl:grid-cols-[1.4fr_1fr]">
+          <section className="space-y-3">
+            <h2 className="font-mono text-xs uppercase tracking-wide text-brand-electric">
+              Resumen del equipo
+            </h2>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <DataLabel label="Institución" value={current.institution} />
+              <DataLabel label="Tamaño" value={`${current.teamSize} integrantes`} />
+              <DataLabel label="Canal" value={current.source || "-"} />
+              <DataLabel label="Inscripción" value={formatDateTime(current.createdAt)} />
+              <DataLabel
+                label="Representante"
+                value={
+                  representative
+                    ? `${representative.firstName} ${representative.lastName}`
+                    : "Sin definir"
+                }
+              />
+              <DataLabel label="Correo representante" value={representative?.email ?? "-"} />
+              <DataLabel label="Teléfono representante" value={representative?.phone ?? "-"} />
+            </div>
+
+            <div>
+              <p className="font-mono text-xs uppercase tracking-wide text-brand-muted">
+                Descripción del equipo
+              </p>
+              <p className="mt-1 text-sm text-brand-white/90">{current.teamDescription || "-"}</p>
+            </div>
+          </section>
+
+          <section className="space-y-3 rounded-xl border border-brand-electric/25 bg-brand-bg/35 p-3">
+            <h2 className="font-mono text-xs uppercase tracking-wide text-brand-electric">
+              Preferencias de retos
+            </h2>
+            <ul className="grid gap-2 text-sm text-brand-muted">
+              {current.challengePreferences.map((challengeId, index) => {
+                const challengeName =
+                  challenges.find((challenge) => challenge.id === challengeId)?.name ??
+                  challengeId;
+                return (
+                  <li key={`${challengeId}-${index}`} className="flex gap-2">
+                    <span className="font-mono text-brand-orange-soft">#{index + 1}</span>
+                    <span>{challengeName}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
         </div>
       </Card>
 
       <Card className="grid gap-4 lg:grid-cols-3">
+        <h2 className="lg:col-span-3 font-mono text-xs uppercase tracking-wide text-brand-electric">
+          Acciones admin
+        </h2>
         <div>
           <Label htmlFor="status">Cambiar estado</Label>
           <Select
@@ -112,7 +176,7 @@ export function RegistrationDetail({
           >
             {REGISTRATION_STATUS_VALUES.map((value) => (
               <option key={value} value={value}>
-                {value}
+                {registrationStatusLabel(value)}
               </option>
             ))}
           </Select>
@@ -150,26 +214,7 @@ export function RegistrationDetail({
 
       <Card className="space-y-3">
         <h2 className="font-mono text-xs uppercase tracking-wide text-brand-electric">
-          Preferencias de reto
-        </h2>
-        <ul className="grid gap-2 text-sm text-brand-muted">
-          {current.challengePreferences.map((challengeId, index) => {
-            const challengeName =
-              challenges.find((challenge) => challenge.id === challengeId)?.name ??
-              challengeId;
-            return (
-              <li key={`${challengeId}-${index}`} className="flex gap-2">
-                <span className="font-mono text-brand-orange-soft">#{index + 1}</span>
-                <span>{challengeName}</span>
-              </li>
-            );
-          })}
-        </ul>
-      </Card>
-
-      <Card className="space-y-3">
-        <h2 className="font-mono text-xs uppercase tracking-wide text-brand-electric">
-          Integrantes 3H
+          Integrantes
         </h2>
         <div className="grid gap-3 md:grid-cols-2">
           {current.members.map((member, index) => (
@@ -188,6 +233,20 @@ export function RegistrationDetail({
               </p>
               <p className="text-sm text-brand-muted">{member.email}</p>
               <p className="text-sm text-brand-muted">{member.phone}</p>
+              <div className="mt-3 grid gap-1 text-xs text-brand-muted">
+                <p>
+                  <span className="font-mono uppercase tracking-wide text-brand-electric">Afiliación:</span>{" "}
+                  {member.affiliationType}
+                </p>
+                <p>
+                  <span className="font-mono uppercase tracking-wide text-brand-electric">Institución:</span>{" "}
+                  {member.institution}
+                </p>
+                <p>
+                  <span className="font-mono uppercase tracking-wide text-brand-electric">Área:</span>{" "}
+                  {member.degreeOrMajor}
+                </p>
+              </div>
               <p className="mt-3 font-mono text-xs uppercase tracking-wide text-brand-electric">
                 Cuéntanos de ti
               </p>
@@ -201,27 +260,27 @@ export function RegistrationDetail({
         <h2 className="font-mono text-xs uppercase tracking-wide text-brand-electric">
           Consentimientos
         </h2>
-        <div className="grid gap-2 text-sm text-brand-muted">
-          <DataLabel
-            label="Código de conducta"
-            value={current.consents.acceptCodeOfConduct ? "Sí" : "No"}
-          />
-          <DataLabel
-            label="Privacidad"
-            value={current.consents.acceptPrivacyPolicy ? "Sí" : "No"}
-          />
-          <DataLabel
-            label="Consentimiento de media"
-            value={current.consents.mediaConsent ? "Sí" : "No"}
-          />
-          <DataLabel
-            label="Compartir datos"
-            value={current.consents.dataSharingConsent ? "Sí" : "No"}
-          />
-          <DataLabel
-            label="Declaración autorización"
-            value={current.consents.authorizationDeclaration ? "Sí" : "No"}
-          />
+        <div className="overflow-x-auto rounded-xl border border-brand-electric/20 bg-brand-bg/35">
+          <table className="min-w-full table-fixed">
+            <thead>
+              <tr className="border-b border-brand-electric/20 bg-brand-bg/55 font-mono text-[11px] uppercase tracking-wide text-brand-muted">
+                {CONSENT_COLUMNS.map((column) => (
+                  <th key={column.key} className="px-3 py-2 text-center font-medium">
+                    {column.label}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                {CONSENT_COLUMNS.map((column) => (
+                  <td key={column.key} className="px-3 py-3 text-center">
+                    <ConsentMark value={Boolean(current.consents[column.key])} />
+                  </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
         </div>
       </Card>
 
@@ -250,4 +309,3 @@ export function RegistrationDetail({
     </div>
   );
 }
-

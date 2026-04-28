@@ -1,4 +1,4 @@
-import type { Role3H, TeamMember } from "@/lib/types/domain";
+import type { RegistrationStatus, Role3H, TeamMember } from "@/lib/types/domain";
 
 export function normalizeTeamName(value: string) {
   return value.trim().toLocaleLowerCase();
@@ -61,4 +61,21 @@ export function getRepresentativeName(members: readonly TeamMember[]) {
 
 export function getRepresentativeEmail(members: readonly TeamMember[]) {
   return getRepresentativeMember(members)?.email ?? "";
+}
+
+export function registrationStatusLabel(status: RegistrationStatus) {
+  switch (status) {
+    case "submitted":
+      return "Enviado";
+    case "approved":
+      return "Aprobado";
+    case "waitlist":
+      return "Lista de espera";
+    case "rejected":
+      return "Rechazado";
+    case "needs_fix":
+      return "Requiere corrección";
+    default:
+      return status;
+  }
 }

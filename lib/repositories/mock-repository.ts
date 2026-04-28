@@ -2,6 +2,7 @@ import {
   CURRENT_EDITION_FALLBACK,
   EDITION_SEEDS,
 } from "@/lib/constants/event";
+import { buildRegistrationsCsv } from "@/lib/repositories/csv-export";
 import { getMockStore } from "@/lib/repositories/mock-store";
 import type {
   RegistrationRepository,
@@ -18,7 +19,6 @@ import {
   getRepresentativeEmail,
   getRepresentativeName,
   normalizeTeamName,
-  toCsvValue,
   toSlug,
 } from "@/lib/utils";
 
@@ -124,45 +124,6 @@ function buildDashboardStats(records: TeamRegistrationDoc[]): DashboardStats {
   };
 }
 
-function buildCsv(registrations: TeamRegistrationDoc[]) {
-  const rows: string[] = [];
-  rows.push(
-    [
-      "id",
-      "status",
-      "teamSize",
-      "teamName",
-      "institution",
-      "representativeName",
-      "representativeEmail",
-      "preferredChallenge",
-      "memberRoles",
-      "memberAbouts",
-      "createdAt",
-    ].join(","),
-  );
-
-  for (const item of registrations) {
-    rows.push(
-      [
-        toCsvValue(item.id),
-        toCsvValue(item.status),
-        toCsvValue(item.teamSize),
-        toCsvValue(item.teamName),
-        toCsvValue(item.institution),
-        toCsvValue(getRepresentativeName(item.members)),
-        toCsvValue(getRepresentativeEmail(item.members)),
-        toCsvValue(item.challengePreferences[0]),
-        toCsvValue(item.members.map((member) => member.role3H).join("|")),
-        toCsvValue(item.members.map((member) => member.about).join(" || ")),
-        toCsvValue(item.createdAt),
-      ].join(","),
-    );
-  }
-
-  return rows.join("\n");
-}
-
 export const mockRegistrationRepository: RegistrationRepository = {
   async getChallenges() {
     return getMockStore().challenges;
@@ -247,7 +208,7 @@ export const mockRegistrationRepository: RegistrationRepository = {
   },
 
   async exportRegistrationsCsv() {
-    return buildCsv(getMockStore().registrations);
+    return buildRegistrationsCsv(getMockStore().registrations);
   },
 
   async hasTeamNameInEdition(teamNameNormalized, editionId, ignoreId) {

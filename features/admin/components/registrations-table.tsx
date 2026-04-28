@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState, type FormEvent } from "react";
 import Link from "next/link";
@@ -6,7 +6,7 @@ import { REGISTRATION_STATUS_VALUES } from "@/lib/types/domain";
 import type { Challenge, RegistrationListItem, RegistrationStatus } from "@/lib/types/domain";
 import { parseJsonResponse, toQueryString } from "@/lib/http";
 import { Badge, ButtonLink, Card, EmptyState, Input, Label, Select } from "@/lib/ui";
-import { formatDateTime } from "@/lib/utils";
+import { formatDateTime, registrationStatusLabel } from "@/lib/utils";
 
 type RegistrationsTableProps = {
   initialRows: RegistrationListItem[];
@@ -91,7 +91,7 @@ export function RegistrationsTable({
               <option value="">Todos</option>
               {REGISTRATION_STATUS_VALUES.map((value) => (
                 <option key={value} value={value}>
-                  {value}
+                  {registrationStatusLabel(value)}
                 </option>
               ))}
             </Select>
@@ -160,6 +160,7 @@ export function RegistrationsTable({
           <table className="min-w-full divide-y divide-brand-electric/25 text-sm">
             <thead className="bg-brand-bg/60">
               <tr className="text-left font-mono text-xs uppercase tracking-wide text-brand-muted">
+                <th className="px-4 py-3 text-center">Detalle</th>
                 <th className="px-4 py-3">Estado</th>
                 <th className="px-4 py-3">Tamaño</th>
                 <th className="px-4 py-3">Equipo</th>
@@ -173,8 +174,20 @@ export function RegistrationsTable({
             <tbody className="divide-y divide-brand-electric/20">
               {rows.map((row) => (
                 <tr key={row.id} className="hover:bg-brand-bg/45">
+                  <td className="px-4 py-3 text-center">
+                    <Link
+                      href={`/admin/registrations/${row.id}`}
+                      aria-label={`Ver detalle del equipo ${row.teamName}`}
+                      title={`Ver detalle del equipo ${row.teamName}`}
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-brand-electric/45 bg-brand-bg/35 font-mono text-base leading-none text-brand-electric transition hover:border-brand-orange hover:text-brand-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-electric"
+                    >
+                      +
+                    </Link>
+                  </td>
                   <td className="px-4 py-3">
-                    <Badge variant={row.status as RegistrationStatus}>{row.status}</Badge>
+                    <Badge variant={row.status as RegistrationStatus}>
+                      {registrationStatusLabel(row.status)}
+                    </Badge>
                   </td>
                   <td className="px-4 py-3 font-mono text-xs text-brand-muted">
                     {row.teamSize}

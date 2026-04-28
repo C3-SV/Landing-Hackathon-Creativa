@@ -1,5 +1,7 @@
 import { StatCard, Card } from "@/lib/ui";
 import type { Challenge, DashboardStats } from "@/lib/types/domain";
+import type { RegistrationStatus } from "@/lib/types/domain";
+import { registrationStatusLabel } from "@/lib/utils";
 
 type DashboardStatsProps = {
   stats: DashboardStats;
@@ -14,8 +16,8 @@ export function DashboardStatsGrid({ stats, challenges }: DashboardStatsProps) {
     <div className="space-y-4">
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Total equipos" value={stats.totalTeams} />
-        <StatCard label="Submitted" value={stats.totalByStatus.submitted} />
-        <StatCard label="Approved" value={stats.totalByStatus.approved} />
+        <StatCard label={registrationStatusLabel("submitted")} value={stats.totalByStatus.submitted} />
+        <StatCard label={registrationStatusLabel("approved")} value={stats.totalByStatus.approved} />
         <StatCard
           label="Equipos de 4"
           value={stats.totalByTeamSize[4]}
@@ -31,7 +33,9 @@ export function DashboardStatsGrid({ stats, challenges }: DashboardStatsProps) {
           <ul className="mt-3 space-y-2 text-sm text-brand-muted">
             {Object.entries(stats.totalByStatus).map(([status, count]) => (
               <li key={status} className="flex justify-between gap-4">
-                <span className="uppercase">{status}</span>
+                <span className="uppercase">
+                  {registrationStatusLabel(status as RegistrationStatus)}
+                </span>
                 <strong className="text-brand-white">{count}</strong>
               </li>
             ))}

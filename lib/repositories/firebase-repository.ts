@@ -1,6 +1,7 @@
 import type { QueryDocumentSnapshot, Timestamp } from "firebase-admin/firestore";
 import { CHALLENGE_SEEDS, EDITION_SEEDS } from "@/lib/constants/event";
 import { getFirebaseAdminDb } from "@/lib/firebase/admin";
+import { buildRegistrationsCsv } from "@/lib/repositories/csv-export";
 import type {
   RegistrationRepository,
   RegistrationUpdateInput,
@@ -20,7 +21,6 @@ import {
   getRepresentativeEmail,
   getRepresentativeName,
   normalizeTeamName,
-  toCsvValue,
 } from "@/lib/utils";
 
 const COLLECTIONS = {
@@ -323,41 +323,7 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
     const db = getFirebaseAdminDb();
     const snapshot = await db.collection(COLLECTIONS.registrations).get();
     const records = snapshot.docs.map(fromDoc);
-    const rows = [
-      [
-        "id",
-        "status",
-        "teamSize",
-        "teamName",
-        "institution",
-        "representativeName",
-        "representativeEmail",
-        "preferredChallenge",
-        "memberRoles",
-        "memberAbouts",
-        "createdAt",
-      ].join(","),
-    ];
-
-    for (const item of records) {
-      rows.push(
-        [
-          toCsvValue(item.id),
-          toCsvValue(item.status),
-          toCsvValue(item.teamSize),
-          toCsvValue(item.teamName),
-          toCsvValue(item.institution),
-          toCsvValue(getRepresentativeName(item.members)),
-          toCsvValue(getRepresentativeEmail(item.members)),
-          toCsvValue(item.challengePreferences[0]),
-          toCsvValue(item.members.map((member) => member.role3H).join("|")),
-          toCsvValue(item.members.map((member) => member.about).join(" || ")),
-          toCsvValue(item.createdAt),
-        ].join(","),
-      );
-    }
-
-    return rows.join("\n");
+    return buildRegistrationsCsv(records);
   },
 
   async hasTeamNameInEdition(teamNameNormalized, editionId, ignoreId) {
