@@ -1,7 +1,6 @@
-import type { TeamRegistrationFormValues } from "@/lib/validation/team-registration";
+﻿import type { TeamRegistrationFormValues } from "@/lib/validation/team-registration";
 
 export type RegisterSectionId =
-  | "general"
   | "team"
   | "hacker"
   | "hipster"
@@ -15,14 +14,9 @@ export const REGISTER_SECTIONS: Array<{
   subtitle: string;
 }> = [
   {
-    id: "general",
-    title: "Datos generales",
-    subtitle: "Persona responsable y canal de origen",
-  },
-  {
     id: "team",
     title: "Equipo",
-    subtitle: "Identidad del equipo, tamaño y retos top 3",
+    subtitle: "Identidad del equipo, origen, tamaño y retos top 3",
   },
   {
     id: "hacker",
@@ -53,6 +47,7 @@ export const REGISTER_SECTIONS: Array<{
 
 function createMemberBase() {
   return {
+    isRepresentative: false,
     firstName: "",
     lastName: "",
     preferredName: "",
@@ -85,11 +80,8 @@ export function buildDefaultRegistrationValues(
     institution: "",
     teamDescription: "",
     challengePreferences: ["", "", ""],
-    responsibleName: "",
-    responsibleEmail: "",
-    responsiblePhone: "",
     source: "",
-    hacker: { role3H: "hacker", ...createMemberBase() },
+    hacker: { role3H: "hacker", ...createMemberBase(), isRepresentative: true },
     hipster: { role3H: "hipster", ...createMemberBase() },
     hustler: { role3H: "hustler", ...createMemberBase() },
     extraMember: undefined,
@@ -102,3 +94,4 @@ export function buildDefaultRegistrationValues(
     },
   };
 }
+

@@ -1,4 +1,4 @@
-import { APP_ENV, isFirebaseMode } from "@/lib/constants/env";
+﻿import { APP_ENV, isFirebaseMode } from "@/lib/constants/env";
 import { firebaseRegistrationRepository } from "@/lib/repositories/firebase-repository";
 import { mockRegistrationRepository } from "@/lib/repositories/mock-repository";
 import type { RegistrationRepository } from "@/lib/repositories/types";
@@ -43,15 +43,12 @@ export async function validateRegistrationBusinessRules(input: unknown) {
   }
 
   for (const member of payload.members) {
-    const exists = await registrationRepository.memberEmailExistsInEdition(
-      member.email,
-      editionId,
-    );
+    const exists = await registrationRepository.memberEmailExists(member.email);
     if (exists) {
       return {
         ok: false as const,
         status: 409,
-        error: `El correo ${member.email} ya está inscrito en esta edición.`,
+        error: `El correo ${member.email} ya está inscrito en otro equipo.`,
       };
     }
   }

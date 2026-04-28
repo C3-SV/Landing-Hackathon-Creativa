@@ -1,4 +1,4 @@
-import type { Role3H } from "@/lib/types/domain";
+import type { Role3H, TeamMember } from "@/lib/types/domain";
 
 export function normalizeTeamName(value: string) {
   return value.trim().toLocaleLowerCase();
@@ -45,4 +45,20 @@ export function toSlug(value: string) {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
+}
+
+export function getRepresentativeMember(members: readonly TeamMember[]) {
+  return members.find((member) => member.isRepresentative) ?? members[0];
+}
+
+export function getRepresentativeName(members: readonly TeamMember[]) {
+  const member = getRepresentativeMember(members);
+  if (!member) {
+    return "";
+  }
+  return `${member.firstName} ${member.lastName}`.trim();
+}
+
+export function getRepresentativeEmail(members: readonly TeamMember[]) {
+  return getRepresentativeMember(members)?.email ?? "";
 }

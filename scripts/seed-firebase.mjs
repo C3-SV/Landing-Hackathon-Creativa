@@ -96,13 +96,11 @@ const registrations = [
     teamDescription:
       "Equipo enfocado en prototipos practicos para mejorar la experiencia cultural y turistica con herramientas digitales accesibles.",
     challengePreferences: ["touristsv", "ar-cultura", "creator-kit"],
-    responsibleName: "Daniela Rivas",
-    responsibleEmail: "daniela.rivas@example.com",
-    responsiblePhone: "+50370000001",
     source: "Instagram",
     members: [
       {
         role3H: "hacker",
+        isRepresentative: true,
         firstName: "Daniela",
         lastName: "Rivas",
         preferredName: "Dani",
@@ -118,6 +116,7 @@ const registrations = [
       },
       {
         role3H: "hipster",
+        isRepresentative: false,
         firstName: "Maria",
         lastName: "Linares",
         preferredName: "Mare",
@@ -133,6 +132,7 @@ const registrations = [
       },
       {
         role3H: "hustler",
+        isRepresentative: false,
         firstName: "Carlos",
         lastName: "Mejia",
         email: "carlos.mejia@example.com",
@@ -167,13 +167,11 @@ const registrations = [
     teamDescription:
       "Equipo multidisciplinario con enfoque build-first para crear herramientas que ayuden a pequenos negocios turisticos a tomar mejores decisiones.",
     challengePreferences: ["datapulse", "ecotrack", "touristsv"],
-    responsibleName: "Andrea Molina",
-    responsibleEmail: "andrea.molina@example.com",
-    responsiblePhone: "+50370000011",
     source: "Comunidad tech",
     members: [
       {
         role3H: "hacker",
+        isRepresentative: true,
         firstName: "Andrea",
         lastName: "Molina",
         email: "andrea.molina@example.com",
@@ -188,6 +186,7 @@ const registrations = [
       },
       {
         role3H: "hipster",
+        isRepresentative: false,
         firstName: "Sofia",
         lastName: "Guardado",
         email: "sofia.guardado@example.com",
@@ -201,6 +200,7 @@ const registrations = [
       },
       {
         role3H: "hustler",
+        isRepresentative: false,
         firstName: "Luis",
         lastName: "Caceres",
         email: "luis.caceres@example.com",
@@ -214,6 +214,7 @@ const registrations = [
       },
       {
         role3H: "hacker",
+        isRepresentative: false,
         firstName: "Javier",
         lastName: "Abarca",
         email: "javier.abarca@example.com",

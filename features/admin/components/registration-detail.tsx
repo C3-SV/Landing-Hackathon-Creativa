@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { REGISTRATION_STATUS_VALUES } from "@/lib/types/domain";
@@ -18,7 +18,7 @@ import {
   Select,
   Textarea,
 } from "@/lib/ui";
-import { formatDateTime, roleLabel } from "@/lib/utils";
+import { formatDateTime, getRepresentativeMember, roleLabel } from "@/lib/utils";
 
 type RegistrationDetailProps = {
   registration: TeamRegistrationDoc;
@@ -38,6 +38,8 @@ export function RegistrationDetail({
   const [saving, setSaving] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const representative = getRepresentativeMember(current.members);
 
   async function saveChanges() {
     setSaving(true);
@@ -83,11 +85,20 @@ export function RegistrationDetail({
           <Badge variant={current.status}>{current.status}</Badge>
         </div>
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          <DataLabel label="Responsable" value={current.responsibleName} />
-          <DataLabel label="Correo" value={current.responsibleEmail} />
           <DataLabel label="Institución" value={current.institution} />
           <DataLabel label="Tamaño equipo" value={`${current.teamSize} integrantes`} />
+          <DataLabel label="Canal" value={current.source || "-"} />
           <DataLabel label="Enviado" value={formatDateTime(current.createdAt)} />
+          <DataLabel
+            label="Representante"
+            value={
+              representative
+                ? `${representative.firstName} ${representative.lastName}`
+                : "Sin definir"
+            }
+          />
+          <DataLabel label="Correo representante" value={representative?.email ?? "-"} />
+          <DataLabel label="Teléfono representante" value={representative?.phone ?? "-"} />
         </div>
       </Card>
 
@@ -166,9 +177,12 @@ export function RegistrationDetail({
               key={`${member.role3H}-${member.email}-${index}`}
               className="rounded-xl border border-brand-electric/20 bg-brand-bg/45 p-3"
             >
-              <p className="font-mono text-xs uppercase tracking-wide text-brand-orange-soft">
-                {roleLabel(member.role3H)}
-              </p>
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-mono text-xs uppercase tracking-wide text-brand-orange-soft">
+                  {roleLabel(member.role3H)}
+                </p>
+                {member.isRepresentative ? <Badge variant="approved">Representante</Badge> : null}
+              </div>
               <p className="mt-1 text-brand-white">
                 {member.firstName} {member.lastName}
               </p>
@@ -197,11 +211,11 @@ export function RegistrationDetail({
             value={current.consents.acceptPrivacyPolicy ? "Sí" : "No"}
           />
           <DataLabel
-            label="Media consent"
+            label="Consentimiento de media"
             value={current.consents.mediaConsent ? "Sí" : "No"}
           />
           <DataLabel
-            label="Data sharing"
+            label="Compartir datos"
             value={current.consents.dataSharingConsent ? "Sí" : "No"}
           />
           <DataLabel
@@ -236,3 +250,4 @@ export function RegistrationDetail({
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type { Challenge } from "@/lib/types/domain";
 import type { TeamRegistrationFormValues } from "@/lib/validation/team-registration";
@@ -18,6 +18,8 @@ export function SummaryPanel({ values, challenges }: SummaryPanelProps) {
       ? [...baseMembers, values.extraMember]
       : baseMembers;
 
+  const representative = members.find((member) => member.isRepresentative);
+
   return (
     <div className="space-y-4">
       <Card className="space-y-3">
@@ -28,12 +30,19 @@ export function SummaryPanel({ values, challenges }: SummaryPanelProps) {
           <DataLabel label="Nombre" value={values.teamName || "-"} />
           <DataLabel label="Institución" value={values.institution || "-"} />
           <DataLabel label="Tamaño del equipo" value={`${values.teamSize || "-"} integrantes`} />
+          <DataLabel label="Cómo se enteraron" value={values.source || "-"} />
           <DataLabel
             label="Reto #1"
             value={challengeMap.get(values.challengePreferences?.[0]) ?? "-"}
           />
-          <DataLabel label="Responsable" value={values.responsibleName || "-"} />
-          <DataLabel label="Email responsable" value={values.responsibleEmail || "-"} />
+          <DataLabel
+            label="Representante"
+            value={
+              representative
+                ? `${representative.firstName} ${representative.lastName} · ${representative.email}`
+                : "-"
+            }
+          />
         </div>
       </Card>
 
@@ -51,7 +60,10 @@ export function SummaryPanel({ values, challenges }: SummaryPanelProps) {
                 <p className="font-mono text-xs uppercase tracking-wide text-brand-orange-soft">
                   {roleLabel(member.role3H)}
                 </p>
-                {index === 3 ? <Badge variant="proposed">Integrante extra</Badge> : null}
+                <div className="flex items-center gap-2">
+                  {member.isRepresentative ? <Badge variant="approved">Representante</Badge> : null}
+                  {index === 3 ? <Badge variant="proposed">Integrante extra</Badge> : null}
+                </div>
               </div>
               <p className="mt-1 text-brand-white">
                 {member.firstName} {member.lastName}
@@ -66,3 +78,4 @@ export function SummaryPanel({ values, challenges }: SummaryPanelProps) {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import { AFFILIATION_TYPE_OPTIONS } from "@/lib/constants/form-options";
@@ -12,6 +12,8 @@ type MemberFormCardProps = {
   fixedRole?: "hacker" | "hipster" | "hustler";
   register: UseFormRegister<TeamRegistrationFormValues>;
   errors: FieldErrors<TeamRegistrationFormValues>;
+  isRepresentative: boolean;
+  onSelectRepresentative: () => void;
 };
 
 function resolveError(errors: FieldErrors<TeamRegistrationFormValues>, path: string) {
@@ -34,6 +36,8 @@ export function MemberFormCard({
   fixedRole,
   register,
   errors,
+  isRepresentative,
+  onSelectRepresentative,
 }: MemberFormCardProps) {
   const prefix = fieldName;
   const reg = (name: string) => register(name as never);
@@ -159,6 +163,26 @@ export function MemberFormCard({
           placeholder="Queremos conocerte mejor: cuéntanos tu perfil, intereses y aporte esperado."
         />
         <FieldError message={err(`${prefix}.about`)} />
+      </div>
+
+      <div className="rounded-xl border border-brand-electric/25 bg-brand-bg/45 p-3">
+        <label className="flex cursor-pointer items-center gap-3">
+          <input
+            type="radio"
+            name="team-representative"
+            checked={isRepresentative}
+            onChange={onSelectRepresentative}
+            className="h-4 w-4 border-brand-electric/50 bg-brand-bg text-brand-orange focus-visible:ring-brand-electric"
+          />
+          <span>
+            <span className="block font-mono text-xs uppercase tracking-wide text-brand-orange-soft">
+              Contacto principal del equipo
+            </span>
+            <span className="mt-1 block text-xs text-brand-muted">
+              Selecciona exactamente una persona como representante para contacto de administración.
+            </span>
+          </span>
+        </label>
       </div>
     </div>
   );

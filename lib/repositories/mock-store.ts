@@ -30,7 +30,7 @@ const sampleStatuses: RegistrationStatus[] = [
 ];
 
 function longAbout(role: string, focus: string) {
-  return `Soy un perfil ${role} con motivación fuerte por crear soluciones reales para turismo. Me interesa trabajar con equipos multidisciplinarios, validar rápido ideas en contexto local y construir prototipos funcionales que la gente pueda usar de verdad. Aporto enfoque práctico, disciplina de ejecución, comunicación clara y capacidad para colaborar durante todo el sprint con criterio técnico y humano. Mi objetivo es que el producto final tenga impacto tangible y continuidad después de la hackathon, con aprendizaje compartido para todo el equipo. ${focus}`;
+  return `Soy un perfil ${role} con motivacion fuerte por crear soluciones reales para turismo. Me interesa trabajar con equipos multidisciplinarios, validar rapido ideas en contexto local y construir prototipos funcionales que la gente pueda usar de verdad. Aporto enfoque practico, disciplina de ejecucion, comunicacion clara y capacidad para colaborar durante todo el sprint con criterio tecnico y humano. Mi objetivo es que el producto final tenga impacto tangible y continuidad despues de la hackathon, con aprendizaje compartido para todo el equipo. ${focus}`;
 }
 
 function createMember(
@@ -38,10 +38,12 @@ function createMember(
   index: number,
   institution: string,
   email: string,
+  isRepresentative = false,
 ) {
   const prefix = role3H;
   return {
     role3H,
+    isRepresentative,
     firstName:
       role3H === "hacker" ? "Luis" : role3H === "hipster" ? "Sofia" : "Diego",
     lastName: "Demo",
@@ -52,11 +54,11 @@ function createMember(
     institution,
     degreeOrMajor:
       role3H === "hacker"
-        ? "Ingeniería en Sistemas"
+        ? "Ingenieria en Sistemas"
         : role3H === "hipster"
-          ? "Diseño Digital"
+          ? "Diseno Digital"
           : "Marketing",
-    about: longAbout(prefix, `Además, disfruto resolver retos en equipo con enfoque ${prefix}.`),
+    about: longAbout(prefix, `Ademas, disfruto resolver retos en equipo con enfoque ${prefix}.`),
     linkedinUrl: `https://linkedin.com/in/${prefix}-${index}`,
     githubUrl: role3H === "hacker" ? `https://github.com/${prefix}-${index}` : undefined,
     portfolioUrl:
@@ -70,36 +72,32 @@ function createSeedRegistrations() {
     {
       teamName: "Pixel Atlas",
       institution: "Universidad de El Salvador",
-      responsibleName: "Camila Rivas",
-      responsibleEmail: "camila.rivas@example.com",
       teamSize: 3 as const,
+      source: "Comunidad tech",
       challengePreferences: ["touristsv", "datapulse", "twinmap"] as const,
       extraRole: undefined,
     },
     {
       teamName: "Ruta 503",
       institution: "Universidad Don Bosco",
-      responsibleName: "Javier Mejia",
-      responsibleEmail: "javier.mejia@example.com",
       teamSize: 4 as const,
+      source: "Instagram",
       challengePreferences: ["creator-kit", "ecotrack", "ar-cultura"] as const,
       extraRole: "hacker" as const,
     },
     {
       teamName: "Cultura Runtime",
       institution: "ITCA-FEPADE",
-      responsibleName: "Andrea Cruz",
-      responsibleEmail: "andrea.cruz@example.com",
       teamSize: 3 as const,
+      source: "Universidad",
       challengePreferences: ["ar-cultura", "touristsv", "creator-kit"] as const,
       extraRole: undefined,
     },
     {
       teamName: "Twin Explorers",
-      institution: "Universidad Tecnológica",
-      responsibleName: "Mario Arévalo",
-      responsibleEmail: "mario.arevalo@example.com",
+      institution: "Universidad Tecnologica",
       teamSize: 4 as const,
+      source: "Comunidad tech",
       challengePreferences: ["twinmap", "datapulse", "ecotrack"] as const,
       extraRole: "hipster" as const,
     },
@@ -110,9 +108,9 @@ function createSeedRegistrations() {
     const id = `mock_${toSlug(seed.teamName)}`;
 
     const members: TeamMember[] = [
-      createMember("hacker", index * 10 + 1, seed.institution, `hacker.${index}@example.com`),
+      createMember("hacker", index * 10 + 1, seed.institution, `hacker.${index}@example.com`, true),
       createMember("hipster", index * 10 + 2, seed.institution, `hipster.${index}@example.com`),
-      createMember("hustler", index * 10 + 3, seed.institution, seed.responsibleEmail),
+      createMember("hustler", index * 10 + 3, seed.institution, `hustler.${index}@example.com`),
     ];
 
     if (seed.teamSize === 4 && seed.extraRole) {
@@ -136,10 +134,7 @@ function createSeedRegistrations() {
       teamDescription:
         "Equipo orientado a construir MVP funcional en turismo con enfoque local.",
       challengePreferences: seed.challengePreferences,
-      responsibleName: seed.responsibleName,
-      responsibleEmail: seed.responsibleEmail,
-      responsiblePhone: "+503 7000 0000",
-      source: "Comunidad tech",
+      source: seed.source,
       members,
       consents: {
         acceptCodeOfConduct: true,
@@ -156,7 +151,7 @@ function createSeedRegistrations() {
               {
                 id: `note_${index}`,
                 authorEmail: "admin@hackathoncreativa.dev",
-                message: "Equipo con buena cohesión y propuesta clara.",
+                message: "Equipo con buena cohesion y propuesta clara.",
                 createdAt: date,
               },
             ]

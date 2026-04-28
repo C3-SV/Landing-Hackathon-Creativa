@@ -1,4 +1,4 @@
-import { z } from "zod";
+﻿import { z } from "zod";
 import { ROLE3H_VALUES } from "@/lib/types/domain";
 
 const ABOUT_MIN_WORDS = 50;
@@ -28,6 +28,11 @@ const optionalText = z
   .or(z.literal(""))
   .transform((value) => (value?.trim() ? value.trim() : undefined));
 
+const representativeFlagSchema = z.preprocess(
+  (value) => value === true || value === "true" || value === "on",
+  z.boolean(),
+);
+
 const aboutSchema = z
   .string()
   .trim()
@@ -44,6 +49,7 @@ const aboutSchema = z
 
 export const memberSchema = z.object({
   role3H: z.enum(ROLE3H_VALUES),
+  isRepresentative: representativeFlagSchema,
   firstName: z.string().trim().min(1, "Nombre es obligatorio"),
   lastName: z.string().trim().min(1, "Apellido es obligatorio"),
   preferredName: optionalText,
@@ -90,9 +96,6 @@ export const teamRegistrationFormSchema = z
         const nonEmpty = values.filter(Boolean);
         return new Set(nonEmpty).size === nonEmpty.length;
       }, "No puedes repetir retos en tus preferencias"),
-    responsibleName: z.string().trim().min(1, "Responsable obligatorio"),
-    responsibleEmail: z.string().trim().email("Email inválido"),
-    responsiblePhone: z.string().trim().min(7, "Teléfono requerido"),
     source: z.string().trim().min(1, "Campo requerido"),
     hacker: memberSchema.extend({ role3H: z.literal("hacker") }),
     hipster: memberSchema.extend({ role3H: z.literal("hipster") }),
@@ -129,11 +132,12 @@ export const teamRegistrationFormSchema = z
       });
     }
 
-    if (!memberEmails.includes(data.responsibleEmail.toLowerCase())) {
+    const representatives = cleanMembers.filter((member) => member.isRepresentative);
+    if (representatives.length !== 1) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "El correo del responsable debe coincidir con un integrante",
-        path: ["responsibleEmail"],
+        message: "Debes marcar exactamente un representante del equipo",
+        path: ["teamSize"],
       });
     }
 
@@ -158,9 +162,6 @@ export const teamRegistrationPayloadSchema = teamRegistrationFormSchema.transfor
     institution: data.institution,
     teamDescription: data.teamDescription,
     challengePreferences: data.challengePreferences as [string, string, string],
-    responsibleName: data.responsibleName,
-    responsibleEmail: data.responsibleEmail,
-    responsiblePhone: data.responsiblePhone,
     source: data.source,
     members:
       data.teamSize === 4 && data.extraMember
@@ -174,3 +175,4 @@ export type TeamRegistrationFormValues = z.input<typeof teamRegistrationFormSche
 export type TeamRegistrationPayloadInput = z.output<
   typeof teamRegistrationPayloadSchema
 >;
+

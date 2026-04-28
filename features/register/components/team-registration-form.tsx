@@ -1,6 +1,6 @@
-"use client";
+﻿"use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
@@ -15,7 +15,7 @@ import { RegisterSidebar } from "@/features/register/components/register-sidebar
 import { SummaryPanel } from "@/features/register/components/summary-panel";
 import { SOURCE_OPTIONS } from "@/lib/constants/form-options";
 import { parseJsonResponse } from "@/lib/http";
-import type { Challenge, TeamMember } from "@/lib/types/domain";
+import type { Challenge } from "@/lib/types/domain";
 import {
   AlertState,
   Button,
@@ -38,7 +38,20 @@ type TeamRegistrationFormProps = {
   challenges: Challenge[];
 };
 
-function memberIsComplete(member?: Partial<TeamMember>) {
+type MemberField = "hacker" | "hipster" | "hustler" | "extraMember";
+
+type MemberCompletionShape = {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  affiliationType?: string;
+  institution?: string;
+  degreeOrMajor?: string;
+  about?: string;
+};
+
+function memberIsComplete(member?: MemberCompletionShape) {
   if (!member) {
     return false;
   }
@@ -64,9 +77,15 @@ function hasMemberErrors(errors: unknown) {
   return Object.keys(errors as Record<string, unknown>).length > 0;
 }
 
+function getMemberKeys(teamSize: 3 | 4) {
+  return teamSize === 4
+    ? (["hacker", "hipster", "hustler", "extraMember"] as const)
+    : (["hacker", "hipster", "hustler"] as const);
+}
+
 export function TeamRegistrationForm({ editionId, challenges }: TeamRegistrationFormProps) {
   const router = useRouter();
-  const [activeSection, setActiveSection] = useState<RegisterSectionId>("general");
+  const [activeSection, setActiveSection] = useState<RegisterSectionId>("team");
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const {
@@ -84,26 +103,52 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
   const values = useWatch({ control }) as TeamRegistrationFormValues;
   const teamSize = Number(values.teamSize || 3) as 3 | 4;
 
+  const setRepresentative = useCallback((target: MemberField) => {
+    const keys = getMemberKeys(teamSize);
+    for (const key of keys) {
+      setValue(`${key}.isRepresentative`, key === target, { shouldValidate: true });
+    }
+  }, [setValue, teamSize]);
+
   useEffect(() => {
     if (teamSize === 4 && !values.extraMember) {
       setValue("extraMember", createExtraMemberDefault(), { shouldValidate: true });
     }
+
     if (teamSize === 3 && values.extraMember) {
+      const extraWasRepresentative = Boolean(values.extraMember.isRepresentative);
       setValue("extraMember", undefined, { shouldValidate: true });
+      if (extraWasRepresentative) {
+        setRepresentative("hacker");
+      }
     }
-  }, [setValue, teamSize, values.extraMember]);
+  }, [setRepresentative, setValue, teamSize, values.extraMember]);
+
+  useEffect(() => {
+    const keys = getMemberKeys(teamSize);
+    const representatives = keys.filter((key) => Boolean(values[key]?.isRepresentative));
+
+    if (representatives.length === 0) {
+      setRepresentative("hacker");
+      return;
+    }
+
+    if (representatives.length > 1) {
+      const keep = representatives[0];
+      for (const key of keys) {
+        if (key !== keep && values[key]?.isRepresentative) {
+          setValue(`${key}.isRepresentative`, false, { shouldValidate: true });
+        }
+      }
+    }
+  }, [setRepresentative, setValue, teamSize, values]);
 
   const completeMap = useMemo(() => {
     return {
-      general: Boolean(
-        values.responsibleName &&
-          values.responsibleEmail &&
-          values.responsiblePhone &&
-          values.source,
-      ),
       team: Boolean(
         values.teamName &&
           values.institution &&
+          values.source &&
           values.challengePreferences?.[0] &&
           values.challengePreferences?.[1] &&
           values.challengePreferences?.[2] &&
@@ -122,16 +167,11 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
   }, [teamSize, values]);
 
   const errorMap = {
-    general: Boolean(
-      errors.responsibleName ||
-        errors.responsibleEmail ||
-        errors.responsiblePhone ||
-        errors.source,
-    ),
     team: Boolean(
       errors.teamName ||
         errors.teamSize ||
         errors.institution ||
+        errors.source ||
         errors.challengePreferences ||
         errors.teamDescription,
     ),
@@ -204,49 +244,12 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
             <AlertState variant="error" title="Error de envío" description={submitError} />
           ) : null}
 
-          {activeSection === "general" ? (
-            <SectionWrapper
-              title="Datos generales"
-              subtitle="La persona responsable debe ser parte del equipo."
-            >
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <Label htmlFor="responsibleName">Nombre responsable</Label>
-                  <Input id="responsibleName" {...register("responsibleName")} />
-                  <FieldError message={errors.responsibleName?.message} />
-                </div>
-                <div>
-                  <Label htmlFor="responsibleEmail">Correo responsable</Label>
-                  <Input id="responsibleEmail" type="email" {...register("responsibleEmail")} />
-                  <FieldError message={errors.responsibleEmail?.message} />
-                </div>
-                <div>
-                  <Label htmlFor="responsiblePhone">Teléfono responsable</Label>
-                  <Input id="responsiblePhone" {...register("responsiblePhone")} />
-                  <FieldError message={errors.responsiblePhone?.message} />
-                </div>
-                <div>
-                  <Label htmlFor="source">¿Cómo se enteraron?</Label>
-                  <Select id="source" {...register("source")}>
-                    <option value="">Selecciona una opción</option>
-                    {SOURCE_OPTIONS.map((item) => (
-                      <option key={item} value={item}>
-                        {item}
-                      </option>
-                    ))}
-                  </Select>
-                  <FieldError message={errors.source?.message} />
-                </div>
-              </div>
-            </SectionWrapper>
-          ) : null}
-
           {activeSection === "team" ? (
             <SectionWrapper
               title="Equipo"
-              subtitle="Define el tamaño del equipo y selecciona tus 3 retos preferidos."
+              subtitle="Define tamaño, canal de origen y tus 3 retos preferidos."
             >
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <Label htmlFor="teamName">Nombre del equipo</Label>
                   <Input id="teamName" {...register("teamName")} />
@@ -259,14 +262,23 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
                 </div>
                 <div>
                   <Label htmlFor="teamSize">Tamaño del equipo</Label>
-                  <Select
-                    id="teamSize"
-                    {...register("teamSize", { valueAsNumber: true })}
-                  >
+                  <Select id="teamSize" {...register("teamSize", { valueAsNumber: true })}>
                     <option value={3}>3 integrantes</option>
                     <option value={4}>4 integrantes</option>
                   </Select>
                   <FieldError message={errors.teamSize?.message} />
+                </div>
+                <div>
+                  <Label htmlFor="source">Cómo se enteraron</Label>
+                  <Select id="source" {...register("source")}>
+                    <option value="">Selecciona una opción</option>
+                    {SOURCE_OPTIONS.map((item) => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </Select>
+                  <FieldError message={errors.source?.message} />
                 </div>
               </div>
 
@@ -313,6 +325,8 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
                 fixedRole="hacker"
                 register={register}
                 errors={errors}
+                isRepresentative={Boolean(values.hacker?.isRepresentative)}
+                onSelectRepresentative={() => setRepresentative("hacker")}
               />
             </SectionWrapper>
           ) : null}
@@ -327,6 +341,8 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
                 fixedRole="hipster"
                 register={register}
                 errors={errors}
+                isRepresentative={Boolean(values.hipster?.isRepresentative)}
+                onSelectRepresentative={() => setRepresentative("hipster")}
               />
             </SectionWrapper>
           ) : null}
@@ -341,6 +357,8 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
                 fixedRole="hustler"
                 register={register}
                 errors={errors}
+                isRepresentative={Boolean(values.hustler?.isRepresentative)}
+                onSelectRepresentative={() => setRepresentative("hustler")}
               />
             </SectionWrapper>
           ) : null}
@@ -357,7 +375,13 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
                 />
               ) : (
                 <>
-                  <MemberFormCard fieldName="extraMember" register={register} errors={errors} />
+                  <MemberFormCard
+                    fieldName="extraMember"
+                    register={register}
+                    errors={errors}
+                    isRepresentative={Boolean(values.extraMember?.isRepresentative)}
+                    onSelectRepresentative={() => setRepresentative("extraMember")}
+                  />
                   <FieldError
                     message={
                       typeof errors.extraMember?.message === "string"
@@ -417,7 +441,7 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
           type="button"
           variant="secondary"
           onClick={() => moveSection("prev")}
-          disabled={activeSection === "general" || isSubmitting}
+          disabled={activeSection === "team" || isSubmitting}
         >
           Anterior
         </Button>
@@ -441,3 +465,5 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
     </form>
   );
 }
+
+

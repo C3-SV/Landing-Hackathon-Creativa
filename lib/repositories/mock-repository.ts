@@ -14,7 +14,13 @@ import type {
   TeamRegistrationDoc,
   TeamRegistrationPayload,
 } from "@/lib/types/domain";
-import { normalizeTeamName, toCsvValue, toSlug } from "@/lib/utils";
+import {
+  getRepresentativeEmail,
+  getRepresentativeName,
+  normalizeTeamName,
+  toCsvValue,
+  toSlug,
+} from "@/lib/utils";
 
 function mapToListItem(record: TeamRegistrationDoc): RegistrationListItem {
   return {
@@ -22,8 +28,8 @@ function mapToListItem(record: TeamRegistrationDoc): RegistrationListItem {
     status: record.status,
     teamSize: record.teamSize,
     teamName: record.teamName,
-    responsibleName: record.responsibleName,
-    responsibleEmail: record.responsibleEmail,
+    representativeName: getRepresentativeName(record.members),
+    representativeEmail: getRepresentativeEmail(record.members),
     institution: record.institution,
     preferredChallenge: record.challengePreferences[0] ?? "",
     createdAt: record.createdAt,
@@ -57,8 +63,8 @@ function applyFilters(
       const term = filters.query.toLowerCase();
       const hasTerm =
         record.teamName.toLowerCase().includes(term) ||
-        record.responsibleName.toLowerCase().includes(term) ||
-        record.responsibleEmail.toLowerCase().includes(term);
+        getRepresentativeName(record.members).toLowerCase().includes(term) ||
+        getRepresentativeEmail(record.members).toLowerCase().includes(term);
 
       if (!hasTerm) {
         return false;
@@ -127,8 +133,8 @@ function buildCsv(registrations: TeamRegistrationDoc[]) {
       "teamSize",
       "teamName",
       "institution",
-      "responsibleName",
-      "responsibleEmail",
+      "representativeName",
+      "representativeEmail",
       "preferredChallenge",
       "memberRoles",
       "memberAbouts",
@@ -144,8 +150,8 @@ function buildCsv(registrations: TeamRegistrationDoc[]) {
         toCsvValue(item.teamSize),
         toCsvValue(item.teamName),
         toCsvValue(item.institution),
-        toCsvValue(item.responsibleName),
-        toCsvValue(item.responsibleEmail),
+        toCsvValue(getRepresentativeName(item.members)),
+        toCsvValue(getRepresentativeEmail(item.members)),
         toCsvValue(item.challengePreferences[0]),
         toCsvValue(item.members.map((member) => member.role3H).join("|")),
         toCsvValue(item.members.map((member) => member.about).join(" || ")),
@@ -253,11 +259,10 @@ export const mockRegistrationRepository: RegistrationRepository = {
     );
   },
 
-  async memberEmailExistsInEdition(memberEmail, editionId, ignoreId) {
+  async memberEmailExists(memberEmail, ignoreId) {
     const email = memberEmail.toLowerCase();
     return getMockStore().registrations.some(
       (item) =>
-        item.editionId === editionId &&
         item.id !== ignoreId &&
         item.members.some((member) => member.email.toLowerCase() === email),
     );

@@ -36,9 +36,8 @@ export type RegistrationRepository = {
     editionId: string,
     ignoreId?: string,
   ): Promise<boolean>;
-  memberEmailExistsInEdition(
+  memberEmailExists(
     memberEmail: string,
-    editionId: string,
     ignoreId?: string,
   ): Promise<boolean>;
 };

@@ -73,7 +73,7 @@ export function RegistrationsTable({
       <Card>
         <form className="grid gap-3 lg:grid-cols-5" onSubmit={onApplyFilters}>
           <div className="lg:col-span-2">
-            <Label htmlFor="query">Buscar por equipo/responsable/email</Label>
+            <Label htmlFor="query">Buscar por equipo/representante/email</Label>
             <Input
               id="query"
               placeholder="Ej. Pixel Atlas"
@@ -163,11 +163,11 @@ export function RegistrationsTable({
                 <th className="px-4 py-3">Estado</th>
                 <th className="px-4 py-3">Tamaño</th>
                 <th className="px-4 py-3">Equipo</th>
-                <th className="px-4 py-3">Responsable</th>
-                <th className="px-4 py-3">Correo</th>
                 <th className="px-4 py-3">Institución</th>
                 <th className="px-4 py-3">Reto #1</th>
                 <th className="px-4 py-3">Fecha</th>
+                <th className="px-4 py-3">Representante</th>
+                <th className="px-4 py-3">Correo</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-brand-electric/20">
@@ -184,13 +184,13 @@ export function RegistrationsTable({
                       {row.teamName}
                     </Link>
                   </td>
-                  <td className="px-4 py-3 text-brand-muted">{row.responsibleName}</td>
-                  <td className="px-4 py-3 text-brand-muted">{row.responsibleEmail}</td>
                   <td className="px-4 py-3 text-brand-muted">{row.institution}</td>
                   <td className="px-4 py-3 text-brand-muted">
                     {challengeMap.get(row.preferredChallenge) ?? row.preferredChallenge}
                   </td>
                   <td className="px-4 py-3 text-brand-muted">{formatDateTime(row.createdAt)}</td>
+                  <td className="px-4 py-3 text-brand-muted">{row.representativeName}</td>
+                  <td className="px-4 py-3 text-brand-muted">{row.representativeEmail}</td>
                 </tr>
               ))}
             </tbody>

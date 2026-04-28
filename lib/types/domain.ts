@@ -34,6 +34,7 @@ export type Edition = {
 
 export type TeamMember = {
   role3H: Role3H;
+  isRepresentative: boolean;
   firstName: string;
   lastName: string;
   preferredName?: string;
@@ -63,9 +64,6 @@ export type TeamRegistrationPayload = {
   institution: string;
   teamDescription?: string;
   challengePreferences: readonly [string, string, string];
-  responsibleName: string;
-  responsibleEmail: string;
-  responsiblePhone: string;
   source: string;
   members: readonly TeamMember[];
   consents: TeamConsents;
@@ -100,8 +98,8 @@ export type RegistrationListItem = {
   status: RegistrationStatus;
   teamSize: TeamSize;
   teamName: string;
-  responsibleName: string;
-  responsibleEmail: string;
+  representativeName: string;
+  representativeEmail: string;
   institution: string;
   preferredChallenge: string;
   createdAt: string;

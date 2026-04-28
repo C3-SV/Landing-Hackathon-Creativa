@@ -11,16 +11,41 @@ import type {
   Edition,
   RegistrationListFilters,
   RegistrationListItem,
+  TeamConsents,
+  TeamMember,
   TeamRegistrationDoc,
   TeamRegistrationPayload,
 } from "@/lib/types/domain";
-import { normalizeTeamName, toCsvValue } from "@/lib/utils";
+import {
+  getRepresentativeEmail,
+  getRepresentativeName,
+  normalizeTeamName,
+  toCsvValue,
+} from "@/lib/utils";
 
 const COLLECTIONS = {
   challenges: "challenges",
   editions: "editions",
   registrations: "team_registrations",
 } as const;
+
+const ABOUT_FALLBACK = "Perfil pendiente de actualizacion desde una inscripcion anterior.";
+
+const CONSENTS_FALLBACK: TeamConsents = {
+  acceptCodeOfConduct: false,
+  acceptPrivacyPolicy: false,
+  mediaConsent: false,
+  dataSharingConsent: false,
+  authorizationDeclaration: false,
+};
+
+type StoredRegistration = Partial<Omit<TeamRegistrationDoc, "id">> & {
+  createdAt?: string | Timestamp;
+  updatedAt?: string | Timestamp;
+  responsibleName?: string;
+  responsibleEmail?: string;
+  responsiblePhone?: string;
+};
 
 function timestampToIso(value: string | Timestamp | undefined) {
   if (!value) {
@@ -32,28 +57,66 @@ function timestampToIso(value: string | Timestamp | undefined) {
   return value.toDate().toISOString();
 }
 
-function fromDoc(doc: QueryDocumentSnapshot): TeamRegistrationDoc {
-  const data = doc.data() as Omit<TeamRegistrationDoc, "id"> & {
-    createdAt?: string | Timestamp;
-    updatedAt?: string | Timestamp;
-  };
-
-  const members = (data.members ?? []).map((member) => ({
+function normalizeMembers(data: StoredRegistration) {
+  const members = ((data.members as TeamMember[] | undefined) ?? []).map((member) => ({
     ...member,
-    about:
-      member.about ??
-      "Perfil pendiente de actualización desde una inscripción anterior.",
+    isRepresentative: Boolean(member.isRepresentative),
+    about: member.about ?? ABOUT_FALLBACK,
   }));
 
+  if (members.length === 0) {
+    return members;
+  }
+
+  const representativeCount = members.filter((member) => member.isRepresentative).length;
+  if (representativeCount === 1) {
+    return members;
+  }
+
+  let representativeIndex = 0;
+  if (data.responsibleEmail) {
+    const idx = members.findIndex(
+      (member) => member.email.toLowerCase() === data.responsibleEmail?.toLowerCase(),
+    );
+    if (idx >= 0) {
+      representativeIndex = idx;
+    }
+  }
+
+  return members.map((member, index) => ({
+    ...member,
+    isRepresentative: index === representativeIndex,
+  }));
+}
+
+function toRegistration(docId: string, rawData: StoredRegistration): TeamRegistrationDoc {
+  const teamName = rawData.teamName ?? "";
+  const members = normalizeMembers(rawData);
+  const preferences = rawData.challengePreferences ?? ["", "", ""];
+
   return {
-    ...data,
-    id: doc.id,
-    teamSize: data.teamSize ?? (members.length >= 4 ? 4 : 3),
+    id: docId,
+    editionId: rawData.editionId ?? "",
+    status: rawData.status ?? "submitted",
+    teamSize: rawData.teamSize ?? (members.length >= 4 ? 4 : 3),
+    teamName,
+    teamNameNormalized: rawData.teamNameNormalized ?? normalizeTeamName(teamName),
+    institution: rawData.institution ?? "",
+    teamDescription: rawData.teamDescription,
+    challengePreferences: [preferences[0] ?? "", preferences[1] ?? "", preferences[2] ?? ""],
+    source: rawData.source ?? "No especificado",
     members,
-    createdAt: timestampToIso(data.createdAt),
-    updatedAt: timestampToIso(data.updatedAt),
-    adminNotes: data.adminNotes ?? [],
+    consents: rawData.consents ?? CONSENTS_FALLBACK,
+    assignedChallengeId: rawData.assignedChallengeId,
+    adminNotes: rawData.adminNotes ?? [],
+    createdAt: timestampToIso(rawData.createdAt),
+    updatedAt: timestampToIso(rawData.updatedAt),
   };
+}
+
+function fromDoc(doc: QueryDocumentSnapshot): TeamRegistrationDoc {
+  const data = doc.data() as StoredRegistration;
+  return toRegistration(doc.id, data);
 }
 
 function applyFilters(
@@ -80,8 +143,8 @@ function applyFilters(
       const term = filters.query.toLowerCase();
       const hasTerm =
         record.teamName.toLowerCase().includes(term) ||
-        record.responsibleName.toLowerCase().includes(term) ||
-        record.responsibleEmail.toLowerCase().includes(term);
+        getRepresentativeName(record.members).toLowerCase().includes(term) ||
+        getRepresentativeEmail(record.members).toLowerCase().includes(term);
       if (!hasTerm) {
         return false;
       }
@@ -144,8 +207,8 @@ function toListItem(doc: TeamRegistrationDoc): RegistrationListItem {
     status: doc.status,
     teamSize: doc.teamSize,
     teamName: doc.teamName,
-    responsibleName: doc.responsibleName,
-    responsibleEmail: doc.responsibleEmail,
+    representativeName: getRepresentativeName(doc.members),
+    representativeEmail: getRepresentativeEmail(doc.members),
     institution: doc.institution,
     preferredChallenge: doc.challengePreferences[0] ?? "",
     createdAt: doc.createdAt,
@@ -204,21 +267,8 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
     if (!snap.exists) {
       return null;
     }
-    const data = snap.data() as Omit<TeamRegistrationDoc, "id">;
-    return {
-      ...data,
-      id: snap.id,
-      teamSize: data.teamSize ?? ((data.members?.length ?? 0) >= 4 ? 4 : 3),
-      members: (data.members ?? []).map((member) => ({
-        ...member,
-        about:
-          member.about ??
-          "Perfil pendiente de actualización desde una inscripción anterior.",
-      })),
-      createdAt: timestampToIso(data.createdAt as string | Timestamp | undefined),
-      updatedAt: timestampToIso(data.updatedAt as string | Timestamp | undefined),
-      adminNotes: data.adminNotes ?? [],
-    };
+
+    return toRegistration(snap.id, (snap.data() ?? {}) as StoredRegistration);
   },
 
   async listRegistrations(filters = {}) {
@@ -246,7 +296,7 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
       return null;
     }
 
-    const current = (snap.data() ?? {}) as TeamRegistrationDoc;
+    const current = toRegistration(id, (snap.data() ?? {}) as StoredRegistration);
     const updatedAt = new Date().toISOString();
     const nextNotes = [...(current.adminNotes ?? [])];
     if (update.note?.message) {
@@ -266,21 +316,7 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
     });
 
     const saved = await ref.get();
-    const data = saved.data() as Omit<TeamRegistrationDoc, "id">;
-    return {
-      ...data,
-      id: saved.id,
-      teamSize: data.teamSize ?? ((data.members?.length ?? 0) >= 4 ? 4 : 3),
-      members: (data.members ?? []).map((member) => ({
-        ...member,
-        about:
-          member.about ??
-          "Perfil pendiente de actualización desde una inscripción anterior.",
-      })),
-      createdAt: timestampToIso(data.createdAt as string | Timestamp | undefined),
-      updatedAt: timestampToIso(data.updatedAt as string | Timestamp | undefined),
-      adminNotes: data.adminNotes ?? [],
-    };
+    return toRegistration(saved.id, (saved.data() ?? {}) as StoredRegistration);
   },
 
   async exportRegistrationsCsv() {
@@ -294,8 +330,8 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
         "teamSize",
         "teamName",
         "institution",
-        "responsibleName",
-        "responsibleEmail",
+        "representativeName",
+        "representativeEmail",
         "preferredChallenge",
         "memberRoles",
         "memberAbouts",
@@ -311,8 +347,8 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
           toCsvValue(item.teamSize),
           toCsvValue(item.teamName),
           toCsvValue(item.institution),
-          toCsvValue(item.responsibleName),
-          toCsvValue(item.responsibleEmail),
+          toCsvValue(getRepresentativeName(item.members)),
+          toCsvValue(getRepresentativeEmail(item.members)),
           toCsvValue(item.challengePreferences[0]),
           toCsvValue(item.members.map((member) => member.role3H).join("|")),
           toCsvValue(item.members.map((member) => member.about).join(" || ")),
@@ -335,19 +371,16 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
     return snapshot.docs.some((doc) => doc.id !== ignoreId);
   },
 
-  async memberEmailExistsInEdition(memberEmail, editionId, ignoreId) {
+  async memberEmailExists(memberEmail, ignoreId) {
     const db = getFirebaseAdminDb();
-    const snapshot = await db
-      .collection(COLLECTIONS.registrations)
-      .where("editionId", "==", editionId)
-      .get();
+    const snapshot = await db.collection(COLLECTIONS.registrations).get();
     const emailLower = memberEmail.toLowerCase();
 
     return snapshot.docs.some((doc) => {
       if (ignoreId && doc.id === ignoreId) {
         return false;
       }
-      const data = doc.data() as TeamRegistrationDoc;
+      const data = toRegistration(doc.id, (doc.data() ?? {}) as StoredRegistration);
       return data.members.some((member) => member.email.toLowerCase() === emailLower);
     });
   },
