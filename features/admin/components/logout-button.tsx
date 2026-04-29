@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { parseJsonResponse } from "@/lib/http";
 import { Button } from "@/lib/ui";
 
 export function LogoutButton() {
@@ -11,10 +12,11 @@ export function LogoutButton() {
   async function onLogout() {
     setPending(true);
     try {
-      await fetch("/api/admin/logout", {
+      const response = await fetch("/api/admin/logout", {
         method: "POST",
       });
-      router.push("/admin/login");
+      const payload = await parseJsonResponse<{ redirectTo?: string }>(response);
+      router.push(payload.redirectTo ?? "/admin/login");
       router.refresh();
     } finally {
       setPending(false);

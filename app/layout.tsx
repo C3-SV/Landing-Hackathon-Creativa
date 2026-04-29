@@ -1,6 +1,9 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { JetBrains_Mono, Press_Start_2P, Sora } from "next/font/google";
+import { PreviewAccessControls } from "@/features/site-access/components/preview-access-controls";
+import { getPreviewUserFromCookies } from "@/lib/auth/preview-access";
 import { BRANDING } from "@/lib/constants/branding";
+import { APP_ENV } from "@/lib/constants/env";
 import "./globals.css";
 
 const fontBody = Sora({
@@ -24,15 +27,19 @@ export const metadata: Metadata = {
   description: `${BRANDING.concept}. ${BRANDING.eventSubtitle}. ${BRANDING.thematicLine}.`,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const previewUser =
+    APP_ENV.siteLockEnabled ? await getPreviewUserFromCookies() : null;
+
   return (
     <html
       lang="es"
       className={`${fontBody.variable} ${fontMono.variable} ${fontDisplay.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-brand-bg text-brand-white">
+        {previewUser ? <PreviewAccessControls userEmail={previewUser.email} /> : null}
         {children}
       </body>
     </html>

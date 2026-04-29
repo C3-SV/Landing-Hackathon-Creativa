@@ -32,6 +32,7 @@ Base funcional en **Next.js App Router + TypeScript + Tailwind v4 + Firebase** p
 Variables clave:
 
 - `DATA_MODE=mock|firebase`
+- `SITE_LOCK_ENABLED=true|false` 
 - `CURRENT_EDITION_ID`
 - `ADMIN_EMAILS`
 - `MOCK_ADMIN_PASSWORD` (solo mock)
@@ -45,6 +46,8 @@ Con `DATA_MODE=mock`:
 - Seed interno de retos/edición/equipos demo.
 - Registro y admin funcionan sin proyecto Firebase.
 - Login admin usa `ADMIN_EMAILS` + `MOCK_ADMIN_PASSWORD`.
+- Login temporal `/login` usa las mismas credenciales del admin.
+
 
 ## Modo Firebase
 

@@ -1,14 +1,10 @@
 import { NextResponse } from "next/server";
 import { clearPreviewAccessCookie } from "@/lib/auth/preview-access";
 import { clearAdminSession } from "@/lib/auth/session";
-import { APP_ENV } from "@/lib/constants/env";
 
 export async function POST() {
-  await clearAdminSession();
   await clearPreviewAccessCookie();
+  await clearAdminSession();
 
-  return NextResponse.json({
-    ok: true,
-    redirectTo: APP_ENV.siteLockEnabled ? "/login" : "/admin/login",
-  });
+  return NextResponse.json({ ok: true });
 }

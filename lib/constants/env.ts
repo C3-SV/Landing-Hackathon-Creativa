@@ -1,9 +1,18 @@
 import { CURRENT_EDITION_FALLBACK } from "@/lib/constants/event";
 import type { RepositoryMode } from "@/lib/types/domain";
 
+function readBooleanEnv(value: string | undefined, fallback: boolean) {
+  if (!value) {
+    return fallback;
+  }
+
+  return ["1", "true", "yes", "on"].includes(value.trim().toLowerCase());
+}
+
 export const APP_ENV = {
   dataMode: (process.env.DATA_MODE ?? "mock") as RepositoryMode,
   currentEditionId: process.env.CURRENT_EDITION_ID ?? CURRENT_EDITION_FALLBACK,
+  siteLockEnabled: readBooleanEnv(process.env.SITE_LOCK_ENABLED, false),
   adminEmails: (process.env.ADMIN_EMAILS ?? "admin@festivaldecodigo.dev")
     .split(",")
     .map((item) => item.trim().toLowerCase())

@@ -3,6 +3,7 @@ import {
   AdminCredentialError,
   validateAdminCredentials,
 } from "@/lib/auth/admin-credentials";
+import { setPreviewAccessCookie } from "@/lib/auth/preview-access";
 import { createAdminSession } from "@/lib/auth/session";
 
 type SessionBody = {
@@ -16,7 +17,9 @@ export async function POST(request: Request) {
     const body = (await request.json()) as SessionBody;
     const { email, idToken } = await validateAdminCredentials(body);
 
+    await setPreviewAccessCookie(email);
     await createAdminSession({ email, idToken });
+
     return NextResponse.json({ ok: true });
   } catch (error) {
     if (error instanceof AdminCredentialError) {
@@ -24,6 +27,6 @@ export async function POST(request: Request) {
     }
 
     console.error(error);
-    return NextResponse.json({ error: "No se pudo iniciar sesión" }, { status: 500 });
+    return NextResponse.json({ error: "No se pudo habilitar el acceso" }, { status: 500 });
   }
 }
