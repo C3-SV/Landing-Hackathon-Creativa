@@ -1,4 +1,5 @@
-﻿import { TourismCodeIllustration } from "@/features/landing/components/tourism-code-illustration";
+import Image from "next/image";
+
 import { ButtonLink } from "@/lib/ui";
 
 export function LandingHero() {
@@ -45,7 +46,16 @@ export function LandingHero() {
             <div className="pointer-events-none absolute -bottom-24 -right-16 h-64 w-64 rounded-full bg-brand-electric/20 blur-3xl" />
             <span className="absolute left-5 top-5 h-5 w-5 border-l border-t border-brand-electric/60" />
             <span className="absolute bottom-5 right-5 h-5 w-5 border-b border-r border-brand-electric/60" />
-            <TourismCodeIllustration className="relative z-10 h-full w-full text-brand-orange" />
+            <div className="relative z-10 h-full w-full overflow-hidden rounded-[1.4rem] border border-brand-electric/45">
+              <Image
+                src="/images/hero-festival-pc.png"
+                alt="Ilustración principal del Festival de Código"
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 52vw"
+                className="object-cover object-center"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -91,4 +101,3 @@ function TargetIcon({ className }: { className?: string }) {
     </svg>
   );
 }
-

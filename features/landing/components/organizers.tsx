@@ -1,21 +1,24 @@
-import type { ReactElement } from "react";
+import Image from "next/image";
 
 type OrganizerCard = {
   name: string;
-  Logo: () => ReactElement;
+  logoSrc: string;
   logoAlt: string;
+  logoClassName?: string;
 };
 
 const ORGANIZERS: OrganizerCard[] = [
   {
     name: "C3 | Competitive Coding",
-    Logo: C3PlaceholderLogo,
+    logoSrc: "/images/logo-c3-blanco.png",
     logoAlt: "Logo de C3",
+    logoClassName: "max-h-[220px]",
   },
   {
     name: "Poliédrica",
-    Logo: PoliedricaPlaceholderLogo,
+    logoSrc: "/images/logo-poliedrica-original.png",
     logoAlt: "Logo de Poliédrica",
+    logoClassName: "max-h-[190px]",
   },
 ];
 
@@ -53,8 +56,14 @@ export function OrganizersSection() {
               />
 
               <div className="flex flex-1 items-center justify-center px-2 sm:px-4">
-                <div className="w-full max-w-[360px]" role="img" aria-label={organizer.logoAlt}>
-                  <organizer.Logo />
+                <div className="relative flex h-full w-full items-center justify-center rounded-2xl border border-brand-electric/35 bg-brand-bg/40 p-4">
+                  <Image
+                    src={organizer.logoSrc}
+                    alt={organizer.logoAlt}
+                    width={620}
+                    height={300}
+                    className={`h-auto w-full object-contain ${organizer.logoClassName ?? "max-h-[200px]"}`}
+                  />
                 </div>
               </div>
 
@@ -66,55 +75,5 @@ export function OrganizersSection() {
         </div>
       </div>
     </section>
-  );
-}
-
-function C3PlaceholderLogo() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 540 210"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="h-auto w-full text-brand-white"
-    >
-      <rect x="1" y="1" width="538" height="208" rx="26" stroke="currentColor" strokeOpacity="0.75" />
-      <path d="M110 104a58 58 0 1 1 0-1" stroke="currentColor" strokeWidth="16" strokeLinecap="round" />
-      <path d="M257 58h92M257 104h78M257 150h92" stroke="currentColor" strokeWidth="16" strokeLinecap="round" />
-      <path d="M396 74c18-16 49-16 67 0 12 10 12 31 0 41-18 16-49 16-67 0M396 133c18 16 49 16 67 0" stroke="currentColor" strokeWidth="16" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function PoliedricaPlaceholderLogo() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 540 210"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="h-auto w-full text-brand-white"
-    >
-      <rect x="1" y="1" width="538" height="208" rx="26" stroke="currentColor" strokeOpacity="0.75" />
-      <g stroke="currentColor" strokeWidth="7.5" strokeLinecap="round" strokeLinejoin="round">
-        <polygon points="88,106 134,72 180,106 134,140" />
-        <polygon points="180,106 226,72 272,106 226,140" />
-        <polygon points="272,106 318,72 364,106 318,140" />
-        <line x1="134" y1="140" x2="226" y2="140" />
-        <line x1="226" y1="140" x2="318" y2="140" />
-      </g>
-      <text
-        x="416"
-        y="123"
-        fill="currentColor"
-        fontFamily="var(--font-jetbrains), monospace"
-        fontSize="28"
-        fontWeight="700"
-        letterSpacing="2"
-        textAnchor="middle"
-      >
-        POLIÉDRICA
-      </text>
-    </svg>
   );
 }
