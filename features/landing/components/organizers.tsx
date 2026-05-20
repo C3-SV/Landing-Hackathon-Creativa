@@ -1,6 +1,8 @@
+import type { ReactElement } from "react";
+
 type OrganizerCard = {
   name: string;
-  Logo: () => JSX.Element;
+  Logo: () => ReactElement;
   logoAlt: string;
 };
 
@@ -11,9 +13,9 @@ const ORGANIZERS: OrganizerCard[] = [
     logoAlt: "Logo de C3",
   },
   {
-    name: "Poli�drica",
+    name: "Poliédrica",
     Logo: PoliedricaPlaceholderLogo,
-    logoAlt: "Logo de Poli�drica",
+    logoAlt: "Logo de Poliédrica",
   },
 ];
 
@@ -30,9 +32,9 @@ export function OrganizersSection() {
         </h2>
 
         <p className="mt-8 max-w-[980px] text-base leading-relaxed text-brand-white/92 sm:text-lg">
-          El Festival de C�digo es organizado por Poli�drica y C3, uniendo creatividad, comunidad,
-          tecnolog�a y ejecuci�n para activar un espacio donde el talento pueda construir soluciones
-          sobre retos reales del pa�s.
+          El Festival de Código es organizado por Poliédrica y C3, uniendo creatividad, comunidad,
+          tecnología y ejecución para activar un espacio donde el talento pueda construir soluciones
+          sobre retos reales del país.
         </p>
 
         <div className="mt-10 grid gap-5 md:grid-cols-2 lg:mt-12 lg:gap-6">
@@ -111,7 +113,7 @@ function PoliedricaPlaceholderLogo() {
         letterSpacing="2"
         textAnchor="middle"
       >
-        POLI�DRICA
+        POLIÉDRICA
       </text>
     </svg>
   );

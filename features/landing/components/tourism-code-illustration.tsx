@@ -1,5 +1,3 @@
-﻿import type { SVGProps } from "react";
-
 export function TourismCodeIllustration({ className }: { className?: string }) {
   return (
     <svg
@@ -35,9 +33,9 @@ export function TourismCodeIllustration({ className }: { className?: string }) {
       <path d="M503 371c47-19 84-20 125-8" strokeDasharray="10 10" opacity="0.8" />
       <path d="M650 360c40 8 60 21 77 39" strokeDasharray="10 10" opacity="0.8" />
 
-      <Pin x="386" y="347" />
-      <Pin x="468" y="300" />
-      <Pin x="550" y="394" />
+      <Pin x={386} y={347} />
+      <Pin x={468} y={300} />
+      <Pin x={550} y={394} />
       <circle cx="302" cy="322" r="4" opacity="0.8" />
       <circle cx="593" cy="425" r="4" opacity="0.8" />
 
@@ -89,16 +87,13 @@ export function TourismCodeIllustration({ className }: { className?: string }) {
   );
 }
 
-function Pin(props: SVGProps<SVGPathElement> & { x: number; y: number }) {
-  const { x, y, ...rest } = props;
-
+function Pin({ x, y }: { x: number; y: number }) {
   return (
     <>
       <path
         d={`M ${x} ${y} c 0 -12 9 -20 20 -20 s 20 8 20 20 c 0 15 -17 30 -20 35 c -3 -5 -20 -20 -20 -35z`}
-        {...rest}
       />
-      <circle cx={x + 20} cy={y - 2} r="6" {...rest} />
+      <circle cx={x + 20} cy={y - 2} r="6" />
     </>
   );
 }

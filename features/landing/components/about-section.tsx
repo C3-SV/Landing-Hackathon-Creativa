@@ -1,9 +1,9 @@
-﻿import type { SVGProps } from "react";
+import type { ReactElement, SVGProps } from "react";
 
 type FestivalItem = {
   title: string;
   description: string;
-  Icon: ({ className }: { className?: string }) => JSX.Element;
+  Icon: ({ className }: { className?: string }) => ReactElement;
 };
 
 const FESTIVAL_ITEMS: FestivalItem[] = [
