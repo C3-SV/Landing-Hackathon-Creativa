@@ -6,7 +6,7 @@ import type {
 import { cn } from "@/lib/ui/cn";
 
 const fieldBase =
-  "w-full rounded-xl border border-brand-electric/35 bg-brand-bg/55 px-3 py-2.5 text-sm text-brand-white placeholder:text-brand-muted/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-electric";
+  "w-full rounded-xl border border-brand-electric/45 bg-brand-bg px-3.5 py-2.5 text-sm text-brand-white placeholder:text-brand-muted/75 shadow-[inset_0_0_0_1px_rgba(26,130,255,0.08)] transition focus-visible:border-brand-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange/45";
 
 export function Label({
   className,
@@ -15,7 +15,7 @@ export function Label({
   return (
     <label
       className={cn(
-        "font-mono text-xs uppercase tracking-wide text-brand-muted",
+        "font-mono text-xs uppercase tracking-[0.08em] text-brand-white",
         className,
       )}
       {...props}
@@ -56,19 +56,23 @@ export function Checkbox({
   ...props
 }: CheckboxProps) {
   return (
-    <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-brand-electric/25 bg-brand-bg/40 p-3">
+    <label className="relative flex cursor-pointer items-start gap-3 overflow-hidden rounded-2xl border border-brand-electric/45 bg-brand-bg/55 p-3.5 transition hover:border-brand-electric/70">
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute right-3 top-3 h-3 w-3 border-r border-t border-brand-white/65"
+      />
       <input
         type="checkbox"
         className={cn(
-          "mt-0.5 h-4 w-4 rounded border-brand-electric/50 bg-brand-bg text-brand-orange focus-visible:ring-brand-electric",
+          "mt-0.5 h-4 w-4 rounded border-brand-electric/55 bg-brand-bg accent-brand-orange focus-visible:ring-brand-orange",
           className,
         )}
         {...props}
       />
       <span>
-        <span className="block text-sm font-medium text-brand-white">{label}</span>
+        <span className="block font-mono text-sm font-medium text-brand-white">{label}</span>
         {description ? (
-          <span className="mt-1 block text-xs text-brand-muted">{description}</span>
+          <span className="mt-1 block font-mono text-xs leading-relaxed text-brand-muted">{description}</span>
         ) : null}
       </span>
     </label>
@@ -79,5 +83,5 @@ export function FieldError({ message }: { message?: string }) {
   if (!message) {
     return null;
   }
-  return <p className="mt-1 text-xs text-status-rejected">{message}</p>;
+  return <p className="mt-1 font-mono text-xs text-brand-action">{message}</p>;
 }

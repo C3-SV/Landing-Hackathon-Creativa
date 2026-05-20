@@ -10,24 +10,32 @@ export default async function RegisterSuccessPage({ searchParams }: SuccessPageP
   const teamName = params.teamName ?? "Tu equipo";
 
   return (
-    <main className="flex-1 py-14">
-      <div className="container-shell">
-        <Card className="mx-auto max-w-2xl space-y-5 text-center">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-brand-electric">
-            {BRANDING.conceptUpper}
+    <main className="relative left-1/2 right-1/2 flex w-screen -translate-x-1/2 flex-1 overflow-hidden bg-brand-bg py-14 sm:py-18">
+      <div className="mx-auto w-[min(1180px,calc(100%-2rem))]">
+        <Card className="relative mx-auto max-w-3xl space-y-5 overflow-hidden border-brand-electric/45 bg-brand-surface/90 p-6 text-center shadow-[0_0_0_1px_rgba(26,130,255,0.16)] sm:p-8">
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute right-4 top-4 h-5 w-5 border-r-2 border-t-2 border-brand-white/75"
+          />
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute bottom-4 left-4 h-5 w-5 border-b-2 border-l-2 border-brand-white/75"
+          />
+          <p className="inline-flex items-center rounded-full border border-brand-orange px-4 py-2 font-mono text-xs uppercase tracking-[0.18em] text-brand-orange-soft">
+            {"{} INSCRIPCIÓN ENVIADA"}
           </p>
-          <h1 className="font-display text-lg uppercase leading-relaxed text-brand-white sm:text-2xl">
+          <h1 className="font-display text-[1rem] uppercase leading-relaxed text-brand-white [text-shadow:3px_3px_0_var(--brand-electric)] sm:text-[1.45rem]">
             {teamName}
           </h1>
           <p className="font-mono text-xs uppercase tracking-wide text-brand-orange-soft">
             {BRANDING.eventName} · {BRANDING.eventSubtitle}
           </p>
-          <p className="text-sm leading-relaxed text-brand-muted sm:text-base">
+          <p className="font-mono text-sm leading-relaxed text-brand-muted sm:text-base">
             Recibimos la postulación de tu equipo. Revisaremos la información y les contactaremos con los siguientes pasos.
           </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <ButtonLink href="/">Volver a inicio</ButtonLink>
-            <ButtonLink href="/register" variant="secondary">
+          <div className="flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap">
+            <ButtonLink href="/" className="w-full sm:w-auto">Volver a inicio</ButtonLink>
+            <ButtonLink href="/register" variant="secondary" className="w-full sm:w-auto">
               Registrar otro equipo
             </ButtonLink>
           </div>

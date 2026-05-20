@@ -3,14 +3,15 @@ import Link from "next/link";
 import { cn } from "@/lib/ui/cn";
 
 const buttonStyles = {
-  base: "inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-electric focus-visible:ring-offset-2 focus-visible:ring-offset-brand-bg disabled:pointer-events-none disabled:opacity-60",
+  base: "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 font-mono text-sm font-semibold uppercase tracking-[0.08em] transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange/60 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-bg disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-55",
   variants: {
     primary:
-      "bg-brand-orange text-brand-white shadow-[0_6px_0_0_rgba(230,81,0,0.8)] hover:bg-brand-orange-soft",
+      "bg-brand-orange-soft text-brand-bg shadow-[0_6px_0_0_var(--brand-action)] hover:-translate-y-0.5 hover:bg-brand-orange hover:shadow-[0_8px_16px_rgba(255,107,0,0.28)]",
     secondary:
-      "border border-brand-electric/70 bg-brand-surface text-brand-white hover:bg-brand-electric/15",
+      "border border-brand-orange bg-transparent text-brand-orange-soft hover:-translate-y-0.5 hover:bg-brand-orange/12 hover:text-brand-orange",
     ghost: "text-brand-muted hover:bg-brand-surface/70 hover:text-brand-white",
-    danger: "bg-status-rejected text-brand-white hover:bg-red-700",
+    danger:
+      "border border-brand-action/60 bg-brand-action text-brand-white hover:-translate-y-0.5 hover:bg-brand-action/90",
   },
 } as const;
 

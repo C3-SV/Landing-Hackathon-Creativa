@@ -65,15 +65,15 @@ export function AlertState({
   variant?: "info" | "warning" | "error";
 }) {
   const variants = {
-    info: "border-brand-electric/45 bg-brand-electric/12 text-brand-white",
-    warning: "border-status-waitlist/50 bg-status-waitlist/10 text-status-waitlist",
-    error: "border-status-rejected/55 bg-status-rejected/10 text-status-rejected",
+    info: "border-brand-electric/55 bg-brand-bg/70 text-brand-white",
+    warning: "border-brand-orange-soft/55 bg-brand-bg/70 text-brand-orange-soft",
+    error: "border-brand-action/70 bg-brand-bg/70 text-brand-white",
   } as const;
 
   return (
-    <div className={cn("rounded-xl border p-3", variants[variant])}>
-      <p className="font-mono text-xs uppercase tracking-wide">{title}</p>
-      <p className="mt-1 text-sm">{description}</p>
+    <div className={cn("rounded-2xl border p-3.5", variants[variant])}>
+      <p className="font-mono text-xs uppercase tracking-[0.1em]">{title}</p>
+      <p className="mt-1 text-sm leading-relaxed text-brand-muted">{description}</p>
     </div>
   );
 }

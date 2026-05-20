@@ -230,8 +230,8 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
   }
 
   return (
-    <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
-      <div className="grid gap-4 lg:grid-cols-[280px_1fr]">
+    <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+      <div className="grid gap-5 lg:grid-cols-[300px_1fr] lg:gap-6">
         <RegisterSidebar
           activeSection={activeSection}
           completeMap={completeMap}
@@ -289,21 +289,30 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
               </div>
 
               <div className="mt-4 grid gap-4 md:grid-cols-3">
-                <div>
+                <div className="rounded-2xl border border-brand-electric/45 bg-brand-bg/55 p-3.5">
+                  <p className="mb-2 inline-flex items-center rounded-full border border-brand-orange px-2.5 py-1 font-mono text-[0.65rem] uppercase tracking-[0.12em] text-brand-orange-soft">
+                    PREFERENCIA 1
+                  </p>
                   <Label htmlFor="challengePreferences.0">Reto preferido #1</Label>
                   <Select id="challengePreferences.0" {...register("challengePreferences.0")}>
                     <option value="">Selecciona reto</option>
                     {challengeOptions(0)}
                   </Select>
                 </div>
-                <div>
+                <div className="rounded-2xl border border-brand-electric/45 bg-brand-bg/55 p-3.5">
+                  <p className="mb-2 inline-flex items-center rounded-full border border-brand-orange px-2.5 py-1 font-mono text-[0.65rem] uppercase tracking-[0.12em] text-brand-orange-soft">
+                    PREFERENCIA 2
+                  </p>
                   <Label htmlFor="challengePreferences.1">Reto preferido #2</Label>
                   <Select id="challengePreferences.1" {...register("challengePreferences.1")}>
                     <option value="">Selecciona reto</option>
                     {challengeOptions(1)}
                   </Select>
                 </div>
-                <div>
+                <div className="rounded-2xl border border-brand-electric/45 bg-brand-bg/55 p-3.5">
+                  <p className="mb-2 inline-flex items-center rounded-full border border-brand-orange px-2.5 py-1 font-mono text-[0.65rem] uppercase tracking-[0.12em] text-brand-orange-soft">
+                    PREFERENCIA 3
+                  </p>
                   <Label htmlFor="challengePreferences.2">Reto preferido #3</Label>
                   <Select id="challengePreferences.2" {...register("challengePreferences.2")}>
                     <option value="">Selecciona reto</option>
@@ -436,30 +445,34 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
         </div>
       </div>
 
-      <div className="flex flex-wrap justify-between gap-3">
+      <div className="rounded-2xl border border-brand-electric/35 bg-brand-surface/50 p-3 sm:p-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <Button
           type="button"
           variant="secondary"
           onClick={() => moveSection("prev")}
           disabled={activeSection === "team" || isSubmitting}
+          className="w-full sm:w-auto"
         >
           Anterior
         </Button>
-        <div className="flex gap-3">
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
           {activeSection !== "confirm" ? (
             <Button
               type="button"
               variant="primary"
               onClick={() => moveSection("next")}
               disabled={isSubmitting}
+              className="w-full sm:w-auto"
             >
               Siguiente
             </Button>
           ) : (
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
               {isSubmitting ? "Enviando..." : "Enviar inscripción"}
             </Button>
           )}
+        </div>
         </div>
       </div>
     </form>

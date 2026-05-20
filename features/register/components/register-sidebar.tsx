@@ -18,7 +18,7 @@ export function RegisterSidebar({
   onSelect,
 }: RegisterSidebarProps) {
   return (
-    <aside className="space-y-2">
+    <aside className="space-y-2 rounded-3xl border border-brand-electric/40 bg-brand-surface/70 p-3 shadow-[0_0_0_1px_rgba(26,130,255,0.12)] lg:sticky lg:top-6 lg:self-start">
       {REGISTER_SECTIONS.map((section) => (
         <SidebarItem
           key={section.id}

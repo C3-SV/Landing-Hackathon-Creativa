@@ -153,7 +153,7 @@ export function MemberFormCard({
 
       <div>
         <Label htmlFor={`${prefix}.about`}>Cuéntanos de ti</Label>
-        <p className="mt-1 text-xs text-brand-muted">
+        <p className="mt-1 font-mono text-xs leading-relaxed text-brand-muted">
           Preséntate brevemente. Escribe entre 50 y 100 palabras sobre quién eres,
           qué te interesa y cómo aportarías a tu equipo.
         </p>
@@ -165,14 +165,18 @@ export function MemberFormCard({
         <FieldError message={err(`${prefix}.about`)} />
       </div>
 
-      <div className="rounded-xl border border-brand-electric/25 bg-brand-bg/45 p-3">
+      <div className="relative overflow-hidden rounded-2xl border border-brand-electric/45 bg-brand-bg/70 p-3.5">
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute right-3 top-3 h-3 w-3 border-r border-t border-brand-white/65"
+        />
         <label className="flex cursor-pointer items-center gap-3">
           <input
             type="radio"
             name="team-representative"
             checked={isRepresentative}
             onChange={onSelectRepresentative}
-            className="h-4 w-4 border-brand-electric/50 bg-brand-bg text-brand-orange focus-visible:ring-brand-electric"
+            className="h-4 w-4 border-brand-electric/55 bg-brand-bg accent-brand-orange focus-visible:ring-brand-orange"
           />
           <span>
             <span className="block font-mono text-xs uppercase tracking-wide text-brand-orange-soft">

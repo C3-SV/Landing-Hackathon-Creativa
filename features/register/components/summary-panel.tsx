@@ -22,7 +22,7 @@ export function SummaryPanel({ values, challenges }: SummaryPanelProps) {
 
   return (
     <div className="space-y-4">
-      <Card className="space-y-3">
+      <Card className="space-y-3 border-brand-electric/45 bg-brand-bg/55 p-4 sm:p-5">
         <h4 className="font-mono text-xs uppercase tracking-wide text-brand-electric">
           Equipo
         </h4>
@@ -46,7 +46,7 @@ export function SummaryPanel({ values, challenges }: SummaryPanelProps) {
         </div>
       </Card>
 
-      <Card className="space-y-3">
+      <Card className="space-y-3 border-brand-electric/45 bg-brand-bg/55 p-4 sm:p-5">
         <h4 className="font-mono text-xs uppercase tracking-wide text-brand-electric">
           Integrantes
         </h4>
@@ -54,7 +54,7 @@ export function SummaryPanel({ values, challenges }: SummaryPanelProps) {
           {members.map((member, index) => (
             <div
               key={`${member.role3H}-${index}-${member.email}`}
-              className="rounded-xl border border-brand-electric/20 bg-brand-bg/40 p-3 text-sm"
+              className="rounded-2xl border border-brand-electric/35 bg-brand-bg/75 p-3 text-sm"
             >
               <div className="mb-2 flex items-center justify-between gap-2">
                 <p className="font-mono text-xs uppercase tracking-wide text-brand-orange-soft">
