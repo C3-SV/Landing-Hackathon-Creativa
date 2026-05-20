@@ -20,51 +20,41 @@ export const LANDING_BULLETS = [
 
 export const HOW_IT_WORKS = [
   "Inscribes a tu equipo completo de 3H.",
-  "Eligen top 3 de retos desde el catálogo.",
+  "Eligen top 3 retos desde el catálogo.",
   "Construyen prototipo funcional con mentoría.",
   "Presentan demo final con enfoque país.",
 ] as const;
 
 export const FAQ_ITEMS = [
   {
-    question: "¿Quién puede participar?",
+    question: "¿QUIÉN PUEDE PARTICIPAR?",
     answer:
-      "Personas de perfiles técnicos, creativos y de negocio interesadas en construir soluciones para turismo, código y cultura.",
+      "Personas interesadas en turismo, tecnología, cultura, diseño, negocios, marketing, datos o creación de soluciones. No necesitas tener un perfil exclusivamente técnico.",
   },
   {
-    question: "¿La inscripción es por equipos?",
+    question: "¿LA INSCRIPCIÓN ES POR EQUIPOS?",
     answer:
-      "Sí. Se aceptan equipos de 3 o 4 integrantes, manteniendo al menos un Hacker, un Hipster y un Hustler.",
+      "Sí. La inscripción se realiza por equipos. Cada equipo debe seleccionar sus 3 retos de preferencia durante el registro.",
   },
   {
-    question: "¿Cuánto dura el festival-hackathon?",
+    question: "¿CUÁNTO DURA EL FESTIVAL-HACKATHON?",
     answer:
-      "La experiencia se desarrolla durante dos días intensivos de construcción y demo.",
+      "El Festival de Código se desarrollará durante dos días, del 20 al 21 de junio, en Key Institute, San Salvador.",
   },
   {
-    question: "¿Qué debo llevar?",
+    question: "¿NECESITO SABER PROGRAMAR?",
     answer:
-      "Laptop, cargador, documentos de identificación y ganas de construir en serio.",
+      "No necesariamente. El evento está pensado para equipos multidisciplinarios. Puedes aportar desde diseño, investigación, negocio, turismo, contenido, datos, estrategia o tecnología.",
   },
   {
-    question: "¿Habrá mentorías?",
+    question: "¿QUÉ SE DEBE ENTREGAR AL FINAL?",
     answer:
-      "Sí. Tendrás acompañamiento técnico y de producto durante la jornada.",
+      "Cada equipo deberá presentar una propuesta demostrable: puede ser un prototipo, mockup funcional, demo, flujo de solución, presentación o una combinación de estos elementos.",
   },
   {
-    question: "¿Cómo se evalúa?",
+    question: "¿LOS RETOS SON REALES?",
     answer:
-      "Se evalúa ejecución, valor real para turismo, funcionalidad y claridad de la propuesta.",
-  },
-  {
-    question: "¿Podemos elegir reto?",
-    answer:
-      "Sí. En el registro seleccionas 3 preferencias y la organización asigna según cupos y balance.",
-  },
-  {
-    question: "¿Qué pasa después?",
-    answer:
-      "Recibirás seguimiento del estado de tu inscripción y próximos pasos por correo.",
+      "Sí. Cada reto plantea una oportunidad vinculada a turismo, cultura, tecnología y ejecución práctica en el contexto del país.",
   },
 ] as const;
 

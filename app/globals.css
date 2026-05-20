@@ -42,16 +42,19 @@
 html,
 body {
   min-height: 100%;
+  background-color: var(--brand-bg);
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
-  background:
-    radial-gradient(circle at 15% 10%, rgba(26, 130, 255, 0.17), transparent 45%),
-    radial-gradient(circle at 85% 0%, rgba(255, 107, 0, 0.12), transparent 42%),
-    linear-gradient(180deg, #071830 0%, #0a1f3d 48%, #0b2241 100%);
+  background-color: var(--brand-bg);
   color: var(--brand-white);
   font-family: var(--font-sora), sans-serif;
+}
+
+main {
+  background-color: var(--brand-bg);
 }
 
 a {
@@ -87,5 +90,5 @@ a {
 
 .container-shell {
   margin-inline: auto;
-  width: min(1120px, calc(100% - 2rem));
+  width: min(1180px, calc(100% - 2rem));
 }

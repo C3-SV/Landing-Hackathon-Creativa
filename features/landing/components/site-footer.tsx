@@ -1,37 +1,51 @@
-﻿import { BRANDING } from "@/lib/constants/branding";
-
 export function SiteFooter() {
   return (
-    <footer className="border-t border-brand-electric/30 bg-brand-bg/70 py-8">
-      <div className="container-shell grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div>
-          <p className="font-display text-xs uppercase text-brand-white">{BRANDING.eventName}</p>
-          <p className="mt-2 text-sm text-brand-muted">{BRANDING.eventSubtitle}</p>
-          <p className="mt-1 font-mono text-xs uppercase tracking-wide text-brand-orange-soft">
-            {BRANDING.thematicLine}
+    <footer className="border-t border-brand-electric/25 bg-brand-bg py-12 sm:py-14">
+      <div className="mx-auto grid w-[min(1180px,calc(100%-2rem))] gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
+        <div className="space-y-3">
+          <p className="font-display text-[0.65rem] uppercase leading-[1.8] text-brand-white sm:text-xs">
+            {"FESTIVAL DE C\u00D3DIGO - I"}
+          </p>
+          <p className="font-mono text-sm leading-relaxed text-brand-muted">
+            Hackathon de Turismo Creativo
+          </p>
+          <p className="font-mono text-xs uppercase tracking-[0.12em] text-brand-orange">
+            {"+TURISMO +C\u00D3DIGO +CULTURA"}
           </p>
         </div>
-        <div>
-          <p className="font-mono text-xs uppercase tracking-wide text-brand-electric">
-            Contacto
-          </p>
-          <p className="mt-2 text-sm text-brand-muted">hola@festivaldecodigo.dev</p>
+
+        <div className="space-y-3">
+          <p className="font-mono text-xs uppercase tracking-[0.14em] text-brand-electric">CONTACTO</p>
+          <a
+            href="mailto:competitivecodingclub.sv@gmail.com"
+            className="block break-words font-mono text-sm leading-relaxed text-brand-white transition-colors hover:text-brand-orange"
+          >
+            competitivecodingclub.sv@gmail.com
+          </a>
         </div>
-        <div>
-          <p className="font-mono text-xs uppercase tracking-wide text-brand-electric">
-            Legal
-          </p>
-          <ul className="mt-2 space-y-1 text-sm text-brand-muted">
-            <li>Política de privacidad (placeholder)</li>
-            <li>Código de conducta (placeholder)</li>
-          </ul>
+
+        <div className="space-y-3">
+          <p className="font-mono text-xs uppercase tracking-[0.14em] text-brand-electric">LEGAL</p>
+          <div className="space-y-2">
+            <a
+              href="#"
+              className="block font-mono text-sm leading-relaxed text-brand-muted transition-colors hover:text-brand-orange"
+            >
+              {"Pol\u00EDtica de privacidad (placeholder)"}
+            </a>
+            <a
+              href="#"
+              className="block font-mono text-sm leading-relaxed text-brand-muted transition-colors hover:text-brand-orange"
+            >
+              {"C\u00F3digo de conducta (placeholder)"}
+            </a>
+          </div>
         </div>
-        <div>
-          <p className="font-mono text-xs uppercase tracking-wide text-brand-electric">
-            Organización
-          </p>
-          <p className="mt-2 text-sm text-brand-muted">{BRANDING.organizers}</p>
-          <p className="mt-1 text-sm text-brand-muted">{BRANDING.dateVenue}</p>
+
+        <div className="space-y-3">
+          <p className="font-mono text-xs uppercase tracking-[0.14em] text-brand-electric">{"ORGANIZACI\u00D3N"}</p>
+          <p className="font-mono text-sm leading-relaxed text-brand-white">{"Poli\u00E9drica + C3"}</p>
+          <p className="font-mono text-sm leading-relaxed text-brand-muted">{"20 - 21 Junio \u00B7 Key Institute"}</p>
         </div>
       </div>
     </footer>
