@@ -228,8 +228,7 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
       const disabled = selected.includes(challenge.id) && current !== challenge.id;
       return (
         <option key={challenge.id} value={challenge.id} disabled={disabled}>
-          {CHALLENGE_OPTION_TITLES[challenge.id] ?? challenge.name}{" "}
-          {challenge.status === "proposed" ? "(propuesto)" : ""}
+          {CHALLENGE_OPTION_TITLES[challenge.id] ?? challenge.name}
         </option>
       );
     });
