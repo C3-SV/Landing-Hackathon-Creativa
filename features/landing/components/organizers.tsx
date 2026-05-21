@@ -9,7 +9,7 @@ type OrganizerCard = {
 
 const ORGANIZERS: OrganizerCard[] = [
   {
-    name: "C3 | Competitive Coding",
+    name: "C3 | Competitive Coding Club",
     logoSrc: "/images/logo-c3-blanco.png",
     logoAlt: "Logo de C3",
     logoClassName: "max-h-[220px]",
@@ -35,7 +35,7 @@ export function OrganizersSection() {
         </h2>
 
         <p className="mt-8 max-w-[980px] text-base leading-relaxed text-brand-white/92 sm:text-lg">
-          El Festival de Código es organizado por Poliédrica y C3, uniendo creatividad, comunidad,
+          El Hackathon de Turismo Creativo I es organizado por Poliédrica y C3, uniendo creatividad, comunidad,
           tecnología y ejecución para activar un espacio donde el talento pueda construir soluciones
           sobre retos reales del país.
         </p>

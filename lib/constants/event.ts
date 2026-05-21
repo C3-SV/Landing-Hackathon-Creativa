@@ -5,7 +5,7 @@ export const CURRENT_EDITION_FALLBACK = BRANDING.editionFallbackId;
 
 export const LANDING_QUICK_FACTS = [
   { label: "EVENTO", value: BRANDING.eventName },
-  { label: "FECHA", value: "20 - 21 Junio" },
+  { label: "FECHA", value: "Fechas por anunciar" },
   { label: "SEDE", value: "Key Institute" },
   { label: "LÍNEA", value: BRANDING.thematicLine },
   { label: "ORGANIZAN", value: BRANDING.organizers },
@@ -37,9 +37,9 @@ export const FAQ_ITEMS = [
       "Sí. La inscripción se realiza por equipos. Cada equipo debe seleccionar sus 3 retos de preferencia durante el registro.",
   },
   {
-    question: "¿CUÁNTO DURA EL FESTIVAL-HACKATHON?",
+    question: "¿CUÁNTO DURA EL HACKATHON?",
     answer:
-      "El Festival de Código se desarrollará durante dos días, del 20 al 21 de junio, en Key Institute, San Salvador.",
+      "El Hackathon de Turismo Creativo I se desarrollará durante dos días, en fechas por anunciar, en Key Institute, San Salvador.",
   },
   {
     question: "¿NECESITO SABER PROGRAMAR?",
@@ -109,8 +109,8 @@ export const EDITION_SEEDS: Edition[] = [
     id: CURRENT_EDITION_FALLBACK,
     name: BRANDING.editionName,
     isCurrent: true,
-    startsAt: "2026-06-20",
-    endsAt: "2026-06-21",
+    startsAt: "Fechas por anunciar",
+    endsAt: "Fechas por anunciar",
     location: "Key Institute",
   },
 ];

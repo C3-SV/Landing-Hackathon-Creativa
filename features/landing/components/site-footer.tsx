@@ -4,7 +4,7 @@ export function SiteFooter() {
       <div className="mx-auto grid w-[min(1180px,calc(100%-2rem))] gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
         <div className="space-y-3">
           <p className="font-display text-[0.65rem] uppercase leading-[1.8] text-brand-white sm:text-xs">
-            {"FESTIVAL DE C\u00D3DIGO - I"}
+            {"HACKATHON DE TURISMO CREATIVO I"}
           </p>
           <p className="font-mono text-sm leading-relaxed text-brand-muted">
             Hackathon de Turismo Creativo
@@ -45,7 +45,7 @@ export function SiteFooter() {
         <div className="space-y-3">
           <p className="font-mono text-xs uppercase tracking-[0.14em] text-brand-electric">{"ORGANIZACI\u00D3N"}</p>
           <p className="font-mono text-sm leading-relaxed text-brand-white">{"Poli\u00E9drica + C3"}</p>
-          <p className="font-mono text-sm leading-relaxed text-brand-muted">{"20 - 21 Junio \u00B7 Key Institute"}</p>
+          <p className="font-mono text-sm leading-relaxed text-brand-muted">{"Fechas por anunciar \u00B7 Key Institute"}</p>
         </div>
       </div>
     </footer>

@@ -26,7 +26,7 @@ export function RegisterPageShell({ children }: { children: React.ReactNode }) {
                 {BRANDING.eventName} · {BRANDING.eventSubtitle}
               </p>
               <p className="mt-3 max-w-3xl font-mono text-sm leading-relaxed text-brand-muted">
-                Completa la información de tu equipo, integrantes y preferencias de retos para participar en Festival de Código.
+                Completa la información de tu equipo, integrantes y preferencias de retos para participar en Hackathon de Turismo Creativo I.
               </p>
             </div>
             <ButtonLink href="/" variant="secondary" className="w-full sm:w-auto">

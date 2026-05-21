@@ -18,7 +18,7 @@ export function EventSpiritSection() {
         </h2>
 
         <p className="mt-8 max-w-[900px] text-base leading-relaxed text-brand-white/90 sm:text-lg">
-          En Festival de Código, cada perfil aporta algo distinto: una idea, una habilidad, una
+          En Hackathon de Turismo Creativo I, cada perfil aporta algo distinto: una idea, una habilidad, una
           forma de entender el problema o una manera de construir la solución.
         </p>
 

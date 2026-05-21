@@ -137,8 +137,8 @@ export const mockRegistrationRepository: RegistrationRepository = {
         id: CURRENT_EDITION_FALLBACK,
         name: BRANDING.editionName,
         isCurrent: true,
-        startsAt: "2026-06-20",
-        endsAt: "2026-06-21",
+        startsAt: "Fechas por anunciar",
+        endsAt: "Fechas por anunciar",
         location: "Key Institute",
       }
     );

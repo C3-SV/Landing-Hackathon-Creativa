@@ -1,4 +1,4 @@
-# Todo suma · Festival de Código - I MVP
+# Todo suma · Hackathon de Turismo Creativo I MVP
 
 Base funcional en **Next.js App Router + TypeScript + Tailwind v4 + Firebase** para:
 

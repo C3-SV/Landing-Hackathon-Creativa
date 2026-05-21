@@ -12,15 +12,15 @@ export function LandingHero() {
               &gt;_ HACKATHON DE TURISMO CREATIVO
             </p>
             <h1 className="font-display text-[2rem] uppercase leading-[1.2] tracking-[0.04em] text-brand-white [text-shadow:4px_4px_0_var(--brand-electric)] sm:text-[2.8rem] lg:text-[4.8rem] lg:leading-[1.15]">
-              <span className="block">FESTIVAL</span>
-              <span className="mt-2 block">DE CÓDIGO</span>
+              <span className="block">HACKATHON DE</span>
+              <span className="mt-2 block">TURISMO CREATIVO I</span>
             </h1>
             <p className="max-w-[35ch] text-lg leading-relaxed text-brand-white/90">
               Un fin de semana para construir soluciones reales donde el turismo, el código y la
               cultura se encuentran.
             </p>
             <p className="font-mono text-xl text-brand-orange-soft">
-              ✧ 20-21 JUN · Key Institute · San Salvador
+              ✧ Fechas por anunciar · Key Institute · San Salvador
             </p>
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <ButtonLink
@@ -49,7 +49,7 @@ export function LandingHero() {
             <div className="relative z-10 h-full w-full overflow-hidden rounded-[1.4rem] border border-brand-electric/45">
               <Image
                 src="/images/hero-festival-pc.png"
-                alt="Ilustración principal del Festival de Código"
+                alt="Ilustración principal del Hackathon de Turismo Creativo I"
                 fill
                 priority
                 sizes="(max-width: 1024px) 100vw, 52vw"
