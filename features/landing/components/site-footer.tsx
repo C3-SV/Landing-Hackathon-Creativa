@@ -25,24 +25,6 @@ export function SiteFooter() {
         </div>
 
         <div className="space-y-3">
-          <p className="font-mono text-xs uppercase tracking-[0.14em] text-brand-electric">LEGAL</p>
-          <div className="space-y-2">
-            <a
-              href="#"
-              className="block font-mono text-sm leading-relaxed text-brand-muted transition-colors hover:text-brand-orange"
-            >
-              {"Pol\u00EDtica de privacidad (placeholder)"}
-            </a>
-            <a
-              href="#"
-              className="block font-mono text-sm leading-relaxed text-brand-muted transition-colors hover:text-brand-orange"
-            >
-              {"C\u00F3digo de conducta (placeholder)"}
-            </a>
-          </div>
-        </div>
-
-        <div className="space-y-3">
           <p className="font-mono text-xs uppercase tracking-[0.14em] text-brand-electric">{"ORGANIZACI\u00D3N"}</p>
           <p className="font-mono text-sm leading-relaxed text-brand-white">{"Poli\u00E9drica + C3"}</p>
           <p className="font-mono text-sm leading-relaxed text-brand-muted">{"Fechas por anunciar \u00B7 Key Institute"}</p>

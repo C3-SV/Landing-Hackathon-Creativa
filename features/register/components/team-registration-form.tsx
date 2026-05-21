@@ -51,6 +51,15 @@ type MemberCompletionShape = {
   about?: string;
 };
 
+const CHALLENGE_OPTION_TITLES: Record<string, string> = {
+  touristsv: "TOURISTSV",
+  "creator-kit": "MARKETPULSE",
+  "ar-cultura": "CULTURAXR",
+  ecotrack: "ECOTRACK",
+  datapulse: "DATATOUR",
+  twinmap: "TWINSCAPE",
+};
+
 function memberIsComplete(member?: MemberCompletionShape) {
   if (!member) {
     return false;
@@ -158,11 +167,7 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
       hipster: memberIsComplete(values.hipster),
       hustler: memberIsComplete(values.hustler),
       extra: teamSize === 3 ? true : memberIsComplete(values.extraMember ?? undefined),
-      confirm: Boolean(
-        values.consents.acceptCodeOfConduct &&
-          values.consents.acceptPrivacyPolicy &&
-          values.consents.authorizationDeclaration,
-      ),
+      confirm: Boolean(values.consents.authorizationDeclaration),
     } satisfies Record<RegisterSectionId, boolean>;
   }, [teamSize, values]);
 
@@ -223,7 +228,8 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
       const disabled = selected.includes(challenge.id) && current !== challenge.id;
       return (
         <option key={challenge.id} value={challenge.id} disabled={disabled}>
-          {challenge.name} {challenge.status === "proposed" ? "(propuesto)" : ""}
+          {CHALLENGE_OPTION_TITLES[challenge.id] ?? challenge.name}{" "}
+          {challenge.status === "proposed" ? "(propuesto)" : ""}
         </option>
       );
     });
@@ -410,20 +416,6 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
             >
               <SummaryPanel values={values} challenges={challenges} />
               <div className="mt-4 grid gap-3">
-                <Checkbox
-                  label="Acepto el código de conducta (obligatorio)"
-                  {...register("consents.acceptCodeOfConduct")}
-                />
-                <FieldError
-                  message={errors.consents?.acceptCodeOfConduct?.message?.toString()}
-                />
-                <Checkbox
-                  label="Acepto la política de privacidad (obligatorio)"
-                  {...register("consents.acceptPrivacyPolicy")}
-                />
-                <FieldError
-                  message={errors.consents?.acceptPrivacyPolicy?.message?.toString()}
-                />
                 <Checkbox
                   label="Consiento uso de imagen y media"
                   {...register("consents.mediaConsent")}

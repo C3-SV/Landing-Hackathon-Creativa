@@ -65,12 +65,8 @@ export const memberSchema = z.object({
 });
 
 export const teamConsentsSchema = z.object({
-  acceptCodeOfConduct: z.boolean().refine((value) => value, {
-    message: "Debes aceptar el código de conducta",
-  }),
-  acceptPrivacyPolicy: z.boolean().refine((value) => value, {
-    message: "Debes aceptar la política de privacidad",
-  }),
+  acceptCodeOfConduct: z.boolean().default(false),
+  acceptPrivacyPolicy: z.boolean().default(false),
   mediaConsent: z.boolean().default(false),
   dataSharingConsent: z.boolean().default(false),
   authorizationDeclaration: z.boolean().refine((value) => value, {
