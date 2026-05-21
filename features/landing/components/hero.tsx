@@ -4,14 +4,14 @@ import { ButtonLink } from "@/lib/ui";
 
 export function LandingHero() {
   return (
-    <section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden bg-brand-bg pb-12 pt-10 sm:pb-14 sm:pt-12 lg:pb-16 lg:pt-16">
+    <section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden bg-brand-bg pb-8 pt-8 sm:pb-10 sm:pt-10 lg:pb-12 lg:pt-12">
       <div className="relative z-10 mx-auto w-[min(1280px,calc(100%-2rem))]">
-        <div className="grid gap-6 lg:min-h-[720px] lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
-          <div className="space-y-6 py-2 sm:space-y-8 lg:max-w-[42rem] lg:self-center lg:py-6">
+        <div className="grid gap-6 lg:grid-cols-[1.4fr_1.1fr] lg:items-center lg:gap-10">
+          <div className="space-y-6 py-1 sm:space-y-7 lg:max-w-[44rem] lg:py-2">
             <p className="inline-flex items-center rounded-full border border-brand-orange px-4 py-2 font-mono text-xs uppercase tracking-[0.18em] text-brand-orange-soft sm:px-5">
               &gt;_ HACKATHON DE TURISMO CREATIVO
             </p>
-            <h1 className="font-display text-[2rem] uppercase leading-[1.2] tracking-[0.04em] text-brand-white [text-shadow:4px_4px_0_var(--brand-electric)] sm:text-[2.8rem] lg:text-[4.8rem] lg:leading-[1.15]">
+            <h1 className="max-w-[16ch] font-display text-[1.85rem] uppercase leading-[1.15] tracking-[0.04em] text-brand-white [text-shadow:4px_4px_0_var(--brand-electric)] sm:text-[2.45rem] lg:text-[3.35rem] lg:leading-[1.1]">
               <span className="block">HACKATHON DE</span>
               <span className="mt-2 block">TURISMO CREATIVO I</span>
             </h1>
@@ -41,19 +41,15 @@ export function LandingHero() {
             </div>
           </div>
 
-          <div className="relative min-h-[300px] overflow-hidden rounded-[2rem] border border-brand-electric bg-[linear-gradient(180deg,rgba(7,34,77,0.92),rgba(10,31,61,1))] p-3 shadow-[0_0_0_1px_rgba(26,130,255,0.25),0_24px_56px_rgba(7,18,43,0.55)] sm:p-4 lg:min-h-[660px] lg:p-5">
-            <div className="pointer-events-none absolute -left-20 -top-20 h-56 w-56 rounded-full bg-brand-electric/25 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-24 -right-16 h-64 w-64 rounded-full bg-brand-electric/20 blur-3xl" />
-            <span className="absolute left-5 top-5 h-5 w-5 border-l border-t border-brand-electric/60" />
-            <span className="absolute bottom-5 right-5 h-5 w-5 border-b border-r border-brand-electric/60" />
-            <div className="relative z-10 h-full w-full overflow-hidden rounded-[1.4rem] border border-brand-electric/45">
+          <div className="w-full lg:justify-self-end">
+            <div className="relative aspect-video w-full overflow-hidden rounded-[1.25rem] bg-transparent lg:w-[min(100%,560px)]">
               <Image
-                src="/images/hero-festival-pc.png"
+                src="/images/hero-festival-pc-transparent.png"
                 alt="Ilustración principal del Hackathon de Turismo Creativo I"
                 fill
                 priority
-                sizes="(max-width: 1024px) 100vw, 52vw"
-                className="object-cover object-center"
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 72vw, 44vw"
+                className="object-contain object-center"
               />
             </div>
           </div>
