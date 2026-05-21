@@ -1,11 +1,53 @@
-﻿const CHALLENGES = Array.from({ length: 6 }, (_, index) => ({
-  number: String(index + 1).padStart(2, "0"),
-  category: "[TouristSV",
-  title: "Asistente inteligente para mejorar la experiencia del turista.",
-  description:
-    "Un reto para diseñar una experiencia conversacional o guiada que ayude al visitante a encontrar contexto, decisiones y rutas útiles.",
-  tag: "AI EXPERIENCE",
-}));
+const CHALLENGES = [
+  {
+    number: "01",
+    category: "[TOURISTSV]",
+    title: "Asistente inteligente para mejorar la experiencia del turista.",
+    description:
+      "Un reto para diseñar una experiencia conversacional o guiada que ayude al visitante a encontrar contexto, decisiones y rutas útiles.",
+    tag: "AI EXPERIENCE",
+  },
+  {
+    number: "02",
+    category: "[MARKETPULSE]",
+    title: "Herramienta inteligente de marketing turístico para micro emprendedores.",
+    description:
+      "Una oportunidad para crear soluciones digitales que ayuden a pequeños negocios turísticos a generar contenido atractivo para promocionar sus servicios y conectar con más visitantes.",
+    tag: "SMART MARKETING",
+  },
+  {
+    number: "03",
+    category: "[CULTURAXR]",
+    title: "Experiencias culturales inmersivas con realidad aumentada.",
+    description:
+      "Un reto para diseñar experiencias interactivas que permitan a los turistas descubrir historia, patrimonio y cultura salvadoreña de forma visual, inmersiva y accesible.",
+    tag: "INTERACTIVE/AR EXPERIENCE",
+  },
+  {
+    number: "04",
+    category: "[ECOTRACK]",
+    title: "Turismo ecológico y sostenible.",
+    description:
+      "Una iniciativa para construir herramientas digitales que promuevan prácticas sostenibles, reduzcan el impacto ambiental y mejoren la conservación de espacios turísticos y naturales.",
+    tag: "GREEN TOURISM",
+  },
+  {
+    number: "05",
+    category: "[DATATOUR]",
+    title: "Capa compartida de datos turísticos.",
+    description:
+      "Un reto orientado a crear una infraestructura de datos turísticos confiable y reutilizable que permita conectar información de lugares, eventos, negocios y experiencias para otros proyectos y plataformas.",
+    tag: "DATA PLATFORM",
+  },
+  {
+    number: "06",
+    category: "[TWINSCAPE]",
+    title: "Digital Twin Turístico: territorio, datos y experiencia.",
+    description:
+      "Una oportunidad para visualizar y comprender destinos turísticos mediante mapas, capas de información y experiencias digitales que integren territorio, movilidad, negocios, sostenibilidad y comportamiento de visitantes.",
+    tag: "DIGITAL TWIN",
+  },
+] as const;
 
 export function ChallengeGrid() {
   return (
