@@ -81,11 +81,9 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: [
-      { url: "/favicon.ico" },
-      { url: "/favicon.ico", rel: "shortcut icon" },
-    ],
-    apple: [{ url: "/favicon.ico" }],
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    shortcut: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/icon.svg", type: "image/svg+xml" }],
   },
   manifest: "/manifest.webmanifest",
   other: {
