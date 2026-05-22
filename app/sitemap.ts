@@ -1,0 +1,15 @@
+import type { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/seo/metadata";
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const routes = ["/", "/register"] as const;
+  const lastModified = new Date();
+
+  return routes.map((route) => ({
+    url: `${SITE_URL}${route}`,
+    lastModified,
+    changeFrequency: route === "/" ? "weekly" : "daily",
+    priority: route === "/" ? 1 : 0.8,
+  }));
+}
+

@@ -1,5 +1,15 @@
-﻿import { BRANDING } from "@/lib/constants/branding";
+﻿import type { Metadata } from "next";
+import { BRANDING } from "@/lib/constants/branding";
 import { ButtonLink, Card } from "@/lib/ui";
+import { buildPageMetadata } from "@/lib/seo/metadata";
+
+export const metadata: Metadata = buildPageMetadata({
+  path: "/register/success",
+  title: "Inscripcion enviada | Hackathon de Turismo Creativo I",
+  description:
+    "Confirmacion de envio de inscripcion para el Hackathon de Turismo Creativo I.",
+  indexable: false,
+});
 
 type SuccessPageProps = {
   searchParams: Promise<{ teamName?: string }>;
