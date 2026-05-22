@@ -1,5 +1,6 @@
 ﻿import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Press_Start_2P, Sora } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { PreviewAccessControls } from "@/features/site-access/components/preview-access-controls";
 import { getPreviewUserFromCookies } from "@/lib/auth/preview-access";
 import { APP_ENV } from "@/lib/constants/env";
@@ -121,6 +122,7 @@ export default async function RootLayout({
         />
         {previewUser ? <PreviewAccessControls userEmail={previewUser.email} /> : null}
         {children}
+        <Analytics />
       </body>
     </html>
   );
