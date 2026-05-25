@@ -27,7 +27,7 @@ export function SiteFooter() {
         <div className="space-y-3">
           <p className="font-mono text-xs uppercase tracking-[0.14em] text-brand-electric">{"ORGANIZACI\u00D3N"}</p>
           <p className="font-mono text-sm leading-relaxed text-brand-white">{"Poli\u00E9drica + C3"}</p>
-          <p className="font-mono text-sm leading-relaxed text-brand-muted">{"Fechas por anunciar \u00B7 Key Institute"}</p>
+          <p className="font-mono text-sm leading-relaxed text-brand-muted">{"11 y 12 de julio \u00B7 Key Institute"}</p>
         </div>
       </div>
     </footer>

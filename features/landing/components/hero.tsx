@@ -20,7 +20,7 @@ export function LandingHero() {
               cultura se encuentran.
             </p>
             <p className="font-mono text-xl text-brand-orange-soft">
-              ✧ Fechas por anunciar · Key Institute · San Salvador
+              ✧ 11 y 12 de julio · Key Institute · San Salvador
             </p>
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <ButtonLink

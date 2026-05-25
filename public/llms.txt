@@ -12,7 +12,7 @@ Organizadores (segun el sitio publico):
 - Poliedrica
 
 Datos publicos clave del sitio:
-- Estado de fecha: Fechas por anunciar
+- Estado de fecha: 11 y 12 de julio
 - Sede: Key Institute, San Salvador
 - Linea tematica: +TURISMO +CODIGO +CULTURA
 - Retos publicos: TouristSV, MarketPulse, CulturaXR, ECOTRACK, DataTour, TwinScape

@@ -5,7 +5,7 @@ export const CURRENT_EDITION_FALLBACK = BRANDING.editionFallbackId;
 
 export const LANDING_QUICK_FACTS = [
   { label: "EVENTO", value: BRANDING.eventName },
-  { label: "FECHA", value: "Fechas por anunciar" },
+  { label: "FECHA", value: "11 y 12 de julio" },
   { label: "SEDE", value: "Key Institute" },
   { label: "LÍNEA", value: BRANDING.thematicLine },
   { label: "ORGANIZAN", value: BRANDING.organizers },
@@ -39,7 +39,7 @@ export const FAQ_ITEMS = [
   {
     question: "¿CUÁNTO DURA EL HACKATHON?",
     answer:
-      "El Hackathon de Turismo Creativo I se desarrollará durante dos días, en fechas por anunciar, en Key Institute, San Salvador.",
+      "El Hackathon de Turismo Creativo I se desarrollará durante dos días, el 11 y 12 de julio, en Key Institute, San Salvador.",
   },
   {
     question: "¿NECESITO SABER PROGRAMAR?",
@@ -109,8 +109,8 @@ export const EDITION_SEEDS: Edition[] = [
     id: CURRENT_EDITION_FALLBACK,
     name: BRANDING.editionName,
     isCurrent: true,
-    startsAt: "Fechas por anunciar",
-    endsAt: "Fechas por anunciar",
+    startsAt: "11 de julio",
+    endsAt: "12 de julio",
     location: "Key Institute",
   },
 ];

@@ -7,7 +7,7 @@ export const BRANDING = {
   thematicLine: "+TURISMO +CÓDIGO +CULTURA",
   supportLine: "Turismo, código y cultura construyendo juntos.",
   organizers: "Poliédrica + C3",
-  dateVenue: "Fechas por anunciar · Key Institute",
+  dateVenue: "11 y 12 de julio · Key Institute",
   csvFileName: "festival-de-codigo-inscripciones.csv",
   editionFallbackId: "festival-de-codigo-i-2026",
   editionName: "Hackathon de Turismo Creativo I",
