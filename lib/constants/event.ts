@@ -50,12 +50,7 @@ export const FAQ_ITEMS = [
     question: "¿QUÉ SE DEBE ENTREGAR AL FINAL?",
     answer:
       "Cada equipo deberá presentar una propuesta demostrable: puede ser un prototipo, mockup funcional, demo, flujo de solución, presentación o una combinación de estos elementos.",
-  },
-  {
-    question: "¿LOS RETOS SON REALES?",
-    answer:
-      "Sí. Cada reto plantea una oportunidad vinculada a turismo, cultura, tecnología y ejecución práctica en el contexto del país.",
-  },
+  }
 ] as const;
 
 export const CHALLENGE_SEEDS: Challenge[] = [
