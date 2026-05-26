@@ -48,11 +48,7 @@ export function AboutSection() {
         </h2>
 
         <p className="max-w-[78ch] text-base leading-relaxed text-brand-white/88 sm:text-lg">
-          El Hackathon de Turismo Creativo I es una hackathon de turismo creativo donde equipos
-          multidisciplinarios trabajan durante dos días para diseñar, prototipar y presentar
-          soluciones aplicables a retos reales del país. El evento une turismo, código y cultura
-          para convertir ideas en propuestas demostrables, combinando creatividad, tecnología,
-          contexto local y ejecución práctica.
+          La Hackathon de Turismo Creativo I es un evento intensivo donde equipos multidisciplinarios trabajan durante dos días para diseñar, prototipar y presentar soluciones aplicables a retos reales del país. La experiencia une turismo, código y cultura para transformar ideas en propuestas demostrables, combinando creatividad, tecnología, contexto local y ejecución práctica. Más que una competencia tradicional, es un espacio de colaboración donde distintos perfiles construyen juntos soluciones con potencial de impacto.
         </p>
 
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
