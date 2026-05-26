@@ -10,7 +10,7 @@ export function EventSpiritSection() {
 
       <div className="relative z-10 mx-auto flex w-[min(1100px,calc(100%-2rem))] flex-col items-center text-center">
         <p className="inline-flex items-center rounded-full border border-brand-orange px-4 py-2 font-mono text-xs uppercase tracking-[0.18em] text-brand-orange-soft sm:px-5">
-          {"{} 03 / ESPÍRITU"}
+          {"{} 02 / ESPÍRITU"}
         </p>
 
         <h2 className="mt-7 font-display text-[2rem] uppercase leading-[1.18] tracking-[0.05em] text-brand-white [text-shadow:4px_4px_0_var(--brand-electric)] sm:text-[2.8rem] lg:text-[4.6rem]">

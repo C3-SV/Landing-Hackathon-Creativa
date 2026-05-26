@@ -2,6 +2,7 @@ export * from "@/features/landing/components/hero";
 export * from "@/features/landing/components/about-section";
 export * from "@/features/landing/components/event-spirit-section";
 export * from "@/features/landing/components/how-it-works";
+export * from "@/features/landing/components/team-3h-section";
 export * from "@/features/landing/components/challenge-grid";
 export * from "@/features/landing/components/facts-strip";
 export * from "@/features/landing/components/organizers";

@@ -7,6 +7,7 @@ import {
   HowItWorksSection,
   LandingHero,
   OrganizersSection,
+  Team3HSection,
   SiteFooter,
   SponsorsSection,
 } from "@/features/landing/components";
@@ -17,7 +18,7 @@ export const metadata: Metadata = buildPageMetadata({
   path: "/",
   title: "Hackathon de Turismo Creativo I | C3",
   description:
-    "Sitio oficial del Hackathon de Turismo Creativo I. Conoce los retos, formato, organizadores, preguntas frecuentes e inscripcion.",
+    "Sitio oficial del Hackathon de Turismo Creativo I. Conoce los retos, el formato 3H, los organizadores, preguntas frecuentes e inscripcion.",
 });
 
 export default function HomePage() {
@@ -63,6 +64,7 @@ export default function HomePage() {
         <EventSpiritSection />
         <ChallengeGrid />
         <HowItWorksSection />
+        <Team3HSection />
         <OrganizersSection />
         <SponsorsSection />
         <FaqSection />

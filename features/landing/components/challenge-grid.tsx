@@ -57,7 +57,7 @@ export function ChallengeGrid() {
     >
       <div className="mx-auto w-[min(1180px,calc(100%-2rem))] space-y-7">
         <p className="inline-flex items-center rounded-full border border-brand-orange px-4 py-2 font-mono text-xs uppercase tracking-[0.18em] text-brand-orange-soft sm:px-5">
-          {"{} 04 / RETOS"}
+          {"{} 03 / RETOS"}
         </p>
 
         <h2 className="font-display text-[1.65rem] uppercase leading-[1.2] tracking-[0.04em] text-brand-white [text-shadow:4px_4px_0_var(--brand-electric)] sm:text-[2.45rem] lg:text-[3.5rem]">

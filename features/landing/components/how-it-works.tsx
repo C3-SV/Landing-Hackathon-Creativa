@@ -5,7 +5,7 @@ export function HowItWorksSection() {
     <section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden bg-brand-bg py-16 sm:py-20 lg:py-24">
       <div className="mx-auto w-[min(1180px,calc(100%-2rem))]">
         <p className="inline-flex items-center rounded-full border border-brand-orange px-4 py-2 font-mono text-xs uppercase tracking-[0.18em] text-brand-orange-soft sm:px-5">
-          {"C\u00D3MO FUNCIONA"}
+          {"{} 04 / C\u00D3MO FUNCIONA"}
         </p>
 
         <h2 className="mt-7 font-display text-[1.55rem] uppercase leading-[1.2] tracking-[0.04em] text-brand-white [text-shadow:4px_4px_0_var(--brand-electric)] sm:text-[2.2rem] lg:text-[3.35rem]">
