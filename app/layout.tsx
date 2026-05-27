@@ -1,5 +1,5 @@
-import type { CSSProperties } from "react";
 import type { Metadata, Viewport } from "next";
+import { JetBrains_Mono, Press_Start_2P, Sora } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { PreviewAccessControls } from "@/features/site-access/components/preview-access-controls";
 import { getPreviewUserFromCookies } from "@/lib/auth/preview-access";
@@ -19,14 +19,21 @@ import {
 } from "@/lib/seo/metadata";
 import "./globals.css";
 
-const fontVariables = {
-  "--font-sora":
-    '"Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
-  "--font-jetbrains":
-    '"JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace',
-  "--font-pressstart":
-    '"Arial Black", "Segoe UI Black", Impact, system-ui, sans-serif',
-} as CSSProperties;
+const fontBody = Sora({
+  variable: "--font-sora",
+  subsets: ["latin"],
+});
+
+const fontMono = JetBrains_Mono({
+  variable: "--font-jetbrains",
+  subsets: ["latin"],
+});
+
+const fontDisplay = Press_Start_2P({
+  variable: "--font-pressstart",
+  weight: "400",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   metadataBase: SITE_ORIGIN,
@@ -107,8 +114,7 @@ export default async function RootLayout({
   return (
     <html
       lang="es-SV"
-      style={fontVariables}
-      className="h-full antialiased"
+      className={`${fontBody.variable} ${fontMono.variable} ${fontDisplay.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-brand-bg text-brand-white">
         <script
