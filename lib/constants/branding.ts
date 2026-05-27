@@ -4,12 +4,11 @@ export const BRANDING = {
   eventName: "Hackathon de Turismo Creativo I",
   eventNameUpper: "HACKATHON DE TURISMO CREATIVO I",
   eventSubtitle: "Hackathon de Turismo Creativo",
-  thematicLine: "+TURISMO +CÓDIGO +CULTURA",
+  thematicLine: "+ Turismo + Código + Cultura",
   supportLine: "Turismo, código y cultura construyendo juntos.",
-  organizers: "Poliédrica + C3",
+  organizers: "C3 + Poliédrica",
   dateVenue: "11 y 12 de julio · Key Institute",
-  csvFileName: "festival-de-codigo-inscripciones.csv",
-  editionFallbackId: "festival-de-codigo-i-2026",
+  csvFileName: "hackathon-turismo-creativo-i-inscripciones.csv",
+  editionFallbackId: "hackathon-de-turismo-creativo-i-2026",
   editionName: "Hackathon de Turismo Creativo I",
 } as const;
-

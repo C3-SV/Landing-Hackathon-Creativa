@@ -1,6 +1,6 @@
-﻿"use client";
+"use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { BRANDING } from "@/lib/constants/branding";
@@ -18,11 +18,6 @@ export function AdminLoginForm() {
   const [error, setError] = useState<string | null>(null);
 
   const forbiddenError = searchParams.get("error") === "forbidden";
-
-  const modeLabel = useMemo(
-    () => (hasFirebaseClientConfig() ? "Firebase Auth" : "Modo mock"),
-    [],
-  );
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -75,7 +70,6 @@ export function AdminLoginForm() {
           Admin · {BRANDING.eventName}
         </h1>
         <p className="text-sm text-brand-muted">{BRANDING.eventSubtitle}</p>
-        <p className="text-sm text-brand-muted">Modo autenticación: {modeLabel}</p>
       </div>
 
       {forbiddenError ? (

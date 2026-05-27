@@ -1,4 +1,4 @@
-﻿import { BRANDING } from "@/lib/constants/branding";
+import { BRANDING } from "@/lib/constants/branding";
 import { ButtonLink, Card } from "@/lib/ui";
 
 export function RegisterPageShell({ children }: { children: React.ReactNode }) {
@@ -23,10 +23,11 @@ export function RegisterPageShell({ children }: { children: React.ReactNode }) {
                 INSCRIBE TU EQUIPO
               </h1>
               <p className="mt-2 font-mono text-xs uppercase tracking-wide text-brand-orange-soft">
-                {BRANDING.eventName} · {BRANDING.eventSubtitle}
+                {BRANDING.eventName} · {BRANDING.thematicLine}
               </p>
               <p className="mt-3 max-w-3xl font-mono text-sm leading-relaxed text-brand-muted">
-                Completa la información de tu equipo, integrantes y preferencias de retos para participar en Hackathon de Turismo Creativo I.
+                Completa la información de tu equipo, integrantes y preferencias de retos para
+                participar en Hackathon de Turismo Creativo I.
               </p>
             </div>
             <ButtonLink href="/" variant="secondary" className="w-full sm:w-auto">

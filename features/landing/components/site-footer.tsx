@@ -7,15 +7,17 @@ export function SiteFooter() {
             {"HACKATHON DE TURISMO CREATIVO I"}
           </p>
           <p className="font-mono text-sm leading-relaxed text-brand-muted">
-            Hackathon de Turismo Creativo
+            Hackathon de Turismo Creativo I
           </p>
           <p className="font-mono text-xs uppercase tracking-[0.12em] text-brand-orange">
-            {"+TURISMO +C\u00D3DIGO +CULTURA"}
+            {"+ TURISMO + CÓDIGO + CULTURA"}
           </p>
         </div>
 
         <div className="space-y-3">
-          <p className="font-mono text-xs uppercase tracking-[0.14em] text-brand-electric">CONTACTO</p>
+          <p className="font-mono text-xs uppercase tracking-[0.14em] text-brand-electric">
+            CONTACTO
+          </p>
           <a
             href="mailto:competitivecodingclub.sv@gmail.com"
             className="block break-words font-mono text-sm leading-relaxed text-brand-white transition-colors hover:text-brand-orange"
@@ -25,9 +27,13 @@ export function SiteFooter() {
         </div>
 
         <div className="space-y-3">
-          <p className="font-mono text-xs uppercase tracking-[0.14em] text-brand-electric">{"ORGANIZACI\u00D3N"}</p>
-          <p className="font-mono text-sm leading-relaxed text-brand-white">{"Poli\u00E9drica + C3"}</p>
-          <p className="font-mono text-sm leading-relaxed text-brand-muted">{"11 y 12 de julio \u00B7 Key Institute"}</p>
+          <p className="font-mono text-xs uppercase tracking-[0.14em] text-brand-electric">
+            {"ORGANIZACIÓN"}
+          </p>
+          <p className="font-mono text-sm leading-relaxed text-brand-white">{"C3 + Poliédrica"}</p>
+          <p className="font-mono text-sm leading-relaxed text-brand-muted">
+            {"11 y 12 de julio · Key Institute"}
+          </p>
         </div>
       </div>
     </footer>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { BRANDING } from "@/lib/constants/branding";
@@ -18,11 +18,6 @@ export function PreviewLoginForm() {
   const [error, setError] = useState<string | null>(null);
 
   const nextPath = searchParams.get("next") ?? "/";
-  const modeLabel = useMemo(
-    () => (hasFirebaseClientConfig() ? "Firebase Auth" : "Modo mock"),
-    [],
-  );
-
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setPending(true);
@@ -69,17 +64,12 @@ export function PreviewLoginForm() {
         </h1>
         <p className="text-sm text-brand-muted">{BRANDING.eventName}</p>
         <p className="font-mono text-xs uppercase tracking-wide text-brand-muted">
-          {BRANDING.eventSubtitle}
+          {BRANDING.thematicLine}
         </p>
-        
       </div>
 
       {error ? (
-        <AlertState
-          variant="error"
-          title="Acceso denegado"
-          description={error}
-        />
+        <AlertState variant="error" title="Acceso denegado" description={error} />
       ) : null}
 
       <form className="space-y-4" onSubmit={onSubmit}>
@@ -107,11 +97,6 @@ export function PreviewLoginForm() {
             required
           />
         </div>
-        {/** 
-        <p className="font-mono text-[11px] uppercase tracking-wide text-brand-muted">
-          Modo autenticación: {modeLabel}
-        </p>
-        */}
         <p className="text-xs text-brand-muted">
           Entorno protegido antes del lanzamiento público.
         </p>

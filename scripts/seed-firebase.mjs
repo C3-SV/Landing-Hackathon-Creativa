@@ -73,9 +73,9 @@ const challenges = [
   },
 ];
 
-const editionId = process.env.CURRENT_EDITION_ID ?? "festival-de-codigo-i-2026";
+const editionId = process.env.CURRENT_EDITION_ID ?? "hackathon-de-turismo-creativo-i-2026";
 const edition = {
-  name: "Festival de Código - I 2026",
+  name: "Hackathon de Turismo Creativo I - 2026",
   isCurrent: true,
   startsAt: "2026-06-20",
   endsAt: "2026-06-21",
@@ -238,7 +238,7 @@ const registrations = [
       {
         id: "note_seed_001",
         message: "Equipo con propuesta solida para fase de mentoria tecnica.",
-        authorEmail: "admin@festivaldecodigo.dev",
+        authorEmail: "admin@hackathonc3.dev",
         createdAt: now,
       },
     ],

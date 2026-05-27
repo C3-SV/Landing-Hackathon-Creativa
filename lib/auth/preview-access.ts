@@ -5,7 +5,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 export const PREVIEW_ACCESS_COOKIE_NAME = "hc_preview_access";
 export const PREVIEW_ACCESS_MAX_AGE_SECONDS = 60 * 60 * 24 * 5;
 const PREVIEW_TOKEN_SECRET =
-  process.env.SESSION_SECRET ?? "festival-de-codigo-preview-secret";
+  process.env.SESSION_SECRET ?? "hackathon-preview-secret";
 
 type PreviewUser = {
   email: string;

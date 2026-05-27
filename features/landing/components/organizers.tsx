@@ -9,7 +9,7 @@ type OrganizerCard = {
 
 const ORGANIZERS: OrganizerCard[] = [
   {
-    name: "C3 | Competitive Coding Club",
+    name: "C3 / Competitive Coding Club",
     logoSrc: "/images/logo-c3-blanco.png",
     logoAlt: "Logo de C3",
     logoClassName: "max-h-[220px]",
@@ -35,9 +35,9 @@ export function OrganizersSection() {
         </h2>
 
         <p className="mt-8 max-w-[980px] text-base leading-relaxed text-brand-white/92 sm:text-lg">
-          El Hackathon de Turismo Creativo I es organizado por Poliédrica y C3, uniendo creatividad, comunidad,
-          tecnología y ejecución para activar un espacio donde el talento pueda construir soluciones
-          sobre retos reales del país.
+          El Hackathon de Turismo Creativo I es organizado por C3 y Poliédrica, uniendo creatividad,
+          comunidad, tecnología y ejecución para activar un espacio donde el talento pueda construir
+          soluciones sobre retos reales del país.
         </p>
 
         <div className="mt-10 grid gap-5 md:grid-cols-2 lg:mt-12 lg:gap-6">

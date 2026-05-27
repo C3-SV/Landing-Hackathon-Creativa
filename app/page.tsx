@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import {
   AboutSection,
   ChallengeGrid,
@@ -7,19 +7,76 @@ import {
   HowItWorksSection,
   LandingHero,
   OrganizersSection,
-  Team3HSection,
   SiteFooter,
   SponsorsSection,
+  Team3HSection,
 } from "@/features/landing/components";
 import { FAQ_ITEMS } from "@/lib/constants/event";
-import { SITE_URL, buildPageMetadata } from "@/lib/seo/metadata";
+import {
+  DEFAULT_DESCRIPTION,
+  DEFAULT_OG_IMAGE,
+  DEFAULT_OG_IMAGE_ALT,
+  OG_LOCALE,
+  SITE_NAME,
+  SITE_ORIGIN,
+  SITE_ROOT_URL,
+  getWebPageJsonLd,
+} from "@/lib/seo/metadata";
 
-export const metadata: Metadata = buildPageMetadata({
-  path: "/",
-  title: "Hackathon de Turismo Creativo I | C3",
+export const metadata: Metadata = {
+  metadataBase: SITE_ORIGIN,
+  title: "Hackathon de Turismo Creativo I | C3 + Poliédrica",
   description:
-    "Sitio oficial del Hackathon de Turismo Creativo I. Conoce los retos, el formato 3H, los organizadores, preguntas frecuentes e inscripcion.",
-});
+    "Hackathon de Turismo Creativo I une turismo, código y cultura para crear prototipos y soluciones colaborativas a retos reales. Una iniciativa organizada por C3 y Poliédrica.",
+  keywords: [
+    "Hackathon de Turismo Creativo I",
+    "hackathon turismo El Salvador",
+    "hackathon El Salvador",
+    "hackathon tecnología El Salvador",
+    "turismo creativo",
+    "código y cultura",
+    "C3",
+    "Competitive Coding Club",
+    "Poliédrica",
+    "prototipos",
+    "retos reales",
+    "innovación turística",
+    "builders El Salvador",
+    "talento técnico joven",
+  ],
+  alternates: {
+    canonical: SITE_ROOT_URL,
+  },
+  openGraph: {
+    title: "Hackathon de Turismo Creativo I | + Turismo + Código + Cultura",
+    description:
+      "Una experiencia de creación colaborativa donde turismo, código y cultura se unen para construir prototipos y soluciones a retos reales. Organizado por C3 y Poliédrica.",
+    url: SITE_ROOT_URL,
+    siteName: SITE_NAME,
+    locale: OG_LOCALE,
+    type: "website",
+    images: [
+      {
+        url: DEFAULT_OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: DEFAULT_OG_IMAGE_ALT,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Hackathon de Turismo Creativo I",
+    description:
+      "+ Turismo + Código + Cultura. Todo Suma. Un hackathon organizado por C3 y Poliédrica para crear soluciones desde tecnología, turismo y cultura.",
+    images: [
+      {
+        url: DEFAULT_OG_IMAGE,
+        alt: DEFAULT_OG_IMAGE_ALT,
+      },
+    ],
+  },
+};
 
 export default function HomePage() {
   const faqJsonLd = {
@@ -43,13 +100,22 @@ export default function HomePage() {
         "@type": "ListItem",
         position: 1,
         name: "Inicio",
-        item: SITE_URL,
+        item: SITE_ROOT_URL,
       },
     ],
   };
 
+  const webPageJsonLd = getWebPageJsonLd({
+    path: "/",
+    description: DEFAULT_DESCRIPTION,
+  });
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}

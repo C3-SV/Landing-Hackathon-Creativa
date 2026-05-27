@@ -13,7 +13,7 @@ export const APP_ENV = {
   dataMode: (process.env.DATA_MODE ?? "mock") as RepositoryMode,
   currentEditionId: process.env.CURRENT_EDITION_ID ?? CURRENT_EDITION_FALLBACK,
   siteLockEnabled: readBooleanEnv(process.env.SITE_LOCK_ENABLED, false),
-  adminEmails: (process.env.ADMIN_EMAILS ?? "admin@festivaldecodigo.dev")
+  adminEmails: (process.env.ADMIN_EMAILS ?? "admin@hackathonc3.dev")
     .split(",")
     .map((item) => item.trim().toLowerCase())
     .filter(Boolean),

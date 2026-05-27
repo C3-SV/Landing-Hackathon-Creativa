@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { BRANDING } from "@/lib/constants/branding";
 import { ButtonLink, Card } from "@/lib/ui";
 import { buildPageMetadata } from "@/lib/seo/metadata";
@@ -38,13 +38,16 @@ export default async function RegisterSuccessPage({ searchParams }: SuccessPageP
             {teamName}
           </h1>
           <p className="font-mono text-xs uppercase tracking-wide text-brand-orange-soft">
-            {BRANDING.eventName} · {BRANDING.eventSubtitle}
+            {BRANDING.eventName} · {BRANDING.thematicLine}
           </p>
           <p className="font-mono text-sm leading-relaxed text-brand-muted sm:text-base">
-            Recibimos la postulación de tu equipo. Revisaremos la información y les contactaremos con los siguientes pasos.
+            Recibimos la postulación de tu equipo. Revisaremos la información y les contactaremos con
+            los siguientes pasos.
           </p>
           <div className="flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap">
-            <ButtonLink href="/" className="w-full sm:w-auto">Volver a inicio</ButtonLink>
+            <ButtonLink href="/" className="w-full sm:w-auto">
+              Volver a inicio
+            </ButtonLink>
             <ButtonLink href="/register" variant="secondary" className="w-full sm:w-auto">
               Registrar otro equipo
             </ButtonLink>

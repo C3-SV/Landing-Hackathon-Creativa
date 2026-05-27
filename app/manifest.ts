@@ -1,12 +1,13 @@
-﻿import type { MetadataRoute } from "next";
+import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Hackathon de Turismo Creativo I",
     short_name: "Hackathon Turismo",
     description:
-      "Sitio oficial del Hackathon de Turismo Creativo I de C3 y Poliedrica.",
+      "Hackathon que une turismo, código y cultura para crear soluciones a retos reales.",
     start_url: "/",
+    scope: "/",
     display: "standalone",
     background_color: "#081326",
     theme_color: "#081326",
@@ -18,8 +19,18 @@ export default function manifest(): MetadataRoute.Manifest {
         type: "image/x-icon",
       },
       {
-        src: "/images/logo-c3-blanco.png",
-        sizes: "2652x2744",
+        src: "/icon.svg",
+        sizes: "any",
+        type: "image/svg+xml",
+      },
+      {
+        src: "/icon-192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        src: "/icon-512.png",
+        sizes: "512x512",
         type: "image/png",
       },
     ],

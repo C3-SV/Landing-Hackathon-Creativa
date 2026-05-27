@@ -1,12 +1,12 @@
 import type { ReactElement, SVGProps } from "react";
 
-type FestivalItem = {
+type AboutItem = {
   title: string;
   description: string;
   Icon: ({ className }: { className?: string }) => ReactElement;
 };
 
-const FESTIVAL_ITEMS: FestivalItem[] = [
+const ABOUT_ITEMS: AboutItem[] = [
   {
     title: "[ Build-first",
     description: "Ideas que se convierten en prototipos reales durante el evento",
@@ -33,26 +33,31 @@ export function AboutSection() {
   return (
     <section
       className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden bg-brand-bg py-16 sm:py-20 lg:py-24"
-      aria-labelledby="about-festival-title"
+      aria-labelledby="about-hackathon-title"
     >
       <div className="mx-auto w-[min(1180px,calc(100%-2rem))] space-y-6 lg:space-y-8">
         <p className="inline-flex items-center rounded-full border border-brand-orange px-4 py-2 font-mono text-xs uppercase tracking-[0.18em] text-brand-orange-soft sm:px-5">
-          {"{} 01 / SOBRE EL FESTIVAL"}
+          {"{} 01 / SOBRE EL HACKATHON"}
         </p>
 
         <h2
-          id="about-festival-title"
+          id="about-hackathon-title"
           className="font-display text-[1.8rem] uppercase leading-[1.2] tracking-[0.04em] text-brand-white [text-shadow:3px_3px_0_var(--brand-electric)] sm:text-[2.3rem] lg:text-[3.25rem]"
         >
           ¿QUÉ ES?
         </h2>
 
         <p className="max-w-[78ch] text-base leading-relaxed text-brand-white/88 sm:text-lg">
-          La Hackathon de Turismo Creativo I es un evento intensivo donde equipos multidisciplinarios trabajan durante dos días para diseñar, prototipar y presentar soluciones aplicables a retos reales del país. La experiencia une turismo, código y cultura para transformar ideas en propuestas demostrables, combinando creatividad, tecnología, contexto local y ejecución práctica. Más que una competencia tradicional, es un espacio de colaboración donde distintos perfiles construyen juntos soluciones con potencial de impacto.
+          El Hackathon de Turismo Creativo I es un evento intensivo donde equipos multidisciplinarios
+          trabajan durante dos días para diseñar, prototipar y presentar soluciones aplicables a retos
+          reales del país. La experiencia une turismo, código y cultura para transformar ideas en
+          propuestas demostrables, combinando creatividad, tecnología, contexto local y ejecución
+          práctica. Más que una competencia tradicional, es un espacio de colaboración donde distintos
+          perfiles construyen juntos soluciones con potencial de impacto.
         </p>
 
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {FESTIVAL_ITEMS.map(({ title, description, Icon }) => (
+          {ABOUT_ITEMS.map(({ title, description, Icon }) => (
             <article
               key={title}
               className="group relative flex min-h-56 flex-col gap-4 overflow-hidden rounded-3xl border border-brand-electric/45 bg-brand-surface/80 p-5 shadow-[0_0_0_1px_rgba(26,130,255,0.15)] transition duration-200 hover:border-brand-orange/70 hover:shadow-[0_0_0_1px_rgba(255,107,0,0.35),0_14px_28px_rgba(8,20,45,0.45)]"

@@ -5,7 +5,7 @@ import { getFirebaseAdminAuth } from "@/lib/firebase/admin";
 
 const SESSION_COOKIE_NAME = "hc_admin_session";
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 5;
-const DEV_TOKEN_SECRET = process.env.SESSION_SECRET ?? "festival-de-codigo-secret";
+const DEV_TOKEN_SECRET = process.env.SESSION_SECRET ?? "hackathon-session-secret";
 
 type SessionUser = {
   email: string;

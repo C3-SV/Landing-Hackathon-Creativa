@@ -1,5 +1,5 @@
-﻿import type { Metadata, Viewport } from "next";
-import { JetBrains_Mono, Press_Start_2P, Sora } from "next/font/google";
+import type { CSSProperties } from "react";
+import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { PreviewAccessControls } from "@/features/site-access/components/preview-access-controls";
 import { getPreviewUserFromCookies } from "@/lib/auth/preview-access";
@@ -13,27 +13,20 @@ import {
   OG_LOCALE,
   SITE_NAME,
   SITE_ORIGIN,
-  SITE_URL,
+  SITE_ROOT_URL,
   getOrganizationJsonLd,
   getWebsiteJsonLd,
 } from "@/lib/seo/metadata";
 import "./globals.css";
 
-const fontBody = Sora({
-  variable: "--font-sora",
-  subsets: ["latin"],
-});
-
-const fontMono = JetBrains_Mono({
-  variable: "--font-jetbrains",
-  subsets: ["latin"],
-});
-
-const fontDisplay = Press_Start_2P({
-  variable: "--font-pressstart",
-  weight: "400",
-  subsets: ["latin"],
-});
+const fontVariables = {
+  "--font-sora":
+    '"Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
+  "--font-jetbrains":
+    '"JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace',
+  "--font-pressstart":
+    '"Arial Black", "Segoe UI Black", Impact, system-ui, sans-serif',
+} as CSSProperties;
 
 export const metadata: Metadata = {
   metadataBase: SITE_ORIGIN,
@@ -41,20 +34,20 @@ export const metadata: Metadata = {
   title: DEFAULT_TITLE,
   description: DEFAULT_DESCRIPTION,
   alternates: {
-    canonical: SITE_URL,
+    canonical: SITE_ROOT_URL,
   },
   openGraph: {
     title: DEFAULT_TITLE,
     description: DEFAULT_DESCRIPTION,
-    url: SITE_URL,
+    url: SITE_ROOT_URL,
     siteName: SITE_NAME,
     locale: OG_LOCALE,
     type: "website",
     images: [
       {
         url: DEFAULT_OG_IMAGE,
-        width: 1280,
-        height: 976,
+        width: 1200,
+        height: 630,
         alt: DEFAULT_OG_IMAGE_ALT,
       },
     ],
@@ -82,9 +75,14 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
-    shortcut: [{ url: "/icon.svg", type: "image/svg+xml" }],
-    apple: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    icon: [
+      { url: "/favicon.ico", type: "image/x-icon" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    shortcut: [{ url: "/favicon.ico", type: "image/x-icon" }],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   manifest: "/manifest.webmanifest",
   other: {
@@ -109,7 +107,8 @@ export default async function RootLayout({
   return (
     <html
       lang="es-SV"
-      className={`${fontBody.variable} ${fontMono.variable} ${fontDisplay.variable} h-full antialiased`}
+      style={fontVariables}
+      className="h-full antialiased"
     >
       <body className="min-h-full flex flex-col bg-brand-bg text-brand-white">
         <script
@@ -127,4 +126,3 @@ export default async function RootLayout({
     </html>
   );
 }
-
