@@ -83,5 +83,9 @@ export function FieldError({ message }: { message?: string }) {
   if (!message) {
     return null;
   }
-  return <p className="mt-1 font-mono text-xs text-brand-action">{message}</p>;
+  return (
+    <p role="alert" className="mt-1 font-mono text-xs text-brand-action">
+      {message}
+    </p>
+  );
 }

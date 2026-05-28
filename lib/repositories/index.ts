@@ -21,6 +21,7 @@ export async function validateRegistrationBusinessRules(input: unknown) {
       ok: false as const,
       status: 400,
       error: "Datos de inscripción inválidos",
+      issues: parsed.error.issues,
       details: parsed.error.flatten(),
     };
   }
@@ -29,6 +30,8 @@ export async function validateRegistrationBusinessRules(input: unknown) {
   const editionId = payload.editionId || APP_ENV.currentEditionId;
   const teamNameNormalized = normalizeTeamName(payload.teamName);
 
+  // TODO: harden duplicate prevention with a transaction or idempotency key when
+  // concurrent submission risk needs stronger guarantees.
   const duplicatedTeam = await registrationRepository.hasTeamNameInEdition(
     teamNameNormalized,
     editionId,

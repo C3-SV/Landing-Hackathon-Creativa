@@ -17,6 +17,7 @@ export function SummaryPanel({ values, challenges }: SummaryPanelProps) {
     values.teamSize === 4 && values.extraMember
       ? [...baseMembers, values.extraMember]
       : baseMembers;
+  const challengePreferences = values.challengePreferences ?? [];
 
   const representative = members.find((member) => member.isRepresentative);
 
@@ -33,7 +34,15 @@ export function SummaryPanel({ values, challenges }: SummaryPanelProps) {
           <DataLabel label="Cómo se enteraron" value={values.source || "-"} />
           <DataLabel
             label="Reto #1"
-            value={challengeMap.get(values.challengePreferences?.[0]) ?? "-"}
+            value={challengeMap.get(challengePreferences[0]) ?? "-"}
+          />
+          <DataLabel
+            label="Reto #2"
+            value={challengeMap.get(challengePreferences[1]) ?? "-"}
+          />
+          <DataLabel
+            label="Reto #3"
+            value={challengeMap.get(challengePreferences[2]) ?? "-"}
           />
           <DataLabel
             label="Representante"

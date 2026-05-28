@@ -154,8 +154,8 @@ export function MemberFormCard({
       <div>
         <Label htmlFor={`${prefix}.about`}>Cuéntanos de ti</Label>
         <p className="mt-1 font-mono text-xs leading-relaxed text-brand-muted">
-          Preséntate brevemente. Escribe entre 50 y 100 palabras sobre quién eres,
-          qué te interesa y cómo aportarías a tu equipo.
+          Cuéntanos brevemente sobre tus intereses, habilidades o experiencia. Mínimo 50
+          caracteres.
         </p>
         <Textarea
           id={`${prefix}.about`}

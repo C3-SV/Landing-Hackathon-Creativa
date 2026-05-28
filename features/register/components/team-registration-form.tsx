@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -14,7 +14,6 @@ import { MemberFormCard } from "@/features/register/components/member-form-card"
 import { RegisterSidebar } from "@/features/register/components/register-sidebar";
 import { SummaryPanel } from "@/features/register/components/summary-panel";
 import { SOURCE_OPTIONS } from "@/lib/constants/form-options";
-import { parseJsonResponse } from "@/lib/http";
 import type { Challenge } from "@/lib/types/domain";
 import {
   AlertState,
@@ -28,8 +27,8 @@ import {
   Textarea,
 } from "@/lib/ui";
 import {
-  countWords,
   teamRegistrationFormSchema,
+  ABOUT_MIN_CHARACTERS,
   type TeamRegistrationFormValues,
 } from "@/lib/validation/team-registration";
 
@@ -49,6 +48,11 @@ type MemberCompletionShape = {
   institution?: string;
   degreeOrMajor?: string;
   about?: string;
+};
+
+type ServerValidationIssue = {
+  path?: Array<string | number>;
+  message: string;
 };
 
 const CHALLENGE_OPTION_TITLES: Record<string, string> = {
@@ -74,8 +78,7 @@ function memberIsComplete(member?: MemberCompletionShape) {
       member.institution &&
       member.degreeOrMajor &&
       member.about &&
-      countWords(member.about) >= 50 &&
-      countWords(member.about) <= 100,
+      member.about.trim().length >= ABOUT_MIN_CHARACTERS,
   );
 }
 
@@ -102,6 +105,8 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
     register,
     handleSubmit,
     setValue,
+    setError,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<TeamRegistrationFormValues>({
     resolver: zodResolver(teamRegistrationFormSchema),
@@ -112,12 +117,15 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
   const values = useWatch({ control }) as TeamRegistrationFormValues;
   const teamSize = Number(values.teamSize || 3) as 3 | 4;
 
-  const setRepresentative = useCallback((target: MemberField) => {
-    const keys = getMemberKeys(teamSize);
-    for (const key of keys) {
-      setValue(`${key}.isRepresentative`, key === target, { shouldValidate: true });
-    }
-  }, [setValue, teamSize]);
+  const setRepresentative = useCallback(
+    (target: MemberField) => {
+      const keys = getMemberKeys(teamSize);
+      for (const key of keys) {
+        setValue(`${key}.isRepresentative`, key === target, { shouldValidate: true });
+      }
+    },
+    [setValue, teamSize],
+  );
 
   useEffect(() => {
     if (teamSize === 4 && !values.extraMember) {
@@ -187,8 +195,34 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
     confirm: Boolean(errors.consents),
   } satisfies Record<RegisterSectionId, boolean>;
 
+  function mapServerIssuePath(path: Array<string | number> | undefined) {
+    if (!path || path.length === 0) {
+      return "";
+    }
+
+    if (path[0] === "challengePreferences") {
+      return "challengePreferences";
+    }
+
+    return path.map(String).join(".");
+  }
+
+  function applyServerValidationIssues(issues: ServerValidationIssue[]) {
+    for (const issue of issues) {
+      const fieldPath = mapServerIssuePath(issue.path);
+      if (fieldPath) {
+        setError(fieldPath as never, {
+          type: "server",
+          message: issue.message,
+        });
+      }
+    }
+  }
+
   async function onSubmit(formValues: TeamRegistrationFormValues) {
     setSubmitError(null);
+    clearErrors();
+
     try {
       const response = await fetch("/api/registrations", {
         method: "POST",
@@ -197,9 +231,29 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
         },
         body: JSON.stringify(formValues),
       });
-      const payload = await parseJsonResponse<{ registration: { teamName: string } }>(
-        response,
-      );
+
+      const payload = (await response.json().catch(() => null)) as
+        | {
+            error?: string;
+            issues?: ServerValidationIssue[];
+            registration?: { teamName: string };
+          }
+        | null;
+
+      if (!response.ok) {
+        if (response.status === 400 && Array.isArray(payload?.issues)) {
+          applyServerValidationIssues(payload.issues);
+        }
+
+        throw new Error(
+          payload?.error ?? "No se pudo enviar la inscripción. Intenta de nuevo.",
+        );
+      }
+
+      if (!payload?.registration?.teamName) {
+        throw new Error("No se pudo enviar la inscripción. Intenta de nuevo.");
+      }
+
       router.push(
         `/register/success?teamName=${encodeURIComponent(payload.registration.teamName)}`,
       );
@@ -438,36 +492,34 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
 
       <div className="rounded-2xl border border-brand-electric/35 bg-brand-surface/50 p-3 sm:p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={() => moveSection("prev")}
-          disabled={activeSection === "team" || isSubmitting}
-          className="w-full sm:w-auto"
-        >
-          Anterior
-        </Button>
-        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-          {activeSection !== "confirm" ? (
-            <Button
-              type="button"
-              variant="primary"
-              onClick={() => moveSection("next")}
-              disabled={isSubmitting}
-              className="w-full sm:w-auto"
-            >
-              Siguiente
-            </Button>
-          ) : (
-            <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
-              {isSubmitting ? "Enviando..." : "Enviar inscripción"}
-            </Button>
-          )}
-        </div>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => moveSection("prev")}
+            disabled={activeSection === "team" || isSubmitting}
+            className="w-full sm:w-auto"
+          >
+            Anterior
+          </Button>
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+            {activeSection !== "confirm" ? (
+              <Button
+                type="button"
+                variant="primary"
+                onClick={() => moveSection("next")}
+                disabled={isSubmitting}
+                className="w-full sm:w-auto"
+              >
+                Siguiente
+              </Button>
+            ) : (
+              <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
+                {isSubmitting ? "Enviando..." : "Enviar inscripción"}
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </form>
   );
 }
-
-

@@ -1,15 +1,7 @@
-﻿import { z } from "zod";
+import { z } from "zod";
 import { ROLE3H_VALUES } from "@/lib/types/domain";
 
-const ABOUT_MIN_WORDS = 50;
-const ABOUT_MAX_WORDS = 100;
-
-export function countWords(value: string) {
-  return value
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean).length;
-}
+export const ABOUT_MIN_CHARACTERS = 50;
 
 const optionalUrl = z
   .string()
@@ -36,16 +28,7 @@ const representativeFlagSchema = z.preprocess(
 const aboutSchema = z
   .string()
   .trim()
-  .min(1, "Cuéntanos de ti para conocerte mejor")
-  .superRefine((value, ctx) => {
-    const words = countWords(value);
-    if (words < ABOUT_MIN_WORDS || words > ABOUT_MAX_WORDS) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: `Escribe entre ${ABOUT_MIN_WORDS} y ${ABOUT_MAX_WORDS} palabras`,
-      });
-    }
-  });
+  .min(ABOUT_MIN_CHARACTERS, "Escribe al menos 50 caracteres.");
 
 export const memberSchema = z.object({
   role3H: z.enum(ROLE3H_VALUES),
@@ -118,14 +101,34 @@ export const teamRegistrationFormSchema = z
       (member): member is (typeof members)[number] & NonNullable<typeof member> =>
         Boolean(member),
     );
-    const memberEmails = cleanMembers.map((member) => member.email.toLowerCase());
+    const emailGroups = new Map<
+      string,
+      Array<(typeof cleanMembers)[number]>
+    >();
 
-    if (new Set(memberEmails).size !== memberEmails.length) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "No puedes repetir emails entre integrantes",
-        path: ["hacker", "email"],
-      });
+    for (const member of cleanMembers) {
+      const email = member.email.trim().toLowerCase();
+      if (!email) {
+        continue;
+      }
+
+      const group = emailGroups.get(email) ?? [];
+      group.push(member);
+      emailGroups.set(email, group);
+    }
+
+    for (const group of emailGroups.values()) {
+      if (group.length < 2) {
+        continue;
+      }
+
+      for (const member of group) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "No puedes repetir emails entre integrantes",
+          path: [member.role3H, "email"],
+        });
+      }
     }
 
     const representatives = cleanMembers.filter((member) => member.isRepresentative);
@@ -171,4 +174,3 @@ export type TeamRegistrationFormValues = z.input<typeof teamRegistrationFormSche
 export type TeamRegistrationPayloadInput = z.output<
   typeof teamRegistrationPayloadSchema
 >;
-

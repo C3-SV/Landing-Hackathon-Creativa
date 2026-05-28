@@ -25,7 +25,7 @@ export function RegisterSidebar({
           title={section.title}
           subtitle={section.subtitle}
           active={activeSection === section.id}
-          complete={Boolean(completeMap[section.id])}
+          complete={Boolean(completeMap[section.id]) && !Boolean(errorMap[section.id])}
           hasError={Boolean(errorMap[section.id])}
           onClick={() => onSelect(section.id)}
         />

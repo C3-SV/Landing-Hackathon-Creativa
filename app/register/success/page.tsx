@@ -5,9 +5,9 @@ import { buildPageMetadata } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = buildPageMetadata({
   path: "/register/success",
-  title: "Inscripcion enviada | Hackathon de Turismo Creativo I",
+  title: "Inscripción enviada | Hackathon de Turismo Creativo I",
   description:
-    "Confirmacion de envio de inscripcion para el Hackathon de Turismo Creativo I.",
+    "Confirmación de envío de inscripción para el Hackathon de Turismo Creativo I.",
   indexable: false,
 });
 

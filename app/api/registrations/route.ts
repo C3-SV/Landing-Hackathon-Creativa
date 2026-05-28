@@ -13,6 +13,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error: validation.error,
+          issues: "issues" in validation ? validation.issues : undefined,
           details: "details" in validation ? validation.details : undefined,
         },
         { status: validation.status },

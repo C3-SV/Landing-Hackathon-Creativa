@@ -71,7 +71,7 @@ export function AlertState({
   } as const;
 
   return (
-    <div className={cn("rounded-2xl border p-3.5", variants[variant])}>
+    <div role="alert" className={cn("rounded-2xl border p-3.5", variants[variant])}>
       <p className="font-mono text-xs uppercase tracking-[0.1em]">{title}</p>
       <p className="mt-1 text-sm leading-relaxed text-brand-muted">{description}</p>
     </div>

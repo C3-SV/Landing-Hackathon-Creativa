@@ -29,7 +29,7 @@ const COLLECTIONS = {
   registrations: "team_registrations",
 } as const;
 
-const ABOUT_FALLBACK = "Perfil pendiente de actualizacion desde una inscripcion anterior.";
+const ABOUT_FALLBACK = "Perfil pendiente de actualización desde una inscripción anterior.";
 
 const CONSENTS_FALLBACK: TeamConsents = {
   acceptCodeOfConduct: false,

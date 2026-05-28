@@ -24,9 +24,13 @@ export function SidebarItem({
       onClick={onClick}
       className={cn(
         "group relative w-full overflow-hidden rounded-2xl border px-3.5 py-3.5 text-left transition duration-200",
-        active
+        hasError
+          ? "border-brand-action/70 bg-brand-surface shadow-[0_0_0_1px_rgba(255,84,84,0.2)]"
+          : active
           ? "border-brand-orange/80 bg-brand-surface shadow-[0_0_0_1px_rgba(255,107,0,0.2)]"
-          : "border-brand-electric/35 bg-brand-surface/70 hover:border-brand-electric/70 hover:bg-brand-surface/90",
+          : complete
+            ? "border-brand-orange/60 bg-brand-surface/90 shadow-[0_0_0_1px_rgba(255,107,0,0.12)]"
+            : "border-brand-electric/35 bg-brand-surface/70 hover:border-brand-electric/70 hover:bg-brand-surface/90",
       )}
     >
       <span
@@ -40,10 +44,10 @@ export function SidebarItem({
         <span
           className={cn(
             "inline-flex h-2.5 w-2.5 rounded-full",
-            complete
-              ? "bg-brand-orange-soft"
-              : hasError
-                ? "bg-brand-action"
+            hasError
+              ? "bg-brand-action"
+              : complete
+                ? "bg-status-approved"
                 : "bg-brand-muted/70",
           )}
         />
