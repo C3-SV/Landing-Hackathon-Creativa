@@ -30,8 +30,8 @@ export function formatDateOnly(value: string) {
   });
 }
 
-export function toCsvValue(value: string | number | boolean | undefined) {
-  if (value === undefined) {
+export function toCsvValue(value: string | number | boolean | null | undefined) {
+  if (value === undefined || value === null) {
     return "";
   }
 

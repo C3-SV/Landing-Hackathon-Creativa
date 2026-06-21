@@ -39,6 +39,58 @@ const CONSENTS_FALLBACK: TeamConsents = {
   authorizationDeclaration: false,
 };
 
+function normalizeOptionalText(value: string | null | undefined) {
+  return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+function prepareRegistrationForFirestore(record: TeamRegistrationDoc): TeamRegistrationDoc {
+  return {
+    ...record,
+    teamDescription: normalizeOptionalText(record.teamDescription),
+    members: record.members.map((member) => ({
+      ...member,
+      preferredName: normalizeOptionalText(member.preferredName),
+      linkedinUrl: normalizeOptionalText(member.linkedinUrl),
+      githubUrl: normalizeOptionalText(member.githubUrl),
+      portfolioUrl: normalizeOptionalText(member.portfolioUrl),
+    })),
+  };
+}
+
+function findUndefinedPath(value: unknown, path: Array<string | number> = []): string | null {
+  if (value === undefined) {
+    return path.join(".") || "<root>";
+  }
+
+  if (Array.isArray(value)) {
+    for (const [index, item] of value.entries()) {
+      const nestedPath = findUndefinedPath(item, [...path, index]);
+      if (nestedPath) {
+        return nestedPath;
+      }
+    }
+    return null;
+  }
+
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+
+  const prototype = Object.getPrototypeOf(value);
+  if (prototype !== Object.prototype && prototype !== null) {
+    return null;
+  }
+
+  for (const [key, item] of Object.entries(value)) {
+    const nestedPath = findUndefinedPath(item, [...path, key]);
+    if (nestedPath) {
+      return nestedPath;
+    }
+  }
+
+  return null;
+}
+
 type StoredRegistration = Partial<Omit<TeamRegistrationDoc, "id">> & {
   createdAt?: string | Timestamp;
   updatedAt?: string | Timestamp;
@@ -257,8 +309,14 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
       updatedAt: now,
     };
 
-    await ref.set(record);
-    return record;
+    const firestoreRecord = prepareRegistrationForFirestore(record);
+    const undefinedPath = findUndefinedPath(firestoreRecord);
+    if (undefinedPath) {
+      throw new Error(`Registration document contains undefined at ${undefinedPath}`);
+    }
+
+    await ref.set(firestoreRecord);
+    return firestoreRecord;
   },
 
   async getRegistrationById(id: string) {

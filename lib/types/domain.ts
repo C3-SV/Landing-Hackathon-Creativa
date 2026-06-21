@@ -37,16 +37,16 @@ export type TeamMember = {
   isRepresentative: boolean;
   firstName: string;
   lastName: string;
-  preferredName?: string;
+  preferredName?: string | null;
   email: string;
   phone: string;
   affiliationType: string;
   institution: string;
   degreeOrMajor: string;
   about: string;
-  linkedinUrl?: string;
-  githubUrl?: string;
-  portfolioUrl?: string;
+  linkedinUrl?: string | null;
+  githubUrl?: string | null;
+  portfolioUrl?: string | null;
 };
 
 export type TeamConsents = {
@@ -62,7 +62,7 @@ export type TeamRegistrationPayload = {
   teamSize: TeamSize;
   teamName: string;
   institution: string;
-  teamDescription?: string;
+  teamDescription?: string | null;
   challengePreferences: readonly [string, string, string];
   source: string;
   members: readonly TeamMember[];

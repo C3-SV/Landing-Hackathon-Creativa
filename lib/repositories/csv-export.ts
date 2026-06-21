@@ -7,14 +7,14 @@ function csvBoolean(value: boolean | undefined) {
   return value ? "true" : "false";
 }
 
-function csvText(value: string | undefined) {
+function csvText(value: string | null | undefined) {
   return value ?? "";
 }
 
 function memberValue(
   member: TeamMember | undefined,
   key: keyof TeamMember,
-): string | boolean | undefined {
+): string | boolean | null | undefined {
   if (!member) {
     return "";
   }
@@ -71,7 +71,7 @@ function buildHeaders() {
 
 function buildRow(item: TeamRegistrationDoc) {
   const representative = getRepresentativeMember(item.members);
-  const row: Array<string | number | boolean | undefined> = [
+  const row: Array<string | number | boolean | null | undefined> = [
     item.id,
     item.editionId,
     item.status,
@@ -102,15 +102,15 @@ function buildRow(item: TeamRegistrationDoc) {
       csvText(memberValue(member, "role3H") as string | undefined),
       csvText(memberValue(member, "firstName") as string | undefined),
       csvText(memberValue(member, "lastName") as string | undefined),
-      csvText(memberValue(member, "preferredName") as string | undefined),
+      csvText(memberValue(member, "preferredName") as string | null | undefined),
       csvText(memberValue(member, "email") as string | undefined),
       csvText(memberValue(member, "phone") as string | undefined),
       csvText(memberValue(member, "affiliationType") as string | undefined),
       csvText(memberValue(member, "institution") as string | undefined),
       csvText(memberValue(member, "degreeOrMajor") as string | undefined),
-      csvText(memberValue(member, "linkedinUrl") as string | undefined),
-      csvText(memberValue(member, "githubUrl") as string | undefined),
-      csvText(memberValue(member, "portfolioUrl") as string | undefined),
+      csvText(memberValue(member, "linkedinUrl") as string | null | undefined),
+      csvText(memberValue(member, "githubUrl") as string | null | undefined),
+      csvText(memberValue(member, "portfolioUrl") as string | null | undefined),
       csvText(memberValue(member, "about") as string | undefined),
       csvBoolean(memberValue(member, "isRepresentative") as boolean | undefined),
     );

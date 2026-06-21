@@ -1,6 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type BaseSyntheticEvent,
+} from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
@@ -219,7 +225,18 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
     }
   }
 
-  async function onSubmit(formValues: TeamRegistrationFormValues) {
+  async function onSubmit(
+    formValues: TeamRegistrationFormValues,
+    event?: BaseSyntheticEvent,
+  ) {
+    const form = event?.target instanceof HTMLFormElement ? event.target : null;
+    if (form?.dataset.submitting === "true") {
+      return;
+    }
+
+    if (form) {
+      form.dataset.submitting = "true";
+    }
     setSubmitError(null);
     clearErrors();
 
@@ -241,7 +258,7 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
         | null;
 
       if (!response.ok) {
-        if (response.status === 400 && Array.isArray(payload?.issues)) {
+        if (Array.isArray(payload?.issues)) {
           applyServerValidationIssues(payload.issues);
         }
 
@@ -263,6 +280,10 @@ export function TeamRegistrationForm({ editionId, challenges }: TeamRegistration
           ? error.message
           : "No se pudo enviar la inscripción. Intenta de nuevo.",
       );
+    } finally {
+      if (form) {
+        delete form.dataset.submitting;
+      }
     }
   }
 

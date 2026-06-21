@@ -154,20 +154,30 @@ export const teamRegistrationFormSchema = z
   });
 
 export const teamRegistrationPayloadSchema = teamRegistrationFormSchema.transform(
-  (data) => ({
-    editionId: data.editionId,
-    teamSize: data.teamSize as 3 | 4,
-    teamName: data.teamName,
-    institution: data.institution,
-    teamDescription: data.teamDescription,
-    challengePreferences: data.challengePreferences as [string, string, string],
-    source: data.source,
-    members:
+  (data) => {
+    const members =
       data.teamSize === 4 && data.extraMember
         ? [data.hacker, data.hipster, data.hustler, data.extraMember]
-        : [data.hacker, data.hipster, data.hustler],
-    consents: data.consents,
-  }),
+        : [data.hacker, data.hipster, data.hustler];
+
+    return {
+      editionId: data.editionId,
+      teamSize: data.teamSize as 3 | 4,
+      teamName: data.teamName,
+      institution: data.institution,
+      teamDescription: data.teamDescription ?? null,
+      challengePreferences: data.challengePreferences as [string, string, string],
+      source: data.source,
+      members: members.map((member) => ({
+        ...member,
+        preferredName: member.preferredName ?? null,
+        linkedinUrl: member.linkedinUrl ?? null,
+        githubUrl: member.githubUrl ?? null,
+        portfolioUrl: member.portfolioUrl ?? null,
+      })),
+      consents: data.consents,
+    };
+  },
 );
 
 export type TeamRegistrationFormValues = z.input<typeof teamRegistrationFormSchema>;

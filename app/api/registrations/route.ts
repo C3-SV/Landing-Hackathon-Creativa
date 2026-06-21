@@ -5,8 +5,18 @@ import {
 } from "@/lib/repositories";
 
 export async function POST(request: Request) {
+  let body: unknown;
+
   try {
-    const body = await request.json();
+    body = await request.json();
+  } catch {
+    return NextResponse.json(
+      { error: "El cuerpo de la solicitud no contiene JSON válido" },
+      { status: 400 },
+    );
+  }
+
+  try {
     const validation = await validateRegistrationBusinessRules(body);
 
     if (!validation.ok) {
@@ -26,7 +36,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ registration }, { status: 201 });
   } catch (error) {
-    console.error(error);
+    console.error("Registration creation failed", {
+      name: error instanceof Error ? error.name : "UnknownError",
+      message: error instanceof Error ? error.message : "Unknown server error",
+    });
     return NextResponse.json(
       { error: "No se pudo completar la inscripción" },
       { status: 500 },
