@@ -1,12 +1,14 @@
 import Image from "next/image";
 import { BRANDING } from "@/lib/constants/branding";
-import { Card, SectionHeading, cn } from "@/lib/ui";
+import { Card, cn } from "@/lib/ui";
 
 type Sponsor = {
   name: string;
   level: string;
+  href: string;
   logoSrc: string;
   logoAlt: string;
+  linkLabel: string;
   width: number;
   height: number;
   featured?: boolean;
@@ -17,8 +19,10 @@ const SPONSORS: Sponsor[] = [
   {
     name: "Key Institute",
     level: "Ultra Legend Partner",
+    href: "https://www.keyinstitute.com/",
     logoSrc: "/images/sponsors/key-institute.png",
-    logoAlt: "Logo de Key Institute, Instituto Kriete de Ingenieria y Ciencias.",
+    logoAlt: "Key Institute — Ultra Legend Partner",
+    linkLabel: "Abrir sitio oficial de Key Institute en una nueva pestana",
     width: 2564,
     height: 432,
     featured: true,
@@ -26,8 +30,10 @@ const SPONSORS: Sponsor[] = [
   {
     name: "SVNet",
     level: "Legend Partner",
+    href: "https://svnet.sv/",
     logoSrc: "/images/sponsors/svnet.svg",
-    logoAlt: "Logo de SVNet.",
+    logoAlt: "SVNet — Legend Partner",
+    linkLabel: "Abrir sitio oficial de SVNet en una nueva pestana",
     width: 1627,
     height: 520,
     unoptimized: true,
@@ -45,10 +51,13 @@ export function SponsorsSection() {
           {"{} 07 / SPONSORS / ALIADOS"}
         </p>
 
-        <SectionHeading
-          title="Patrocinadores y aliados"
-          description={`Key Institute y SVNet se suman a ${BRANDING.eventName} con presencia destacada dentro del ecosistema que impulsa turismo, codigo y cultura.`}
-        />
+        <h2 className="mt-7 font-display text-[1.9rem] uppercase leading-[1.22] tracking-[0.05em] text-brand-white [text-shadow:4px_4px_0_var(--brand-electric)] sm:text-[2.6rem] lg:text-[3.9rem]">
+          PATROCINADORES Y ALIADOS
+        </h2>
+
+        <p className="max-w-[980px] text-base leading-relaxed text-brand-white/92 sm:text-lg">
+          {`Key Institute y SVNet se suman a ${BRANDING.eventName} con presencia destacada dentro del ecosistema que impulsa turismo, codigo y cultura.`}
+        </p>
 
         <div className="space-y-5 lg:space-y-6">
           {SPONSORS.map((sponsor) => (
@@ -106,12 +115,16 @@ export function SponsorsSection() {
                   </h3>
                 </div>
 
-                <div
+                <a
+                  href={sponsor.href}
+                  target="_blank"
+                  rel="sponsored noopener"
+                  aria-label={sponsor.linkLabel}
                   className={cn(
-                    "relative flex w-full items-center justify-center overflow-hidden rounded-[1.5rem] border p-4 sm:p-6",
+                    "relative flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-[1.5rem] border p-4 transition duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange/60 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-surface sm:p-6",
                     sponsor.featured
-                      ? "min-h-[200px] border-brand-orange/35 bg-white shadow-[inset_0_0_0_1px_rgba(255,167,38,0.12)] sm:min-h-[240px] lg:min-h-[280px]"
-                      : "min-h-[180px] border-brand-electric/30 bg-white/95 shadow-[inset_0_0_0_1px_rgba(26,130,255,0.08)] sm:min-h-[220px]",
+                      ? "min-h-[200px] border-brand-orange/35 bg-white shadow-[inset_0_0_0_1px_rgba(255,167,38,0.12)] hover:border-brand-orange/55 hover:shadow-[inset_0_0_0_1px_rgba(255,167,38,0.18),0_16px_30px_rgba(8,20,45,0.2)] sm:min-h-[240px] lg:min-h-[280px]"
+                      : "min-h-[180px] border-brand-electric/30 bg-white/95 shadow-[inset_0_0_0_1px_rgba(26,130,255,0.08)] hover:border-brand-electric/55 hover:shadow-[inset_0_0_0_1px_rgba(26,130,255,0.14),0_16px_30px_rgba(8,20,45,0.18)] sm:min-h-[220px]",
                   )}
                 >
                   <Image
@@ -128,7 +141,7 @@ export function SponsorsSection() {
                         : "max-h-[108px] sm:max-h-[136px] lg:max-h-[150px]",
                     )}
                   />
-                </div>
+                </a>
               </div>
             </Card>
           ))}

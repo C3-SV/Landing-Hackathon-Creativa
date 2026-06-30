@@ -2,22 +2,28 @@ import Image from "next/image";
 
 type OrganizerCard = {
   name: string;
+  href: string;
   logoSrc: string;
   logoAlt: string;
+  linkLabel: string;
   logoClassName?: string;
 };
 
 const ORGANIZERS: OrganizerCard[] = [
   {
     name: "C3 / Competitive Coding Club",
+    href: "https://c3.com.sv/",
     logoSrc: "/images/logo-c3-blanco.png",
-    logoAlt: "Logo de C3",
+    logoAlt: "C3 — Organizador",
+    linkLabel: "Abrir sitio oficial de C3 en una nueva pestana",
     logoClassName: "max-h-[220px]",
   },
   {
     name: "Poliédrica",
+    href: "https://www.poliedrica.sv/",
     logoSrc: "/images/logo-poliedrica-original.png",
-    logoAlt: "Logo de Poliédrica",
+    logoAlt: "Poliédrica — Organizador",
+    linkLabel: "Abrir sitio oficial de Poliedrica en una nueva pestana",
     logoClassName: "max-h-[190px]",
   },
 ];
@@ -55,8 +61,14 @@ export function OrganizersSection() {
                 className="pointer-events-none absolute bottom-4 left-4 h-6 w-6 border-b-2 border-l-2 border-brand-white/80"
               />
 
-              <div className="flex flex-1 items-center justify-center px-2 sm:px-4">
-                <div className="relative flex h-full w-full items-center justify-center rounded-2xl border border-brand-electric/35 bg-brand-bg/40 p-4">
+              <a
+                href={organizer.href}
+                target="_blank"
+                rel="noopener"
+                aria-label={organizer.linkLabel}
+                className="flex flex-1 items-center justify-center rounded-2xl px-2 transition duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange/60 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-surface sm:px-4"
+              >
+                <div className="relative flex h-full w-full cursor-pointer items-center justify-center rounded-2xl border border-brand-electric/35 bg-brand-bg/40 p-4 transition duration-200 hover:border-brand-orange/55 hover:shadow-[0_0_0_1px_rgba(255,107,0,0.18),0_12px_24px_rgba(8,20,45,0.26)]">
                   <Image
                     src={organizer.logoSrc}
                     alt={organizer.logoAlt}
@@ -65,7 +77,7 @@ export function OrganizersSection() {
                     className={`h-auto w-full object-contain ${organizer.logoClassName ?? "max-h-[200px]"}`}
                   />
                 </div>
-              </div>
+              </a>
 
               <p className="mt-8 text-center font-mono text-lg font-semibold text-brand-white sm:text-xl">
                 {organizer.name}
