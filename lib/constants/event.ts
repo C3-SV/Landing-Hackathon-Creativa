@@ -29,7 +29,7 @@ export const FAQ_ITEMS = [
   {
     question: "¿QUIÉN PUEDE PARTICIPAR?",
     answer:
-      "Personas interesadas en turismo, tecnología, cultura, diseño, negocios, marketing, datos o creación de soluciones. No necesitas tener un perfil exclusivamente técnico.",
+      "La competencia está dirigida a estudiantes universitarios y personas recién graduadas, con hasta 2 años de haber egresado. Pueden participar personas interesadas en turismo, tecnología, cultura, diseño, negocios, marketing, datos o creación de soluciones, y no necesitan un perfil exclusivamente técnico.",
   },
   {
     question: "¿LA INSCRIPCIÓN ES POR EQUIPOS?",
