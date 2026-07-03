@@ -11,6 +11,5 @@ export const AFFILIATION_TYPE_OPTIONS = [
   "Estudiante",
   "Profesional",
   "Emprendedor",
-  "Freelancer",
   "Otro",
 ] as const;
