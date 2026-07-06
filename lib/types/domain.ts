@@ -102,6 +102,7 @@ export type RegistrationListItem = {
   representativeEmail: string;
   institution: string;
   preferredChallenge: string;
+  assignedChallengeId?: string | null;
   createdAt: string;
 };
 

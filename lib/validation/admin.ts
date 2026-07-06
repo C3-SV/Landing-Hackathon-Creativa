@@ -11,9 +11,13 @@ export const registrationFiltersSchema = z.object({
 export const adminUpdateRegistrationSchema = z
   .object({
     status: z.enum(REGISTRATION_STATUS_VALUES).optional(),
-    note: z.string().trim().max(500).optional(),
-    assignedChallengeId: z.string().trim().optional(),
+    note: z.string().trim().min(1).max(500).optional(),
+    assignedChallengeId: z.string().trim().nullable().optional(),
   })
-  .refine((value) => value.status || value.note || value.assignedChallengeId, {
+  .refine((value) => (
+    value.status !== undefined ||
+    value.note !== undefined ||
+    Object.prototype.hasOwnProperty.call(value, "assignedChallengeId")
+  ), {
     message: "Debes enviar al menos un cambio",
   });

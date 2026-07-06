@@ -13,6 +13,13 @@ type RegistrationsTableProps = {
   challenges: Challenge[];
 };
 
+type RowFilters = {
+  query: string;
+  status: string;
+  institution: string;
+  preferredChallenge: string;
+};
+
 export function RegistrationsTable({
   initialRows,
   challenges,
@@ -34,14 +41,21 @@ export function RegistrationsTable({
     return [...set].sort((a, b) => a.localeCompare(b));
   }, [initialRows]);
 
-  async function loadRows() {
+  async function loadRows(overrides?: RowFilters) {
+    const filters = overrides ?? {
+      query,
+      status,
+      institution,
+      preferredChallenge,
+    };
+
     setLoading(true);
     try {
       const queryString = toQueryString({
-        query: query || undefined,
-        status: status || undefined,
-        institution: institution || undefined,
-        preferredChallenge: preferredChallenge || undefined,
+        query: filters.query || undefined,
+        status: filters.status || undefined,
+        institution: filters.institution || undefined,
+        preferredChallenge: filters.preferredChallenge || undefined,
       });
       const response = await fetch(`/api/admin/registrations${queryString}`);
       const payload = await parseJsonResponse<{ registrations: RegistrationListItem[] }>(
@@ -61,11 +75,18 @@ export function RegistrationsTable({
   }
 
   async function onResetFilters() {
+    const emptyFilters = {
+      query: "",
+      status: "",
+      institution: "",
+      preferredChallenge: "",
+    };
+
     setQuery("");
     setStatus("");
     setInstitution("");
     setPreferredChallenge("");
-    setRows(initialRows);
+    await loadRows(emptyFilters);
   }
 
   return (
@@ -165,6 +186,7 @@ export function RegistrationsTable({
                 <th className="px-4 py-3">Tamaño</th>
                 <th className="px-4 py-3">Equipo</th>
                 <th className="px-4 py-3">Institución</th>
+                <th className="px-4 py-3">Reto asignado</th>
                 <th className="px-4 py-3">Reto #1</th>
                 <th className="px-4 py-3">Fecha</th>
                 <th className="px-4 py-3">Representante</th>
@@ -198,6 +220,11 @@ export function RegistrationsTable({
                     </Link>
                   </td>
                   <td className="px-4 py-3 text-brand-muted">{row.institution}</td>
+                  <td className="px-4 py-3 text-brand-muted">
+                    {row.assignedChallengeId
+                      ? challengeMap.get(row.assignedChallengeId) ?? row.assignedChallengeId
+                      : "Sin asignar"}
+                  </td>
                   <td className="px-4 py-3 text-brand-muted">
                     {challengeMap.get(row.preferredChallenge) ?? row.preferredChallenge}
                   </td>

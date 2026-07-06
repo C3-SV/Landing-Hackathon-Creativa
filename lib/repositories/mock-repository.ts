@@ -33,6 +33,7 @@ function mapToListItem(record: TeamRegistrationDoc): RegistrationListItem {
     representativeEmail: getRepresentativeEmail(record.members),
     institution: record.institution,
     preferredChallenge: record.challengePreferences[0] ?? "",
+    assignedChallengeId: record.assignedChallengeId ?? null,
     createdAt: record.createdAt,
   };
 }
@@ -187,10 +188,17 @@ export const mockRegistrationRepository: RegistrationRepository = {
     const next: TeamRegistrationDoc = {
       ...current,
       status: update.status ?? current.status,
-      assignedChallengeId: update.assignedChallengeId ?? current.assignedChallengeId,
       adminNotes: current.adminNotes,
       updatedAt: new Date().toISOString(),
     };
+
+    if (Object.prototype.hasOwnProperty.call(update, "assignedChallengeId")) {
+      if (update.assignedChallengeId === null) {
+        delete next.assignedChallengeId;
+      } else {
+        next.assignedChallengeId = update.assignedChallengeId;
+      }
+    }
 
     if (update.note?.message) {
       next.adminNotes = [

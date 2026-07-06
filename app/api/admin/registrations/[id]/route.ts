@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { requireAdminUser } from "@/lib/auth/admin";
+import { notifyRegistrationStatusChange } from "@/lib/email/admin-notifications";
 import { registrationRepository } from "@/lib/repositories";
+import type { RegistrationUpdateInput } from "@/lib/repositories/types";
 import { adminUpdateRegistrationSchema } from "@/lib/validation/admin";
 
 type Context = {
@@ -44,16 +46,46 @@ export async function PATCH(request: Request, context: Context) {
     }
 
     const { id } = await context.params;
-    const updated = await registrationRepository.updateRegistration(id, {
-      status: parsed.data.status,
-      assignedChallengeId: parsed.data.assignedChallengeId || undefined,
-      note: parsed.data.note
-        ? {
-            authorEmail: auth.user.email,
-            message: parsed.data.note,
-          }
-        : undefined,
-    });
+    const current = await registrationRepository.getRegistrationById(id);
+
+    if (!current) {
+      return NextResponse.json(
+        { error: "Equipo no encontrado" },
+        {
+          status: 404,
+        },
+      );
+    }
+
+    if (parsed.data.assignedChallengeId) {
+      const challenges = await registrationRepository.getChallenges();
+      const challengeExists = challenges.some(
+        (challenge) => challenge.id === parsed.data.assignedChallengeId,
+      );
+
+      if (!challengeExists) {
+        return NextResponse.json(
+          { error: "Reto asignado inválido" },
+          { status: 400 },
+        );
+      }
+    }
+
+    const update: RegistrationUpdateInput = {};
+    if (parsed.data.status) {
+      update.status = parsed.data.status;
+    }
+    if (Object.prototype.hasOwnProperty.call(parsed.data, "assignedChallengeId")) {
+      update.assignedChallengeId = parsed.data.assignedChallengeId || null;
+    }
+    if (parsed.data.note) {
+      update.note = {
+        authorEmail: auth.user.email,
+        message: parsed.data.note,
+      };
+    }
+
+    const updated = await registrationRepository.updateRegistration(id, update);
 
     if (!updated) {
       return NextResponse.json(
@@ -62,6 +94,14 @@ export async function PATCH(request: Request, context: Context) {
           status: 404,
         },
       );
+    }
+
+    if (parsed.data.status) {
+      await notifyRegistrationStatusChange({
+        registration: updated,
+        previousStatus: current.status,
+        actorEmail: auth.user.email,
+      });
     }
 
     return NextResponse.json({ registration: updated });

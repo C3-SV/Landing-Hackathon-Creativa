@@ -1,4 +1,4 @@
-import type { QueryDocumentSnapshot, Timestamp } from "firebase-admin/firestore";
+import { FieldValue, type QueryDocumentSnapshot, type Timestamp } from "firebase-admin/firestore";
 import { CHALLENGE_SEEDS, EDITION_SEEDS } from "@/lib/constants/event";
 import { getFirebaseAdminDb } from "@/lib/firebase/admin";
 import { buildRegistrationsCsv } from "@/lib/repositories/csv-export";
@@ -94,6 +94,7 @@ function findUndefinedPath(value: unknown, path: Array<string | number> = []): s
 type StoredRegistration = Partial<Omit<TeamRegistrationDoc, "id">> & {
   createdAt?: string | Timestamp;
   updatedAt?: string | Timestamp;
+  assignedChallengeId?: string | null;
   responsibleName?: string;
   responsibleEmail?: string;
   responsiblePhone?: string;
@@ -141,6 +142,13 @@ function normalizeMembers(data: StoredRegistration) {
   }));
 }
 
+function normalizeAdminNotes(data: StoredRegistration) {
+  return (data.adminNotes ?? []).map((note) => ({
+    ...note,
+    createdAt: timestampToIso(note.createdAt as string | Timestamp | undefined),
+  }));
+}
+
 function toRegistration(docId: string, rawData: StoredRegistration): TeamRegistrationDoc {
   const teamName = rawData.teamName ?? "";
   const members = normalizeMembers(rawData);
@@ -159,8 +167,8 @@ function toRegistration(docId: string, rawData: StoredRegistration): TeamRegistr
     source: rawData.source ?? "No especificado",
     members,
     consents: rawData.consents ?? CONSENTS_FALLBACK,
-    assignedChallengeId: rawData.assignedChallengeId,
-    adminNotes: rawData.adminNotes ?? [],
+    assignedChallengeId: rawData.assignedChallengeId ?? undefined,
+    adminNotes: normalizeAdminNotes(rawData),
     createdAt: timestampToIso(rawData.createdAt),
     updatedAt: timestampToIso(rawData.updatedAt),
   };
@@ -263,6 +271,7 @@ function toListItem(doc: TeamRegistrationDoc): RegistrationListItem {
     representativeEmail: getRepresentativeEmail(doc.members),
     institution: doc.institution,
     preferredChallenge: doc.challengePreferences[0] ?? "",
+    assignedChallengeId: doc.assignedChallengeId ?? null,
     createdAt: doc.createdAt,
   };
 }
@@ -354,11 +363,24 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
       return null;
     }
 
-    const current = toRegistration(id, (snap.data() ?? {}) as StoredRegistration);
     const updatedAt = new Date().toISOString();
-    const nextNotes = [...(current.adminNotes ?? [])];
+    const patch: Record<string, unknown> = {
+      updatedAt,
+    };
+
+    if (update.status) {
+      patch.status = update.status;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(update, "assignedChallengeId")) {
+      patch.assignedChallengeId =
+        update.assignedChallengeId === null
+          ? FieldValue.delete()
+          : update.assignedChallengeId;
+    }
+
     if (update.note?.message) {
-      nextNotes.push({
+      patch.adminNotes = FieldValue.arrayUnion({
         id: `note_${Date.now()}`,
         authorEmail: update.note.authorEmail,
         message: update.note.message,
@@ -366,12 +388,7 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
       });
     }
 
-    await ref.update({
-      status: update.status ?? current.status,
-      assignedChallengeId: update.assignedChallengeId ?? current.assignedChallengeId,
-      adminNotes: nextNotes,
-      updatedAt,
-    });
+    await ref.update(patch);
 
     const saved = await ref.get();
     return toRegistration(saved.id, (saved.data() ?? {}) as StoredRegistration);
@@ -379,7 +396,10 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
 
   async exportRegistrationsCsv() {
     const db = getFirebaseAdminDb();
-    const snapshot = await db.collection(COLLECTIONS.registrations).get();
+    const snapshot = await db
+      .collection(COLLECTIONS.registrations)
+      .orderBy("createdAt", "desc")
+      .get();
     const records = snapshot.docs.map(fromDoc);
     return buildRegistrationsCsv(records);
   },

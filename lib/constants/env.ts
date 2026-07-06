@@ -17,6 +17,12 @@ export const APP_ENV = {
     .split(",")
     .map((item) => item.trim().toLowerCase())
     .filter(Boolean),
+  emailNotificationsEnabled: readBooleanEnv(process.env.EMAIL_NOTIFICATIONS_ENABLED, false),
+  email: {
+    from: process.env.EMAIL_FROM ?? "",
+    replyTo: process.env.EMAIL_REPLY_TO ?? "",
+    brevoApiKey: process.env.BREVO_API_KEY ?? "",
+  },
   firebaseAdmin: {
     projectId: process.env.FIREBASE_PROJECT_ID ?? "",
     clientEmail: process.env.FIREBASE_CLIENT_EMAIL ?? "",

@@ -56,6 +56,7 @@ export function RegistrationDetail({
   registration,
   challenges,
 }: RegistrationDetailProps) {
+  const challengeMap = new Map(challenges.map((challenge) => [challenge.id, challenge.name]));
   const [current, setCurrent] = useState(registration);
   const [status, setStatus] = useState<RegistrationStatus>(registration.status);
   const [assignedChallengeId, setAssignedChallengeId] = useState(
@@ -80,7 +81,7 @@ export function RegistrationDetail({
         },
         body: JSON.stringify({
           status,
-          assignedChallengeId: assignedChallengeId || undefined,
+          assignedChallengeId,
           note: note.trim() || undefined,
         }),
       });
@@ -122,6 +123,15 @@ export function RegistrationDetail({
               <DataLabel label="Tamaño" value={`${current.teamSize} integrantes`} />
               <DataLabel label="Canal" value={current.source || "-"} />
               <DataLabel label="Inscripción" value={formatDateTime(current.createdAt)} />
+              <DataLabel label="Última actualización" value={formatDateTime(current.updatedAt)} />
+              <DataLabel
+                label="Reto asignado"
+                value={
+                  current.assignedChallengeId
+                    ? challengeMap.get(current.assignedChallengeId) ?? current.assignedChallengeId
+                    : "Sin asignar"
+                }
+              />
               <DataLabel
                 label="Representante"
                 value={
@@ -148,9 +158,7 @@ export function RegistrationDetail({
             </h2>
             <ul className="grid gap-2 text-sm text-brand-muted">
               {current.challengePreferences.map((challengeId, index) => {
-                const challengeName =
-                  challenges.find((challenge) => challenge.id === challengeId)?.name ??
-                  challengeId;
+                const challengeName = challengeMap.get(challengeId) ?? challengeId;
                 return (
                   <li key={`${challengeId}-${index}`} className="flex gap-2">
                     <span className="font-mono text-brand-orange-soft">#{index + 1}</span>
@@ -231,6 +239,9 @@ export function RegistrationDetail({
               <p className="mt-1 text-brand-white">
                 {member.firstName} {member.lastName}
               </p>
+              {member.preferredName ? (
+                <p className="text-sm text-brand-muted">Prefiere: {member.preferredName}</p>
+              ) : null}
               <p className="text-sm text-brand-muted">{member.email}</p>
               <p className="text-sm text-brand-muted">{member.phone}</p>
               <div className="mt-3 grid gap-1 text-xs text-brand-muted">
@@ -246,6 +257,38 @@ export function RegistrationDetail({
                   <span className="font-mono uppercase tracking-wide text-brand-electric">Área:</span>{" "}
                   {member.degreeOrMajor}
                 </p>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                {member.linkedinUrl ? (
+                  <a
+                    href={member.linkedinUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-mono uppercase text-brand-electric hover:text-brand-white"
+                  >
+                    LinkedIn
+                  </a>
+                ) : null}
+                {member.githubUrl ? (
+                  <a
+                    href={member.githubUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-mono uppercase text-brand-electric hover:text-brand-white"
+                  >
+                    GitHub
+                  </a>
+                ) : null}
+                {member.portfolioUrl ? (
+                  <a
+                    href={member.portfolioUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-mono uppercase text-brand-electric hover:text-brand-white"
+                  >
+                    Portfolio
+                  </a>
+                ) : null}
               </div>
               <p className="mt-3 font-mono text-xs uppercase tracking-wide text-brand-electric">
                 Cuéntanos de ti

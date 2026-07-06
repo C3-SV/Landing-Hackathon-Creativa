@@ -12,7 +12,7 @@ import type {
 
 export type RegistrationUpdateInput = {
   status?: RegistrationStatus;
-  assignedChallengeId?: string;
+  assignedChallengeId?: string | null;
   note?: {
     authorEmail: string;
     message: string;
