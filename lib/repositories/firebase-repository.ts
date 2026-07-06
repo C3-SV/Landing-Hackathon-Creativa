@@ -8,6 +8,7 @@ import type {
 } from "@/lib/repositories/types";
 import type {
   Challenge,
+  ChallengeOverviewRegistration,
   DashboardStats,
   Edition,
   RegistrationListFilters,
@@ -276,6 +277,21 @@ function toListItem(doc: TeamRegistrationDoc): RegistrationListItem {
   };
 }
 
+function toChallengeOverviewItem(doc: TeamRegistrationDoc): ChallengeOverviewRegistration {
+  return {
+    id: doc.id,
+    status: doc.status,
+    teamSize: doc.teamSize,
+    teamName: doc.teamName,
+    representativeName: getRepresentativeName(doc.members),
+    representativeEmail: getRepresentativeEmail(doc.members),
+    institution: doc.institution,
+    challengePreferences: doc.challengePreferences,
+    assignedChallengeId: doc.assignedChallengeId ?? null,
+    createdAt: doc.createdAt,
+  };
+}
+
 export const firebaseRegistrationRepository: RegistrationRepository = {
   async getChallenges() {
     const db = getFirebaseAdminDb();
@@ -346,6 +362,15 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
       .get();
     const records = snapshot.docs.map(fromDoc);
     return applyFilters(records, filters).map(toListItem);
+  },
+
+  async listRegistrationsForChallengeOverview() {
+    const db = getFirebaseAdminDb();
+    const snapshot = await db
+      .collection(COLLECTIONS.registrations)
+      .orderBy("createdAt", "desc")
+      .get();
+    return snapshot.docs.map(fromDoc).map(toChallengeOverviewItem);
   },
 
   async getDashboardStats() {

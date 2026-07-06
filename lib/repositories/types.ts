@@ -1,6 +1,7 @@
 import type {
   AdminNote,
   Challenge,
+  ChallengeOverviewRegistration,
   DashboardStats,
   Edition,
   RegistrationListFilters,
@@ -25,6 +26,7 @@ export type RegistrationRepository = {
   createRegistration(payload: TeamRegistrationPayload): Promise<TeamRegistrationDoc>;
   getRegistrationById(id: string): Promise<TeamRegistrationDoc | null>;
   listRegistrations(filters?: RegistrationListFilters): Promise<RegistrationListItem[]>;
+  listRegistrationsForChallengeOverview(): Promise<ChallengeOverviewRegistration[]>;
   getDashboardStats(): Promise<DashboardStats>;
   updateRegistration(
     id: string,

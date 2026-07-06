@@ -11,6 +11,7 @@ import type {
 } from "@/lib/repositories/types";
 import type {
   DashboardStats,
+  ChallengeOverviewRegistration,
   RegistrationListFilters,
   RegistrationListItem,
   TeamRegistrationDoc,
@@ -33,6 +34,21 @@ function mapToListItem(record: TeamRegistrationDoc): RegistrationListItem {
     representativeEmail: getRepresentativeEmail(record.members),
     institution: record.institution,
     preferredChallenge: record.challengePreferences[0] ?? "",
+    assignedChallengeId: record.assignedChallengeId ?? null,
+    createdAt: record.createdAt,
+  };
+}
+
+function mapToChallengeOverviewItem(record: TeamRegistrationDoc): ChallengeOverviewRegistration {
+  return {
+    id: record.id,
+    status: record.status,
+    teamSize: record.teamSize,
+    teamName: record.teamName,
+    representativeName: getRepresentativeName(record.members),
+    representativeEmail: getRepresentativeEmail(record.members),
+    institution: record.institution,
+    challengePreferences: record.challengePreferences,
     assignedChallengeId: record.assignedChallengeId ?? null,
     createdAt: record.createdAt,
   };
@@ -171,6 +187,10 @@ export const mockRegistrationRepository: RegistrationRepository = {
   async listRegistrations(filters = {}) {
     const records = applyFilters(getMockStore().registrations, filters);
     return records.map(mapToListItem);
+  },
+
+  async listRegistrationsForChallengeOverview() {
+    return getMockStore().registrations.map(mapToChallengeOverviewItem);
   },
 
   async getDashboardStats() {

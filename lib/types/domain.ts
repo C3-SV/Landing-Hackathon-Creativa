@@ -106,6 +106,19 @@ export type RegistrationListItem = {
   createdAt: string;
 };
 
+export type ChallengeOverviewRegistration = {
+  id: string;
+  status: RegistrationStatus;
+  teamSize: TeamSize;
+  teamName: string;
+  representativeName: string;
+  representativeEmail: string;
+  institution: string;
+  challengePreferences: readonly [string, string, string];
+  assignedChallengeId?: string | null;
+  createdAt: string;
+};
+
 export type DashboardStats = {
   totalTeams: number;
   totalByStatus: Record<RegistrationStatus, number>;

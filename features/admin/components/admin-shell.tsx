@@ -10,6 +10,7 @@ type AdminShellProps = {
 const navItems = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/registrations", label: "Equipos" },
+  { href: "/admin/challenges", label: "Retos" },
 ];
 
 export function AdminShell({ userEmail, children }: AdminShellProps) {
