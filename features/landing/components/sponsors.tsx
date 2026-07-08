@@ -48,7 +48,7 @@ export function SponsorsSection() {
     >
       <div className="mx-auto w-[min(1180px,calc(100%-2rem))] space-y-6">
         <p className="inline-flex items-center rounded-full border border-brand-orange px-4 py-2 font-mono text-xs uppercase tracking-[0.18em] text-brand-orange-soft sm:px-5">
-          {"{} 07 / SPONSORS / ALIADOS"}
+          {"{} 08 / SPONSORS / ALIADOS"}
         </p>
 
         <h2 className="mt-7 font-display text-[1.9rem] uppercase leading-[1.22] tracking-[0.05em] text-brand-white [text-shadow:4px_4px_0_var(--brand-electric)] sm:text-[2.6rem] lg:text-[3.9rem]">
