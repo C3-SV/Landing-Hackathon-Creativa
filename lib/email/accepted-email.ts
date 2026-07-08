@@ -12,7 +12,7 @@ import type {
   TeamRegistrationDoc,
 } from "@/lib/types/domain";
 
-const ACCEPTED_SUBJECT = "Accepted | Hackathon de Turismo Creativo";
+const ACCEPTED_SUBJECT = "Team Accepted | Hackathon de Turismo Creativo Vol. 1";
 const FIXED_CC = [
   "competitivecodingclub.sv@gmail.com",
   //"carlosvalladares.sv@gmail.com", 
@@ -60,7 +60,7 @@ function buildBody(teamName: string) {
   const text = [
     `Hola, equipo ${teamName}.`,
     "",
-    "¡Felicidades! Su equipo ha sido aceptado para participar en la Hackathon de Turismo Creativo.",
+    "¡Felicidades! Su equipo ha sido aceptado para participar en la Hackathon de Turismo Creativo Vol. 1.",
     "",
     "Adjuntamos sus piezas de aceptación del equipo y de cada integrante. Muy pronto recibirán más información sobre los próximos pasos del evento.",
     "",
@@ -73,7 +73,7 @@ function buildBody(teamName: string) {
 
   const html = [
     `<p>Hola, equipo ${escapeHtml(teamName)}.</p>`,
-    "<p>¡Felicidades! Su equipo ha sido aceptado para participar en la Hackathon de Turismo Creativo.</p>",
+    "<p>¡Felicidades! Su equipo ha sido aceptado para participar en la Hackathon de Turismo Creativo Vol. 1.</p>",
     "<p>Adjuntamos sus piezas de aceptación del equipo y de cada integrante. Muy pronto recibirán más información sobre los próximos pasos del evento.</p>",
     "<p>Por favor, cualquier consulta pueden responder a este correo.</p>",
     "<p>Nos vemos pronto.</p>",
