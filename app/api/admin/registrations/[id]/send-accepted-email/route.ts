@@ -42,6 +42,12 @@ export async function POST(request: Request, context: Context) {
       errorMessage: result.errorMessage,
     });
   } catch (error) {
+    const { id } = await context.params;
+    console.error("Error enviando correo Accepted", {
+      registrationId: id,
+      error: error instanceof Error ? error.message : error,
+    });
+
     return NextResponse.json(
       {
         error:

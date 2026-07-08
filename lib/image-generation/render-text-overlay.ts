@@ -54,7 +54,8 @@ export function renderTextOverlay(input: RenderTextOverlayInput) {
   const startY =
     innerTextBox.y +
     (innerTextBox.height - fitted.totalTextHeight) / 2 +
-    fitted.fontSize * 0.8;
+    fitted.fontSize * 0.8 +
+    TEXT_STYLE.verticalNudge;
   const text = fitted.lines
     .map((line, index) => {
       const y = startY + index * fitted.lineHeight;

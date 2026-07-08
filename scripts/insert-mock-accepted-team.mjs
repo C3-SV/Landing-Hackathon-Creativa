@@ -104,14 +104,14 @@ const registration = {
   members: [
     member(
       "hacker",
-      "MOCK MOCK MOCK - Chris",
+      "Chris",
       "Marroquin",
       "chris.marroquin2309@gmail.com",
       true,
     ),
-    member("hipster", "MOCK MOCK MOCK - Luis", "Hernandez", "marroquin.chris2309@gmail.com"),
-    member("hustler", "MOCK MOCK MOCK - Sofia", "Lopez", "mock.accepted.sofia@example.com"),
-    member("hacker", "MOCK MOCK MOCK - Carlos", "Rivera", "mock.accepted.carlos@example.com"),
+    member("hipster", "Luis", "Hernandez", "marroquin.chris2309@gmail.com"),
+    member("hustler", "Sofia", "Lopez", "mock.accepted.sofia@example.com"),
+    member("hacker", "Carlos", "Rivera", "mock.accepted.carlos@example.com"),
   ],
   consents: {
     acceptCodeOfConduct: true,

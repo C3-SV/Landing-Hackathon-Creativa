@@ -31,10 +31,11 @@ export const SHARED_TEXT_BOX: NormalizedTextBox = {
 };
 
 export const TEXT_STYLE = {
-  fontFamily: "Arial, Helvetica, sans-serif",
+  fontFamily: "'JetBrains Mono', 'Courier New', monospace",
   maxFontSize: 64,
   minFontSize: 24,
   lineHeightMultiplier: 1.15,
+  verticalNudge: -6,
   color: "#111111",
   fontWeight: 800,
   maxLines: 2,
