@@ -1,4 +1,5 @@
 import { APP_ENV } from "@/lib/constants/env";
+import { DEFAULT_BREVO_SENDER_NAME } from "@/lib/email/team-email";
 
 export type BrevoAttachment = {
   name: string;
@@ -12,7 +13,7 @@ export type BrevoEmailPayload = {
   text: string;
   html: string;
   replyTo: string;
-  attachments: BrevoAttachment[];
+  attachments?: BrevoAttachment[];
 };
 
 export type BrevoSendResult = {
@@ -32,8 +33,8 @@ export async function sendBrevoEmail(payload: BrevoEmailPayload): Promise<BrevoS
     },
     body: JSON.stringify({
       sender: {
+        name: APP_ENV.email.senderName || DEFAULT_BREVO_SENDER_NAME,
         email: APP_ENV.email.senderEmail,
-        name: APP_ENV.email.senderName || undefined,
       },
       to: payload.to.map((email) => ({ email })),
       cc: payload.cc.map((email) => ({ email })),
@@ -43,7 +44,7 @@ export async function sendBrevoEmail(payload: BrevoEmailPayload): Promise<BrevoS
       subject: payload.subject,
       textContent: payload.text,
       htmlContent: payload.html,
-      attachment: payload.attachments,
+      ...(payload.attachments?.length ? { attachment: payload.attachments } : {}),
     }),
   });
 

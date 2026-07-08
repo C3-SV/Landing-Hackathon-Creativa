@@ -11,6 +11,7 @@ import type {
   RegistrationListFilters,
   RegistrationListItem,
   RegistrationStatus,
+  TeamEmailStatusKey,
   TeamRegistrationDoc,
   TeamRegistrationPayload,
 } from "@/lib/types/domain";
@@ -33,6 +34,8 @@ export type CreateEmailLogInput = {
   cc: string[];
   status: EmailDeliveryStatus;
   brevoMessageId?: string | null;
+  assignedChallengeId?: string | null;
+  assignedChallengeName?: string | null;
   attachments: EmailLogAttachment[];
   sentAt: string;
   sentBy?: string | null;
@@ -53,7 +56,7 @@ export type RegistrationRepository = {
   ): Promise<TeamRegistrationDoc | null>;
   updateRegistrationEmailStatus(
     id: string,
-    emailType: EmailType,
+    emailType: TeamEmailStatusKey,
     update: {
       status: EmailDeliveryStatus;
       lastSentAt: string;

@@ -105,12 +105,14 @@ type StoredRegistration = Partial<Omit<TeamRegistrationDoc, "id">> & {
 type StoredEmailLog = {
   teamRegistrationId?: string;
   teamName?: string;
-  emailType?: "accepted";
+  emailType?: "accepted" | "challenge_assigned";
   subject?: string;
   to?: string[];
   cc?: string[];
   status?: "sent" | "failed" | "dry_run";
   brevoMessageId?: string | null;
+  assignedChallengeId?: string | null;
+  assignedChallengeName?: string | null;
   attachments?: Array<{ fileName: string; type: string }>;
   sentAt?: string | Timestamp;
   sentBy?: string | null;
@@ -205,6 +207,8 @@ function toEmailLog(docId: string, rawData: StoredEmailLog) {
     cc: rawData.cc ?? [],
     status: rawData.status ?? "failed",
     brevoMessageId: rawData.brevoMessageId ?? null,
+    assignedChallengeId: rawData.assignedChallengeId ?? null,
+    assignedChallengeName: rawData.assignedChallengeName ?? null,
     attachments: rawData.attachments ?? [],
     sentAt: timestampToIso(rawData.sentAt) || createdAt,
     sentBy: rawData.sentBy ?? null,

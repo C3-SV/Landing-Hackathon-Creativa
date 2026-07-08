@@ -4,21 +4,20 @@ import {
   generateAcceptedEmailAttachments,
 } from "@/lib/image-generation/generate-accepted-assets";
 import { sendBrevoEmail } from "@/lib/email/brevo";
+import {
+  buildTeamEmailRecipients,
+  escapeHtml,
+  isValidEmail,
+  memberDisplayName,
+} from "@/lib/email/team-email";
 import { registrationRepository } from "@/lib/repositories";
 import type {
   EmailDeliveryStatus,
   Role3H,
-  TeamMember,
   TeamRegistrationDoc,
 } from "@/lib/types/domain";
 
 const ACCEPTED_SUBJECT = "Team Accepted | Hackathon de Turismo Creativo Vol. 1";
-const FIXED_CC = [
-  "competitivecodingclub.sv@gmail.com",
-  //"carlosvalladares.sv@gmail.com", 
-  // KAKO, QUEDA COMENTADO HASTA TERMINAR EL TESTING DE ENVIO DE CORREOS, PARA NO LLENARLE EL BUZON A KAKO
-] as const;
-const REPLY_TO = "competitivecodingclub.sv@gmail.com";
 
 type AcceptedEmailResult = {
   registration: TeamRegistrationDoc;
@@ -27,34 +26,6 @@ type AcceptedEmailResult = {
   messageId?: string | null;
   errorMessage?: string | null;
 };
-
-function escapeHtml(value: string) {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
-function isValidEmail(value: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
-}
-
-function normalizeEmail(value: string) {
-  return value.trim().toLowerCase();
-}
-
-function dedupeEmails(emails: readonly string[]) {
-  return [...new Set(emails.map(normalizeEmail).filter(Boolean))];
-}
-
-function memberDisplayName(member: TeamMember) {
-  return `${member.firstName} ${member.lastName}`.trim();
-}
-
-function findStrictRepresentative(members: readonly TeamMember[]) {
-  return members.find((member) => member.isRepresentative) ?? null;
-}
 
 function buildBody(teamName: string) {
   const text = [
@@ -84,20 +55,7 @@ function buildBody(teamName: string) {
 }
 
 export function buildAcceptedRecipients(registration: TeamRegistrationDoc) {
-  const representative = findStrictRepresentative(registration.members);
-  if (!representative) {
-    throw new Error("No se puede enviar: el equipo no tiene representante definido.");
-  }
-
-  const to = normalizeEmail(representative.email);
-  const cc = dedupeEmails([
-    ...registration.members
-      .filter((member) => !member.isRepresentative)
-      .map((member) => member.email),
-    ...FIXED_CC,
-  ]).filter((email) => email !== to);
-
-  return { representative, to, cc };
+  return buildTeamEmailRecipients(registration);
 }
 
 export async function validateAcceptedEmailRegistration(registration: TeamRegistrationDoc) {
@@ -180,7 +138,7 @@ export async function sendAcceptedEmailForRegistration(input: {
         subject: ACCEPTED_SUBJECT,
         text: body.text,
         html: body.html,
-        replyTo: REPLY_TO,
+        replyTo: APP_ENV.email.replyTo,
         attachments: attachments.map((attachment) => ({
           name: attachment.fileName,
           content: attachment.buffer.toString("base64"),

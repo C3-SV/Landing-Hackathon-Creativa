@@ -1,4 +1,8 @@
 import { CURRENT_EDITION_FALLBACK } from "@/lib/constants/event";
+import {
+  DEFAULT_BREVO_SENDER_NAME,
+  DEFAULT_EMAIL_REPLY_TO,
+} from "@/lib/email/team-email";
 import type { RepositoryMode } from "@/lib/types/domain";
 
 function readBooleanEnv(value: string | undefined, fallback: boolean) {
@@ -21,8 +25,8 @@ export const APP_ENV = {
   email: {
     from: process.env.BREVO_SENDER_EMAIL ?? process.env.EMAIL_FROM ?? "",
     senderEmail: process.env.BREVO_SENDER_EMAIL ?? process.env.EMAIL_FROM ?? "",
-    senderName: process.env.BREVO_SENDER_NAME ?? "",
-    replyTo: process.env.EMAIL_REPLY_TO ?? "",
+    senderName: process.env.BREVO_SENDER_NAME ?? DEFAULT_BREVO_SENDER_NAME,
+    replyTo: process.env.EMAIL_REPLY_TO ?? DEFAULT_EMAIL_REPLY_TO,
     brevoApiKey: process.env.BREVO_API_KEY ?? "",
   },
   firebaseAdmin: {

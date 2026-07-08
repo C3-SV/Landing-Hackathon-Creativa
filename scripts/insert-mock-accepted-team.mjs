@@ -86,7 +86,7 @@ if (getApps().length === 0) {
 const db = getFirestore();
 const id = "mock_mock_mock_accepted_email_test";
 const now = new Date().toISOString();
-const teamName = "MOCK MOCK MOCK - Equipo Aurora";
+const teamName = "Equipo MOCK";
 
 const registration = {
   id,

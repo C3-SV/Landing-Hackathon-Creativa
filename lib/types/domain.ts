@@ -76,12 +76,18 @@ export type AdminNote = {
   createdAt: string;
 };
 
-export type EmailType = "accepted";
+export type EmailType = "accepted" | "challenge_assigned";
 export type EmailDeliveryStatus = "sent" | "failed" | "dry_run";
 export type EmailStatusValue = "not_sent" | EmailDeliveryStatus;
+export type TeamEmailStatusKey = "accepted" | "challengeAssigned";
 
 export type TeamEmailStatus = {
   accepted?: {
+    status: EmailStatusValue;
+    lastSentAt?: string;
+    lastLogId?: string;
+  };
+  challengeAssigned?: {
     status: EmailStatusValue;
     lastSentAt?: string;
     lastLogId?: string;
@@ -103,6 +109,8 @@ export type EmailLog = {
   cc: string[];
   status: EmailDeliveryStatus;
   brevoMessageId?: string | null;
+  assignedChallengeId?: string | null;
+  assignedChallengeName?: string | null;
   attachments: EmailLogAttachment[];
   sentAt: string;
   sentBy?: string | null;

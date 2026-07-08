@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Hackathon de Turismo Creativo I",
+    name: "Hackathon de Turismo Creativo Vol. 1",
     short_name: "Hackathon Turismo",
     description:
       "Hackathon que une turismo, código y cultura para crear soluciones a retos reales.",
