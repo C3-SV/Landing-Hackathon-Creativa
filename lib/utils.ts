@@ -17,17 +17,55 @@ export function roleLabel(role: Role3H) {
   }
 }
 
+const MONTHS_ES_SV = [
+  "ene",
+  "feb",
+  "mar",
+  "abr",
+  "may",
+  "jun",
+  "jul",
+  "ago",
+  "sept",
+  "oct",
+  "nov",
+  "dic",
+] as const;
+
+function getDateParts(value: string) {
+  const date = new Date(value);
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/El_Salvador",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).formatToParts(date);
+
+  const getPart = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((part) => part.type === type)?.value ?? "";
+
+  const month = Number(getPart("month"));
+  return {
+    day: Number(getPart("day")),
+    monthName: MONTHS_ES_SV[Math.max(0, month - 1)] ?? "",
+    year: Number(getPart("year")),
+    hour: Number(getPart("hour")),
+    minute: getPart("minute").padStart(2, "0"),
+    dayPeriod: getPart("dayPeriod").toLowerCase() === "am" ? "a. m." : "p. m.",
+  };
+}
+
 export function formatDateTime(value: string) {
-  return new Date(value).toLocaleString("es-SV", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
+  const parts = getDateParts(value);
+  return `${parts.day} ${parts.monthName} ${parts.year}, ${parts.hour}:${parts.minute} ${parts.dayPeriod}`;
 }
 
 export function formatDateOnly(value: string) {
-  return new Date(value).toLocaleDateString("es-SV", {
-    dateStyle: "medium",
-  });
+  const parts = getDateParts(value);
+  return `${parts.day} ${parts.monthName} ${parts.year}`;
 }
 
 export function toCsvValue(value: string | number | boolean | null | undefined) {

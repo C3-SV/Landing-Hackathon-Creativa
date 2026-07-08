@@ -27,6 +27,7 @@ import {
 const COLLECTIONS = {
   challenges: "challenges",
   editions: "editions",
+  emailLogs: "email_logs",
   registrations: "team_registrations",
 } as const;
 
@@ -101,6 +102,22 @@ type StoredRegistration = Partial<Omit<TeamRegistrationDoc, "id">> & {
   responsiblePhone?: string;
 };
 
+type StoredEmailLog = {
+  teamRegistrationId?: string;
+  teamName?: string;
+  emailType?: "accepted";
+  subject?: string;
+  to?: string[];
+  cc?: string[];
+  status?: "sent" | "failed" | "dry_run";
+  brevoMessageId?: string | null;
+  attachments?: Array<{ fileName: string; type: string }>;
+  sentAt?: string | Timestamp;
+  sentBy?: string | null;
+  errorMessage?: string | null;
+  createdAt?: string | Timestamp;
+};
+
 function timestampToIso(value: string | Timestamp | undefined) {
   if (!value) {
     return new Date().toISOString();
@@ -170,8 +187,29 @@ function toRegistration(docId: string, rawData: StoredRegistration): TeamRegistr
     consents: rawData.consents ?? CONSENTS_FALLBACK,
     assignedChallengeId: rawData.assignedChallengeId ?? undefined,
     adminNotes: normalizeAdminNotes(rawData),
+    emailStatus: rawData.emailStatus,
     createdAt: timestampToIso(rawData.createdAt),
     updatedAt: timestampToIso(rawData.updatedAt),
+  };
+}
+
+function toEmailLog(docId: string, rawData: StoredEmailLog) {
+  const createdAt = timestampToIso(rawData.createdAt);
+  return {
+    id: docId,
+    teamRegistrationId: rawData.teamRegistrationId ?? "",
+    teamName: rawData.teamName ?? "",
+    emailType: rawData.emailType ?? "accepted",
+    subject: rawData.subject ?? "",
+    to: rawData.to ?? [],
+    cc: rawData.cc ?? [],
+    status: rawData.status ?? "failed",
+    brevoMessageId: rawData.brevoMessageId ?? null,
+    attachments: rawData.attachments ?? [],
+    sentAt: timestampToIso(rawData.sentAt) || createdAt,
+    sentBy: rawData.sentBy ?? null,
+    errorMessage: rawData.errorMessage ?? null,
+    createdAt,
   };
 }
 
@@ -417,6 +455,57 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
 
     const saved = await ref.get();
     return toRegistration(saved.id, (saved.data() ?? {}) as StoredRegistration);
+  },
+
+  async updateRegistrationEmailStatus(id, emailType, update) {
+    const db = getFirebaseAdminDb();
+    const ref = db.collection(COLLECTIONS.registrations).doc(id);
+    const snap = await ref.get();
+    if (!snap.exists) {
+      return null;
+    }
+
+    await ref.update({
+      [`emailStatus.${emailType}`]: {
+        status: update.status,
+        lastSentAt: update.lastSentAt,
+        lastLogId: update.lastLogId,
+      },
+      updatedAt: new Date().toISOString(),
+    });
+
+    const saved = await ref.get();
+    return toRegistration(saved.id, (saved.data() ?? {}) as StoredRegistration);
+  },
+
+  async createEmailLog(input) {
+    const db = getFirebaseAdminDb();
+    const ref = db.collection(COLLECTIONS.emailLogs).doc();
+    const log = {
+      id: ref.id,
+      ...input,
+      createdAt: new Date().toISOString(),
+    };
+
+    const undefinedPath = findUndefinedPath(log);
+    if (undefinedPath) {
+      throw new Error(`Email log contains undefined at ${undefinedPath}`);
+    }
+
+    await ref.set(log);
+    return log;
+  },
+
+  async listEmailLogsForRegistration(teamRegistrationId) {
+    const db = getFirebaseAdminDb();
+    const snapshot = await db
+      .collection(COLLECTIONS.emailLogs)
+      .where("teamRegistrationId", "==", teamRegistrationId)
+      .get();
+
+    return snapshot.docs
+      .map((doc) => toEmailLog(doc.id, (doc.data() ?? {}) as StoredEmailLog))
+      .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
   },
 
   async exportRegistrationsCsv() {

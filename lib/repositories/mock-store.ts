@@ -6,6 +6,7 @@ import {
 import { normalizeTeamName, toSlug } from "@/lib/utils";
 import type {
   Challenge,
+  EmailLog,
   Edition,
   RegistrationStatus,
   TeamRegistrationDoc,
@@ -16,6 +17,7 @@ type MockStore = {
   challenges: Challenge[];
   editions: Edition[];
   registrations: TeamRegistrationDoc[];
+  emailLogs: EmailLog[];
 };
 
 declare global {
@@ -168,6 +170,7 @@ export function getMockStore() {
       challenges: [...CHALLENGE_SEEDS],
       editions: [...EDITION_SEEDS],
       registrations: createSeedRegistrations(),
+      emailLogs: [],
     };
   }
 

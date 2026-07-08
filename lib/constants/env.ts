@@ -19,7 +19,9 @@ export const APP_ENV = {
     .filter(Boolean),
   emailNotificationsEnabled: readBooleanEnv(process.env.EMAIL_NOTIFICATIONS_ENABLED, false),
   email: {
-    from: process.env.EMAIL_FROM ?? "",
+    from: process.env.BREVO_SENDER_EMAIL ?? process.env.EMAIL_FROM ?? "",
+    senderEmail: process.env.BREVO_SENDER_EMAIL ?? process.env.EMAIL_FROM ?? "",
+    senderName: process.env.BREVO_SENDER_NAME ?? "",
     replyTo: process.env.EMAIL_REPLY_TO ?? "",
     brevoApiKey: process.env.BREVO_API_KEY ?? "",
   },

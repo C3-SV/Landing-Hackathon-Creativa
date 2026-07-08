@@ -76,12 +76,47 @@ export type AdminNote = {
   createdAt: string;
 };
 
+export type EmailType = "accepted";
+export type EmailDeliveryStatus = "sent" | "failed" | "dry_run";
+export type EmailStatusValue = "not_sent" | EmailDeliveryStatus;
+
+export type TeamEmailStatus = {
+  accepted?: {
+    status: EmailStatusValue;
+    lastSentAt?: string;
+    lastLogId?: string;
+  };
+};
+
+export type EmailLogAttachment = {
+  fileName: string;
+  type: string;
+};
+
+export type EmailLog = {
+  id: string;
+  teamRegistrationId: string;
+  teamName: string;
+  emailType: EmailType;
+  subject: string;
+  to: string[];
+  cc: string[];
+  status: EmailDeliveryStatus;
+  brevoMessageId?: string | null;
+  attachments: EmailLogAttachment[];
+  sentAt: string;
+  sentBy?: string | null;
+  errorMessage?: string | null;
+  createdAt: string;
+};
+
 export type TeamRegistrationDoc = TeamRegistrationPayload & {
   id: string;
   teamNameNormalized: string;
   status: RegistrationStatus;
   assignedChallengeId?: string;
   adminNotes: AdminNote[];
+  emailStatus?: TeamEmailStatus;
   createdAt: string;
   updatedAt: string;
 };
