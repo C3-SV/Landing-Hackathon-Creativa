@@ -17,6 +17,17 @@ export async function POST(request: Request) {
   }
 
   try {
+    const settings = await registrationRepository.getRegistrationSettings();
+    if (!settings.registrationsOpen) {
+      return NextResponse.json(
+        {
+          error:
+            "Las inscripciones para la Hackathon de Turismo Creativo Vol. 1 han cerrado.",
+        },
+        { status: 403 },
+      );
+    }
+
     const validation = await validateRegistrationBusinessRules(body);
 
     if (!validation.ok) {

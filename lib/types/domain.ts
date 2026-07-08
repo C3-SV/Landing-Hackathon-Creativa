@@ -162,6 +162,14 @@ export type ChallengeOverviewRegistration = {
   createdAt: string;
 };
 
+export type RegistrationSettings = {
+  registrationsOpen: boolean;
+  updatedAt?: string;
+  updatedBy?: string | null;
+  closedAt?: string | null;
+  closedBy?: string | null;
+};
+
 export type DashboardStats = {
   totalTeams: number;
   totalByStatus: Record<RegistrationStatus, number>;

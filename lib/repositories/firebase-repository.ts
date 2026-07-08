@@ -13,6 +13,7 @@ import type {
   Edition,
   RegistrationListFilters,
   RegistrationListItem,
+  RegistrationSettings,
   TeamConsents,
   TeamMember,
   TeamRegistrationDoc,
@@ -29,9 +30,19 @@ const COLLECTIONS = {
   editions: "editions",
   emailLogs: "email_logs",
   registrations: "team_registrations",
+  settings: "settings",
 } as const;
 
 const ABOUT_FALLBACK = "Perfil pendiente de actualización desde una inscripción anterior.";
+
+const REGISTRATION_SETTINGS_DOC_ID = "registrations";
+const DEFAULT_REGISTRATION_SETTINGS: RegistrationSettings = {
+  registrationsOpen: true,
+  updatedAt: undefined,
+  updatedBy: null,
+  closedAt: null,
+  closedBy: null,
+};
 
 const CONSENTS_FALLBACK: TeamConsents = {
   acceptCodeOfConduct: false,
@@ -118,6 +129,11 @@ type StoredEmailLog = {
   sentBy?: string | null;
   errorMessage?: string | null;
   createdAt?: string | Timestamp;
+};
+
+type StoredRegistrationSettings = Partial<RegistrationSettings> & {
+  updatedAt?: string | Timestamp;
+  closedAt?: string | Timestamp | null;
 };
 
 function timestampToIso(value: string | Timestamp | undefined) {
@@ -215,6 +231,23 @@ function toEmailLog(docId: string, rawData: StoredEmailLog) {
     errorMessage: rawData.errorMessage ?? null,
     createdAt,
   };
+}
+
+function toRegistrationSettings(rawData: StoredRegistrationSettings | undefined) {
+  if (!rawData) {
+    return DEFAULT_REGISTRATION_SETTINGS;
+  }
+
+  return {
+    registrationsOpen:
+      typeof rawData.registrationsOpen === "boolean"
+        ? rawData.registrationsOpen
+        : DEFAULT_REGISTRATION_SETTINGS.registrationsOpen,
+    updatedAt: rawData.updatedAt ? timestampToIso(rawData.updatedAt) : undefined,
+    updatedBy: rawData.updatedBy ?? null,
+    closedAt: rawData.closedAt ? timestampToIso(rawData.closedAt) : null,
+    closedBy: rawData.closedBy ?? null,
+  } satisfies RegistrationSettings;
 }
 
 function fromDoc(doc: QueryDocumentSnapshot): TeamRegistrationDoc {
@@ -335,6 +368,37 @@ function toChallengeOverviewItem(doc: TeamRegistrationDoc): ChallengeOverviewReg
 }
 
 export const firebaseRegistrationRepository: RegistrationRepository = {
+  async getRegistrationSettings() {
+    const db = getFirebaseAdminDb();
+    const snap = await db
+      .collection(COLLECTIONS.settings)
+      .doc(REGISTRATION_SETTINGS_DOC_ID)
+      .get();
+
+    return toRegistrationSettings(
+      snap.exists ? (snap.data() as StoredRegistrationSettings | undefined) : undefined,
+    );
+  },
+
+  async updateRegistrationSettings(update) {
+    const db = getFirebaseAdminDb();
+    const now = new Date().toISOString();
+    const record: RegistrationSettings = {
+      registrationsOpen: update.registrationsOpen,
+      updatedAt: now,
+      updatedBy: update.updatedBy ?? null,
+      closedAt: update.registrationsOpen ? null : now,
+      closedBy: update.registrationsOpen ? null : update.updatedBy ?? null,
+    };
+
+    await db
+      .collection(COLLECTIONS.settings)
+      .doc(REGISTRATION_SETTINGS_DOC_ID)
+      .set(record, { merge: true });
+
+    return record;
+  },
+
   async getChallenges() {
     const db = getFirebaseAdminDb();
     const snapshot = await db.collection(COLLECTIONS.challenges).get();

@@ -10,6 +10,7 @@ import type {
   Edition,
   RegistrationListFilters,
   RegistrationListItem,
+  RegistrationSettings,
   RegistrationStatus,
   TeamEmailStatusKey,
   TeamRegistrationDoc,
@@ -43,6 +44,12 @@ export type CreateEmailLogInput = {
 };
 
 export type RegistrationRepository = {
+  getRegistrationSettings(): Promise<RegistrationSettings>;
+  updateRegistrationSettings(
+    update: Pick<RegistrationSettings, "registrationsOpen"> & {
+      updatedBy?: string | null;
+    },
+  ): Promise<RegistrationSettings>;
   getChallenges(): Promise<Challenge[]>;
   getCurrentEdition(): Promise<Edition>;
   createRegistration(payload: TeamRegistrationPayload): Promise<TeamRegistrationDoc>;
