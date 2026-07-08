@@ -67,7 +67,7 @@ export function resolveAssignedChallenge(
   const assignedChallengeId = registration.assignedChallengeId?.trim();
   if (!assignedChallengeId) {
     throw new Error(
-      "Este equipo todavÃ­a no tiene reto asignado. Asigna un reto antes de enviar este correo.",
+      "Este equipo todavía no tiene reto asignado. Asigna un reto antes de enviar este correo.",
     );
   }
 
@@ -76,7 +76,7 @@ export function resolveAssignedChallenge(
 
   if (!assignedChallengeName) {
     throw new Error(
-      "El reto asignado de este equipo no tiene un nombre vÃ¡lido. Revisa la configuraciÃ³n antes de enviar este correo.",
+      "El reto asignado de este equipo no tiene un nombre válido. Revisa la configuración antes de enviar este correo.",
     );
   }
 

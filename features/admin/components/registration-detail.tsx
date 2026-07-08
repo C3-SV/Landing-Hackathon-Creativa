@@ -69,7 +69,7 @@ function emailStatusLabel(status: string | undefined) {
     case "failed":
       return "Falló";
     case "dry_run":
-      return "Dry run";
+      return "Simulación";
     case "not_sent":
     default:
       return "No enviado";
@@ -77,7 +77,7 @@ function emailStatusLabel(status: string | undefined) {
 }
 
 function emailTypeLabel(emailType: EmailLog["emailType"]) {
-  return emailType === "challenge_assigned" ? "Reto asignado" : "Accepted";
+  return emailType === "challenge_assigned" ? "Reto asignado" : "Aceptación";
 }
 
 function emailStatusClassName(status: string | undefined) {
@@ -235,17 +235,19 @@ export function RegistrationDetail({
       setCurrent(payload.registration);
       setEmailLogs(payload.emailLogs);
       if (payload.status === "failed") {
-        setError(payload.errorMessage ?? "Brevo no pudo enviar el correo Accepted.");
+        setError(payload.errorMessage ?? "Brevo no pudo enviar el correo de aceptación.");
       } else {
         setFeedback(
           payload.status === "dry_run"
-            ? "Correo Accepted simulado. EMAIL_NOTIFICATIONS_ENABLED está apagado."
-            : "Correo Accepted enviado correctamente.",
+            ? "Correo de aceptación simulado. EMAIL_NOTIFICATIONS_ENABLED está apagado."
+            : "Correo de aceptación enviado correctamente.",
         );
         setConfirmAcceptedOpen(false);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "No se pudo enviar el correo Accepted");
+      setError(
+        err instanceof Error ? err.message : "No se pudo enviar el correo de aceptación",
+      );
     } finally {
       setSendingAccepted(false);
     }
@@ -455,7 +457,7 @@ export function RegistrationDetail({
             label="Reto asignado actual"
             value={challengeAssignedEmailSummary.assignedChallengeName}
           />
-          <DataLabel label="Subject" value={challengeAssignedEmailSummary.subject} />
+          <DataLabel label="Asunto" value={challengeAssignedEmailSummary.subject} />
         </div>
 
         {challengeAssignedEmailSummary.error ? (
@@ -487,7 +489,7 @@ export function RegistrationDetail({
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 className="font-mono text-xs uppercase tracking-wide text-brand-electric">
-              Correo Accepted
+              Correo de aceptación
             </h2>
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <span
@@ -510,7 +512,9 @@ export function RegistrationDetail({
             onClick={() => setConfirmAcceptedOpen(true)}
             disabled={sendingAccepted || Boolean(acceptedEmailSummary.error)}
           >
-            {acceptedStatus === "sent" ? "Reenviar correo Accepted" : "Enviar correo Accepted"}
+            {acceptedStatus === "sent"
+              ? "Reenviar correo de aceptación"
+              : "Enviar correo de aceptación"}
           </Button>
         </div>
 
@@ -640,7 +644,7 @@ export function RegistrationDetail({
                   <th className="px-3 py-2 font-medium">Fecha</th>
                   <th className="px-3 py-2 font-medium">To</th>
                   <th className="px-3 py-2 font-medium">CC</th>
-                  <th className="px-3 py-2 font-medium">Subject</th>
+                  <th className="px-3 py-2 font-medium">Asunto</th>
                 </tr>
               </thead>
               <tbody>
@@ -740,7 +744,7 @@ export function RegistrationDetail({
                   id="accepted-email-confirm-title"
                   className="font-display text-base uppercase text-brand-white"
                 >
-                  Confirmar correo Accepted
+                  Confirmar correo de aceptación
                 </h2>
                 <p className="mt-1 text-sm text-brand-muted">
                   Se enviará un solo correo al representante del equipo.
@@ -762,7 +766,7 @@ export function RegistrationDetail({
                 label="Representante"
                 value={`${acceptedEmailSummary.representativeName} · ${acceptedEmailSummary.to}`}
               />
-              <DataLabel label="Subject" value={acceptedEmailSummary.subject} />
+              <DataLabel label="Asunto" value={acceptedEmailSummary.subject} />
               <DataLabel label="Adjuntos" value={`${acceptedEmailSummary.attachmentCount} JPG`} />
               <DataLabel
                 className="sm:col-span-2"
@@ -779,7 +783,7 @@ export function RegistrationDetail({
               <div className="mt-4">
                 <AlertState
                   title="Advertencia"
-                  description="Este equipo ya tiene un correo Accepted enviado. Confirmar creará un nuevo envío/log."
+                  description="Este equipo ya tiene un correo de aceptación enviado. Confirmar creará un nuevo envío/log."
                   variant="warning"
                 />
               </div>
@@ -788,7 +792,7 @@ export function RegistrationDetail({
             {!emailNotificationsEnabled ? (
               <div className="mt-4">
                 <AlertState
-                  title="Dry run"
+                  title="Simulación"
                   description="EMAIL_NOTIFICATIONS_ENABLED está apagado. No se enviará correo real por Brevo."
                   variant="warning"
                 />
@@ -852,7 +856,7 @@ export function RegistrationDetail({
                 label="Representante"
                 value={`${challengeAssignedEmailSummary.representativeName} · ${challengeAssignedEmailSummary.to}`}
               />
-              <DataLabel label="Subject" value={challengeAssignedEmailSummary.subject} />
+              <DataLabel label="Asunto" value={challengeAssignedEmailSummary.subject} />
               <DataLabel
                 className="sm:col-span-2"
                 label="CC"
@@ -877,7 +881,7 @@ export function RegistrationDetail({
             {!emailNotificationsEnabled ? (
               <div className="mt-4">
                 <AlertState
-                  title="Dry run"
+                  title="Simulación"
                   description="EMAIL_NOTIFICATIONS_ENABLED está apagado. No se enviará correo real por Brevo."
                   variant="warning"
                 />

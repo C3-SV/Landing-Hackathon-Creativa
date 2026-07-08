@@ -7,10 +7,10 @@ export function SiteFooter() {
             {"HACKATHON DE TURISMO CREATIVO VOL. 1"}
           </p>
           <p className="font-mono text-sm leading-relaxed text-brand-muted">
-            Hackathon de Turismo Creativo Vol. 1
+            HTC VOL. 1
           </p>
           <p className="font-mono text-xs uppercase tracking-[0.12em] text-brand-orange">
-            {"+ TURISMO + CÃ“DIGO + CULTURA"}
+            {"+ TURISMO + CÓDIGO + CULTURA"}
           </p>
         </div>
 
@@ -28,11 +28,11 @@ export function SiteFooter() {
 
         <div className="space-y-3">
           <p className="font-mono text-xs uppercase tracking-[0.14em] text-brand-electric">
-            {"ORGANIZACIÃ“N"}
+            {"ORGANIZACIÓN"}
           </p>
-          <p className="font-mono text-sm leading-relaxed text-brand-white">{"C3 + PoliÃ©drica"}</p>
+          <p className="font-mono text-sm leading-relaxed text-brand-white">{"C3 + Poliédrica"}</p>
           <p className="font-mono text-sm leading-relaxed text-brand-muted">
-            {"11 y 12 de julio Â· Key Institute"}
+            {"11 y 12 de julio · Key Institute"}
           </p>
         </div>
       </div>

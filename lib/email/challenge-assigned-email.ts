@@ -23,26 +23,26 @@ function buildBody(teamName: string, assignedChallengeName: string) {
   const text = [
     `Hola, equipo ${teamName}.`,
     "",
-    "Ya tenemos listo el reto asignado para su participacion en la Hackathon de Turismo Creativo Vol. 1.",
+    "Ya tenemos listo el reto asignado para su participación en la Hackathon de Turismo Creativo Vol. 1.",
     "",
     "Su reto asignado es:",
     assignedChallengeName,
     "",
-    "Por ahora, les pedimos estar atentos a las proximas indicaciones del evento. Muy pronto recibiran mas detalles sobre dinamica, horarios y siguientes pasos.",
+    "Por ahora, les pedimos estar atentos a las próximas indicaciones del evento. Muy pronto recibirán más detalles sobre dinámica, horarios y siguientes pasos.",
     "",
     "Cualquier consulta pueden responder a este correo.",
     "",
-    "C3 + Poliedrica",
+    "C3 + Poliédrica",
   ].join("\n");
 
   const html = [
     `<p>Hola, equipo ${escapeHtml(teamName)}.</p>`,
-    "<p>Ya tenemos listo el reto asignado para su participacion en la Hackathon de Turismo Creativo Vol. 1.</p>",
+    "<p>Ya tenemos listo el reto asignado para su participación en la Hackathon de Turismo Creativo Vol. 1.</p>",
     "<p>Su reto asignado es:</p>",
     `<p><strong>${escapeHtml(assignedChallengeName)}</strong></p>`,
-    "<p>Por ahora, les pedimos estar atentos a las proximas indicaciones del evento. Muy pronto recibiran mas detalles sobre dinamica, horarios y siguientes pasos.</p>",
+    "<p>Por ahora, les pedimos estar atentos a las próximas indicaciones del evento. Muy pronto recibirán más detalles sobre dinámica, horarios y siguientes pasos.</p>",
     "<p>Cualquier consulta pueden responder a este correo.</p>",
-    "<p>C3 + Poliedrica</p>",
+    "<p>C3 + Poliédrica</p>",
   ].join("");
 
   return { text, html };
@@ -62,13 +62,13 @@ export function validateChallengeAssignedEmailRegistration(
 
   const { representative, to } = buildTeamEmailRecipients(registration);
   if (!isValidEmail(to)) {
-    throw new Error("No se puede enviar: el representante no tiene un correo valido.");
+    throw new Error("No se puede enviar: el representante no tiene un correo válido.");
   }
 
   for (const member of registration.members) {
     if (!isValidEmail(member.email)) {
       throw new Error(
-        `No se puede enviar: ${memberDisplayName(member) || "un integrante"} no tiene correo valido.`,
+        `No se puede enviar: ${memberDisplayName(member) || "un integrante"} no tiene correo válido.`,
       );
     }
   }
@@ -90,7 +90,7 @@ export async function sendChallengeAssignedEmailForRegistration(input: {
     !input.confirmResend
   ) {
     throw new Error(
-      "Este correo de reto asignado ya fue enviado. Confirma el reenvio para continuar.",
+      "Este correo de reto asignado ya fue enviado. Confirma el reenvío para continuar.",
     );
   }
 

@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = buildPageMetadata({
   path: "/register",
-  title: "Inscripcion | Hackathon de Turismo Creativo Vol. 1",
+  title: "Inscripción | Hackathon de Turismo Creativo Vol. 1",
   description:
     "Inscribe tu equipo en el Hackathon de Turismo Creativo Vol. 1 y selecciona tus tres retos de preferencia para participar.",
 });
@@ -36,7 +36,7 @@ export default async function RegisterPage() {
               {
                 "@type": "ListItem",
                 position: 2,
-                name: "Inscripcion",
+                name: "Inscripción",
                 item: new URL("/register", SITE_ORIGIN).toString(),
               },
             ],

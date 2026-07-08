@@ -22,7 +22,7 @@ const SPONSORS: Sponsor[] = [
     href: "https://www.keyinstitute.com/",
     logoSrc: "/images/sponsors/key-institute.png",
     logoAlt: "Key Institute — Ultra Legend Partner",
-    linkLabel: "Abrir sitio oficial de Key Institute en una nueva pestana",
+    linkLabel: "Abrir sitio oficial de Key Institute en una nueva pestaña",
     width: 2564,
     height: 432,
     featured: true,
@@ -33,7 +33,7 @@ const SPONSORS: Sponsor[] = [
     href: "https://svnet.sv/",
     logoSrc: "/images/sponsors/svnet.svg",
     logoAlt: "SVNet — Legend Partner",
-    linkLabel: "Abrir sitio oficial de SVNet en una nueva pestana",
+    linkLabel: "Abrir sitio oficial de SVNet en una nueva pestaña",
     width: 1627,
     height: 520,
     unoptimized: true,
@@ -56,7 +56,7 @@ export function SponsorsSection() {
         </h2>
 
         <p className="max-w-[980px] text-base leading-relaxed text-brand-white/92 sm:text-lg">
-          {`Key Institute y SVNet se suman a ${BRANDING.eventName} con presencia destacada dentro del ecosistema que impulsa turismo, codigo y cultura.`}
+          {`Key Institute y SVNet se suman a ${BRANDING.eventName} con presencia destacada dentro del ecosistema que impulsa turismo, código y cultura.`}
         </p>
 
         <div className="space-y-5 lg:space-y-6">

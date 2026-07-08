@@ -67,7 +67,7 @@ export async function sendBrevoEmail(payload: BrevoEmailPayload): Promise<BrevoS
 
   const body = await response.text();
   if (!response.ok) {
-    throw new Error(`Brevo rechazo el envio (${response.status}): ${body}`);
+    throw new Error(`Brevo rechazó el envío (${response.status}): ${body}`);
   }
 
   if (!body) {

@@ -5,9 +5,9 @@ import { ButtonLink, Card } from "@/lib/ui";
 
 export const metadata: Metadata = buildPageMetadata({
   path: "/register/success",
-  title: "InscripciÃ³n enviada | Hackathon de Turismo Creativo Vol. 1",
+  title: "Inscripción enviada | Hackathon de Turismo Creativo Vol. 1",
   description:
-    "ConfirmaciÃ³n de envÃ­o de inscripciÃ³n para el Hackathon de Turismo Creativo Vol. 1.",
+    "Confirmación de envío de inscripción para el Hackathon de Turismo Creativo Vol. 1.",
   indexable: false,
 });
 
@@ -32,17 +32,17 @@ export default async function RegisterSuccessPage({ searchParams }: SuccessPageP
             className="pointer-events-none absolute bottom-4 left-4 h-5 w-5 border-b-2 border-l-2 border-brand-white/75"
           />
           <p className="inline-flex items-center rounded-full border border-brand-orange px-4 py-2 font-mono text-xs uppercase tracking-[0.18em] text-brand-orange-soft">
-            {"{} INSCRIPCIÃ“N ENVIADA"}
+            {"{} INSCRIPCIÓN ENVIADA"}
           </p>
           <h1 className="font-display text-[1rem] uppercase leading-relaxed text-brand-white [text-shadow:3px_3px_0_var(--brand-electric)] sm:text-[1.45rem]">
             {teamName}
           </h1>
           <p className="font-mono text-xs uppercase tracking-wide text-brand-orange-soft">
-            {BRANDING.eventName} Â· {BRANDING.thematicLine}
+            {BRANDING.eventName} · {BRANDING.thematicLine}
           </p>
           <p className="font-mono text-sm leading-relaxed text-brand-muted sm:text-base">
-            Recibimos la postulaciÃ³n de tu equipo. Revisaremos la informaciÃ³n y les contactaremos con
-            los siguientes pasos.
+            Recibimos la postulación de tu equipo. Revisaremos la información y les contactaremos
+            con los siguientes pasos.
           </p>
           <div className="flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap">
             <ButtonLink href="/" className="w-full sm:w-auto">

@@ -43,7 +43,7 @@ export async function POST(request: Request, context: Context) {
     });
   } catch (error) {
     const { id } = await context.params;
-    console.error("Error enviando correo Accepted", {
+    console.error("Error enviando correo de aceptación", {
       registrationId: id,
       error: error instanceof Error ? error.message : error,
     });
@@ -53,7 +53,7 @@ export async function POST(request: Request, context: Context) {
         error:
           error instanceof Error
             ? error.message
-            : "No se pudo enviar el correo Accepted",
+            : "No se pudo enviar el correo de aceptación",
       },
       { status: 400 },
     );

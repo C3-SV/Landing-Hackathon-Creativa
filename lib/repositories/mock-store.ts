@@ -32,7 +32,7 @@ const sampleStatuses: RegistrationStatus[] = [
 ];
 
 function longAbout(role: string, focus: string) {
-  return `Soy un perfil ${role} con motivacion fuerte por crear soluciones reales para turismo. Me interesa trabajar con equipos multidisciplinarios, validar rapido ideas en contexto local y construir prototipos funcionales que la gente pueda usar de verdad. Aporto enfoque practico, disciplina de ejecucion, comunicacion clara y capacidad para colaborar durante todo el sprint con criterio tecnico y humano. Mi objetivo es que el producto final tenga impacto tangible y continuidad despues de la hackathon, con aprendizaje compartido para todo el equipo. ${focus}`;
+  return `Soy un perfil ${role} con motivación fuerte por crear soluciones reales para turismo. Me interesa trabajar con equipos multidisciplinarios, validar rápido ideas en contexto local y construir prototipos funcionales que la gente pueda usar de verdad. Aporto enfoque práctico, disciplina de ejecución, comunicación clara y capacidad para colaborar durante todo el sprint con criterio técnico y humano. Mi objetivo es que el producto final tenga impacto tangible y continuidad después de la hackathon, con aprendizaje compartido para todo el equipo. ${focus}`;
 }
 
 function createMember(
@@ -56,11 +56,11 @@ function createMember(
     institution,
     degreeOrMajor:
       role3H === "hacker"
-        ? "Ingenieria en Sistemas"
+        ? "Ingeniería en Sistemas"
         : role3H === "hipster"
-          ? "Diseno Digital"
+          ? "Diseño Digital"
           : "Marketing",
-    about: longAbout(prefix, `Ademas, disfruto resolver retos en equipo con enfoque ${prefix}.`),
+    about: longAbout(prefix, `Además, disfruto resolver retos en equipo con enfoque ${prefix}.`),
     linkedinUrl: `https://linkedin.com/in/${prefix}-${index}`,
     githubUrl: role3H === "hacker" ? `https://github.com/${prefix}-${index}` : undefined,
     portfolioUrl:
@@ -97,7 +97,7 @@ function createSeedRegistrations() {
     },
     {
       teamName: "Twin Explorers",
-      institution: "Universidad Tecnologica",
+      institution: "Universidad Tecnológica",
       teamSize: 4 as const,
       source: "Comunidad tech",
       challengePreferences: ["twinmap", "datapulse", "ecotrack"] as const,
@@ -153,7 +153,7 @@ function createSeedRegistrations() {
               {
                 id: `note_${index}`,
                 authorEmail: "admin@hackathonc3.dev",
-                message: "Equipo con buena cohesion y propuesta clara.",
+                message: "Equipo con buena cohesión y propuesta clara.",
                 createdAt: date,
               },
             ]

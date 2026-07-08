@@ -15,9 +15,7 @@ type PreferenceIndex = 0 | 1 | 2;
 
 const PREFERENCE_INDEXES: PreferenceIndex[] = [0, 1, 2];
 
-function sortTeams(
-  items: ChallengeOverviewRegistration[],
-) {
+function sortTeams(items: ChallengeOverviewRegistration[]) {
   return [...items].sort((a, b) => {
     const createdAtDelta =
       new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
@@ -70,7 +68,7 @@ function TeamCard({
         </p>
         <p>
           <span className="font-mono uppercase tracking-wide text-brand-electric">
-            Inscripcion:
+            Inscripción:
           </span>{" "}
           {formatDateTime(item.createdAt)}
         </p>
@@ -134,7 +132,7 @@ export function ChallengesOverview({
     return (
       <EmptyState
         title="Sin retos configurados"
-        description="Cuando exista catalogo de retos, esta vista mostrara equipos asignados y preferencias."
+        description="Cuando exista catálogo de retos, esta vista mostrará equipos asignados y preferencias."
       />
     );
   }

@@ -17,7 +17,7 @@ import type {
   TeamRegistrationDoc,
 } from "@/lib/types/domain";
 
-const ACCEPTED_SUBJECT = "Team Accepted | Hackathon de Turismo Creativo Vol. 1";
+const ACCEPTED_SUBJECT = "Equipo aceptado | Hackathon de Turismo Creativo Vol. 1";
 
 type AcceptedEmailResult = {
   registration: TeamRegistrationDoc;
@@ -64,7 +64,7 @@ export async function validateAcceptedEmailRegistration(registration: TeamRegist
   }
 
   if (registration.status !== "approved") {
-    throw new Error("No se puede enviar Accepted: primero marca el equipo como aprobado.");
+    throw new Error("No se puede enviar el correo de aceptación: primero marca el equipo como aprobado.");
   }
 
   if (!registration.members.length) {
@@ -82,10 +82,14 @@ export async function validateAcceptedEmailRegistration(registration: TeamRegist
 
   for (const member of registration.members) {
     if (!member.role3H) {
-      throw new Error(`No se puede enviar: ${memberDisplayName(member) || "un integrante"} no tiene rol 3H.`);
+      throw new Error(
+        `No se puede enviar: ${memberDisplayName(member) || "un integrante"} no tiene rol 3H.`,
+      );
     }
     if (!isValidEmail(member.email)) {
-      throw new Error(`No se puede enviar: ${memberDisplayName(member) || "un integrante"} no tiene correo válido.`);
+      throw new Error(
+        `No se puede enviar: ${memberDisplayName(member) || "un integrante"} no tiene correo válido.`,
+      );
     }
   }
 
@@ -102,7 +106,9 @@ export async function sendAcceptedEmailForRegistration(input: {
   const { registration, sentBy } = input;
 
   if (registration.emailStatus?.accepted?.status === "sent" && !input.confirmResend) {
-    throw new Error("Este correo Accepted ya fue enviado. Confirma el reenvío para continuar.");
+    throw new Error(
+      "Este correo de aceptación ya fue enviado. Confirma el reenvío para continuar.",
+    );
   }
 
   await validateAcceptedEmailRegistration(registration);
