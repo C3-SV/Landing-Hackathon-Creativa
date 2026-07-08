@@ -1,7 +1,9 @@
 ﻿import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BRANDING } from "@/lib/constants/branding";
+import { APP_ENV } from "@/lib/constants/env";
 import { RegistrationDetail } from "@/features/admin/components";
+import { getAcceptedEmailClientSummary } from "@/lib/email/accepted-email";
 import { registrationRepository } from "@/lib/repositories";
 import { ButtonLink, Card } from "@/lib/ui";
 
@@ -11,9 +13,10 @@ type PageProps = {
 
 export default async function RegistrationDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const [registration, challenges] = await Promise.all([
+  const [registration, challenges, emailLogs] = await Promise.all([
     registrationRepository.getRegistrationById(id),
     registrationRepository.getChallenges(),
+    registrationRepository.listEmailLogsForRegistration(id),
   ]);
 
   if (!registration) {
@@ -41,7 +44,13 @@ export default async function RegistrationDetailPage({ params }: PageProps) {
           Lista de equipos
         </ButtonLink>
       </Card>
-      <RegistrationDetail registration={registration} challenges={challenges} />
+      <RegistrationDetail
+        registration={registration}
+        challenges={challenges}
+        emailLogs={emailLogs}
+        acceptedEmailSummary={getAcceptedEmailClientSummary(registration)}
+        emailNotificationsEnabled={APP_ENV.emailNotificationsEnabled}
+      />
     </section>
   );
 }

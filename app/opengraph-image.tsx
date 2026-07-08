@@ -4,7 +4,7 @@ import { BRANDING } from "@/lib/constants/branding";
 export const runtime = "edge";
 
 export const alt =
-  "Hackathon de Turismo Creativo I, + Turismo + Código + Cultura, organizado por C3 y Poliédrica";
+  "Hackathon de Turismo Creativo Vol. 1, + Turismo + Código + Cultura, organizado por C3 y Poliédrica";
 export const size = {
   width: 1200,
   height: 630,

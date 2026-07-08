@@ -75,7 +75,7 @@ const challenges = [
 
 const editionId = process.env.CURRENT_EDITION_ID ?? "hackathon-de-turismo-creativo-i-2026";
 const edition = {
-  name: "Hackathon de Turismo Creativo I - 2026",
+  name: "Hackathon de Turismo Creativo Vol. 1 - 2026",
   isCurrent: true,
   startsAt: "2026-06-20",
   endsAt: "2026-06-21",

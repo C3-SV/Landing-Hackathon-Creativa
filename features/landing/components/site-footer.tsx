@@ -4,10 +4,10 @@ export function SiteFooter() {
       <div className="mx-auto grid w-[min(1180px,calc(100%-2rem))] gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
         <div className="space-y-3">
           <p className="font-display text-[0.65rem] uppercase leading-[1.8] text-brand-white sm:text-xs">
-            {"HACKATHON DE TURISMO CREATIVO I"}
+            {"HACKATHON DE TURISMO CREATIVO VOL. 1"}
           </p>
           <p className="font-mono text-sm leading-relaxed text-brand-muted">
-            Hackathon de Turismo Creativo I
+            HTC VOL. 1
           </p>
           <p className="font-mono text-xs uppercase tracking-[0.12em] text-brand-orange">
             {"+ TURISMO + CÓDIGO + CULTURA"}

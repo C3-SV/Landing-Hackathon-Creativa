@@ -18,13 +18,13 @@ export function EventSpiritSection() {
         </h2>
 
         <p className="mt-8 max-w-[900px] text-base leading-relaxed text-brand-white/90 sm:text-lg">
-          En Hackathon de Turismo Creativo I, cada perfil aporta algo distinto: una idea, una habilidad, una
-          forma de entender el problema o una manera de construir la solución.
+          En Hackathon de Turismo Creativo Vol. 1, cada perfil aporta algo distinto: una idea, una
+          habilidad, una forma de entender el problema o una manera de construir la solución.
         </p>
 
         <div className="mt-8 inline-flex max-w-full flex-wrap items-center justify-center gap-x-3 gap-y-2 rounded-full border border-brand-electric/65 bg-brand-surface/25 px-5 py-3 font-mono text-sm uppercase tracking-[0.12em] sm:px-8 sm:text-base">
           <span className="text-brand-orange-soft">+ TURISMO</span>
-          <span className="text-brand-orange-soft">+ CÓDIGO </span>
+          <span className="text-brand-orange-soft">+ CÓDIGO</span>
           <span className="text-brand-orange-soft">+ CULTURA</span>
         </div>
 
@@ -36,4 +36,3 @@ export function EventSpiritSection() {
     </section>
   );
 }
-

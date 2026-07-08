@@ -1,14 +1,21 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
+import {
+  buildTeamEmailRecipients,
+  CHALLENGE_ASSIGNED_SUBJECT,
+  memberDisplayName,
+  resolveAssignedChallenge,
+} from "@/lib/email/team-email";
+import { parseJsonResponse } from "@/lib/http";
 import { REGISTRATION_STATUS_VALUES } from "@/lib/types/domain";
 import type {
   Challenge,
+  EmailLog,
   RegistrationStatus,
   TeamConsents,
   TeamRegistrationDoc,
 } from "@/lib/types/domain";
-import { parseJsonResponse } from "@/lib/http";
 import {
   AlertState,
   Badge,
@@ -29,6 +36,17 @@ import {
 type RegistrationDetailProps = {
   registration: TeamRegistrationDoc;
   challenges: Challenge[];
+  emailLogs: EmailLog[];
+  acceptedEmailSummary: {
+    subject: string;
+    representativeName: string;
+    to: string;
+    cc: string[];
+    attachmentCount: number;
+    notificationsEnabled: boolean;
+    error: string | null;
+  };
+  emailNotificationsEnabled: boolean;
 };
 
 type ConsentColumn = {
@@ -44,6 +62,37 @@ const CONSENT_COLUMNS: ConsentColumn[] = [
   { key: "authorizationDeclaration", label: "Autorización" },
 ];
 
+function emailStatusLabel(status: string | undefined) {
+  switch (status) {
+    case "sent":
+      return "Enviado";
+    case "failed":
+      return "Falló";
+    case "dry_run":
+      return "Simulación";
+    case "not_sent":
+    default:
+      return "No enviado";
+  }
+}
+
+function emailTypeLabel(emailType: EmailLog["emailType"]) {
+  return emailType === "challenge_assigned" ? "Reto asignado" : "Aceptación";
+}
+
+function emailStatusClassName(status: string | undefined) {
+  switch (status) {
+    case "sent":
+      return "border-status-approved/50 bg-status-approved/20 text-status-approved";
+    case "failed":
+      return "border-status-rejected/50 bg-status-rejected/20 text-status-rejected";
+    case "dry_run":
+      return "border-brand-orange-soft/50 bg-brand-orange-soft/20 text-brand-orange-soft";
+    default:
+      return "border-brand-electric/30 bg-brand-surface text-brand-muted";
+  }
+}
+
 function ConsentMark({ value }: { value: boolean }) {
   if (value) {
     return <span className="font-mono text-lg text-brand-electric">✓</span>;
@@ -52,9 +101,53 @@ function ConsentMark({ value }: { value: boolean }) {
   return <span className="font-mono text-base text-brand-muted">—</span>;
 }
 
+function buildChallengeAssignedEmailSummary(
+  registration: TeamRegistrationDoc,
+  challenges: readonly Challenge[],
+  notificationsEnabled: boolean,
+) {
+  const assignedChallengeFallback = registration.assignedChallengeId
+    ? challenges.find((challenge) => challenge.id === registration.assignedChallengeId)?.name ??
+      registration.assignedChallengeId
+    : "Sin asignar";
+  const base = {
+    subject: CHALLENGE_ASSIGNED_SUBJECT,
+    representativeName: "Sin representante",
+    to: "",
+    cc: [] as string[],
+    assignedChallengeName: assignedChallengeFallback,
+    notificationsEnabled,
+    error: null as string | null,
+  };
+
+  try {
+    const { representative, to, cc } = buildTeamEmailRecipients(registration);
+    const assignedChallenge = resolveAssignedChallenge(registration, challenges);
+
+    return {
+      ...base,
+      representativeName: memberDisplayName(representative),
+      to,
+      cc,
+      assignedChallengeName: assignedChallenge.name,
+    };
+  } catch (error) {
+    return {
+      ...base,
+      error:
+        error instanceof Error
+          ? error.message
+          : "No se pudo preparar el resumen del correo de reto asignado.",
+    };
+  }
+}
+
 export function RegistrationDetail({
   registration,
   challenges,
+  emailLogs: initialEmailLogs,
+  acceptedEmailSummary,
+  emailNotificationsEnabled,
 }: RegistrationDetailProps) {
   const challengeMap = new Map(challenges.map((challenge) => [challenge.id, challenge.name]));
   const [current, setCurrent] = useState(registration);
@@ -64,10 +157,26 @@ export function RegistrationDetail({
   );
   const [note, setNote] = useState("");
   const [saving, setSaving] = useState(false);
+  const [emailLogs, setEmailLogs] = useState(initialEmailLogs);
+  const [confirmAcceptedOpen, setConfirmAcceptedOpen] = useState(false);
+  const [confirmChallengeAssignedOpen, setConfirmChallengeAssignedOpen] = useState(false);
+  const [sendingAccepted, setSendingAccepted] = useState(false);
+  const [sendingChallengeAssigned, setSendingChallengeAssigned] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const representative = getRepresentativeMember(current.members);
+  const acceptedStatus = current.emailStatus?.accepted?.status ?? "not_sent";
+  const acceptedLastSentAt = current.emailStatus?.accepted?.lastSentAt;
+  const challengeAssignedStatus =
+    current.emailStatus?.challengeAssigned?.status ?? "not_sent";
+  const challengeAssignedLastSentAt =
+    current.emailStatus?.challengeAssigned?.lastSentAt;
+  const challengeAssignedEmailSummary = buildChallengeAssignedEmailSummary(
+    current,
+    challenges,
+    emailNotificationsEnabled,
+  );
 
   async function saveChanges() {
     setSaving(true);
@@ -97,6 +206,96 @@ export function RegistrationDetail({
       setError(err instanceof Error ? err.message : "No se pudo guardar");
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function sendAcceptedEmail() {
+    setSendingAccepted(true);
+    setFeedback(null);
+    setError(null);
+    try {
+      const response = await fetch(
+        `/api/admin/registrations/${registration.id}/send-accepted-email`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            confirmResend: acceptedStatus === "sent",
+          }),
+        },
+      );
+      const payload = await parseJsonResponse<{
+        registration: TeamRegistrationDoc;
+        emailLogs: EmailLog[];
+        status: "sent" | "failed" | "dry_run";
+        errorMessage?: string | null;
+      }>(response);
+      setCurrent(payload.registration);
+      setEmailLogs(payload.emailLogs);
+      if (payload.status === "failed") {
+        setError(payload.errorMessage ?? "Brevo no pudo enviar el correo de aceptación.");
+      } else {
+        setFeedback(
+          payload.status === "dry_run"
+            ? "Correo de aceptación simulado. EMAIL_NOTIFICATIONS_ENABLED está apagado."
+            : "Correo de aceptación enviado correctamente.",
+        );
+        setConfirmAcceptedOpen(false);
+      }
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "No se pudo enviar el correo de aceptación",
+      );
+    } finally {
+      setSendingAccepted(false);
+    }
+  }
+
+  async function sendChallengeAssignedEmail() {
+    setSendingChallengeAssigned(true);
+    setFeedback(null);
+    setError(null);
+    try {
+      const response = await fetch(
+        `/api/admin/registrations/${registration.id}/send-challenge-assigned-email`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            confirmResend: challengeAssignedStatus === "sent",
+          }),
+        },
+      );
+      const payload = await parseJsonResponse<{
+        registration: TeamRegistrationDoc;
+        emailLogs: EmailLog[];
+        status: "sent" | "failed" | "dry_run";
+        errorMessage?: string | null;
+      }>(response);
+      setCurrent(payload.registration);
+      setEmailLogs(payload.emailLogs);
+      if (payload.status === "failed") {
+        setError(payload.errorMessage ?? "Brevo no pudo enviar el correo de reto asignado.");
+      } else {
+        setFeedback(
+          payload.status === "dry_run"
+            ? "Correo de reto asignado simulado. EMAIL_NOTIFICATIONS_ENABLED está apagado."
+            : "Correo de reto asignado enviado correctamente.",
+        );
+        setConfirmChallengeAssignedOpen(false);
+      }
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "No se pudo enviar el correo de reto asignado",
+      );
+    } finally {
+      setSendingChallengeAssigned(false);
     }
   }
 
@@ -220,6 +419,130 @@ export function RegistrationDetail({
         </div>
       </Card>
 
+      <Card className="space-y-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h2 className="font-mono text-xs uppercase tracking-wide text-brand-electric">
+              Correo de reto asignado
+            </h2>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <span
+                className={`inline-flex items-center rounded-full px-2.5 py-1 font-mono text-xs uppercase tracking-wide ${emailStatusClassName(
+                  challengeAssignedStatus,
+                )}`}
+              >
+                {emailStatusLabel(challengeAssignedStatus)}
+              </span>
+              {challengeAssignedLastSentAt ? (
+                <span className="text-sm text-brand-muted">
+                  Último intento: {formatDateTime(challengeAssignedLastSentAt)}
+                </span>
+              ) : null}
+            </div>
+          </div>
+          <Button
+            type="button"
+            variant={challengeAssignedStatus === "sent" ? "secondary" : "primary"}
+            onClick={() => setConfirmChallengeAssignedOpen(true)}
+            disabled={sendingChallengeAssigned || Boolean(challengeAssignedEmailSummary.error)}
+          >
+            {challengeAssignedStatus === "sent"
+              ? "Reenviar correo de reto asignado"
+              : "Enviar correo de reto asignado"}
+          </Button>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <DataLabel
+            label="Reto asignado actual"
+            value={challengeAssignedEmailSummary.assignedChallengeName}
+          />
+          <DataLabel label="Asunto" value={challengeAssignedEmailSummary.subject} />
+        </div>
+
+        {challengeAssignedEmailSummary.error ? (
+          <AlertState
+            title="Envío bloqueado"
+            description={challengeAssignedEmailSummary.error}
+            variant="error"
+          />
+        ) : null}
+
+        {challengeAssignedStatus === "sent" ? (
+          <AlertState
+            title="Reenvío"
+            description="Este correo ya fue enviado. Si lo reenvías, se guardará un nuevo log."
+            variant="warning"
+          />
+        ) : null}
+
+        {!emailNotificationsEnabled ? (
+          <AlertState
+            title="Envío real desactivado"
+            description="EMAIL_NOTIFICATIONS_ENABLED no está en true. Se guardará un log dry_run sin llamar a Brevo."
+            variant="warning"
+          />
+        ) : null}
+      </Card>
+
+      <Card className="space-y-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h2 className="font-mono text-xs uppercase tracking-wide text-brand-electric">
+              Correo de aceptación
+            </h2>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <span
+                className={`inline-flex items-center rounded-full px-2.5 py-1 font-mono text-xs uppercase tracking-wide ${emailStatusClassName(
+                  acceptedStatus,
+                )}`}
+              >
+                {emailStatusLabel(acceptedStatus)}
+              </span>
+              {acceptedLastSentAt ? (
+                <span className="text-sm text-brand-muted">
+                  Último intento: {formatDateTime(acceptedLastSentAt)}
+                </span>
+              ) : null}
+            </div>
+          </div>
+          <Button
+            type="button"
+            variant={acceptedStatus === "sent" ? "secondary" : "primary"}
+            onClick={() => setConfirmAcceptedOpen(true)}
+            disabled={sendingAccepted || Boolean(acceptedEmailSummary.error)}
+          >
+            {acceptedStatus === "sent"
+              ? "Reenviar correo de aceptación"
+              : "Enviar correo de aceptación"}
+          </Button>
+        </div>
+
+        {acceptedEmailSummary.error ? (
+          <AlertState
+            title="Falta configuración"
+            description={acceptedEmailSummary.error}
+            variant="error"
+          />
+        ) : null}
+
+        {acceptedStatus === "sent" ? (
+          <AlertState
+            title="Reenvío"
+            description="Este correo ya fue enviado. Si lo reenvías, se guardará un nuevo log."
+            variant="warning"
+          />
+        ) : null}
+
+        {!emailNotificationsEnabled ? (
+          <AlertState
+            title="Envío real desactivado"
+            description="EMAIL_NOTIFICATIONS_ENABLED no está en true. El flujo generará adjuntos y guardará un log dry_run sin llamar a Brevo."
+            variant="warning"
+          />
+        ) : null}
+      </Card>
+
       <Card className="space-y-3">
         <h2 className="font-mono text-xs uppercase tracking-wide text-brand-electric">
           Integrantes
@@ -246,15 +569,21 @@ export function RegistrationDetail({
               <p className="text-sm text-brand-muted">{member.phone}</p>
               <div className="mt-3 grid gap-1 text-xs text-brand-muted">
                 <p>
-                  <span className="font-mono uppercase tracking-wide text-brand-electric">Afiliación:</span>{" "}
+                  <span className="font-mono uppercase tracking-wide text-brand-electric">
+                    Afiliación:
+                  </span>{" "}
                   {member.affiliationType}
                 </p>
                 <p>
-                  <span className="font-mono uppercase tracking-wide text-brand-electric">Institución:</span>{" "}
+                  <span className="font-mono uppercase tracking-wide text-brand-electric">
+                    Institución:
+                  </span>{" "}
                   {member.institution}
                 </p>
                 <p>
-                  <span className="font-mono uppercase tracking-wide text-brand-electric">Área:</span>{" "}
+                  <span className="font-mono uppercase tracking-wide text-brand-electric">
+                    Área:
+                  </span>{" "}
                   {member.degreeOrMajor}
                 </p>
               </div>
@@ -297,6 +626,57 @@ export function RegistrationDetail({
             </div>
           ))}
         </div>
+      </Card>
+
+      <Card className="space-y-3">
+        <h2 className="font-mono text-xs uppercase tracking-wide text-brand-electric">
+          Historial de correos
+        </h2>
+        {emailLogs.length === 0 ? (
+          <p className="text-sm text-brand-muted">Sin correos registrados todavía.</p>
+        ) : (
+          <div className="overflow-x-auto rounded-xl border border-brand-electric/20 bg-brand-bg/35">
+            <table className="min-w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-brand-electric/20 bg-brand-bg/55 font-mono text-[11px] uppercase tracking-wide text-brand-muted">
+                  <th className="px-3 py-2 font-medium">Tipo</th>
+                  <th className="px-3 py-2 font-medium">Status</th>
+                  <th className="px-3 py-2 font-medium">Fecha</th>
+                  <th className="px-3 py-2 font-medium">To</th>
+                  <th className="px-3 py-2 font-medium">CC</th>
+                  <th className="px-3 py-2 font-medium">Asunto</th>
+                </tr>
+              </thead>
+              <tbody>
+                {emailLogs.map((log) => (
+                  <tr key={log.id} className="border-b border-brand-electric/10 last:border-b-0">
+                    <td className="px-3 py-2 font-mono uppercase text-brand-electric">
+                      {emailTypeLabel(log.emailType)}
+                    </td>
+                    <td className="px-3 py-2">
+                      <span
+                        className={`inline-flex items-center rounded-full px-2 py-0.5 font-mono text-[11px] uppercase tracking-wide ${emailStatusClassName(
+                          log.status,
+                        )}`}
+                      >
+                        {emailStatusLabel(log.status)}
+                      </span>
+                      {log.errorMessage ? (
+                        <p className="mt-1 max-w-sm text-xs text-brand-action">
+                          {log.errorMessage}
+                        </p>
+                      ) : null}
+                    </td>
+                    <td className="px-3 py-2 text-brand-muted">{formatDateTime(log.sentAt)}</td>
+                    <td className="px-3 py-2 text-brand-white">{log.to[0] ?? "-"}</td>
+                    <td className="px-3 py-2 text-brand-muted">{log.cc.length}</td>
+                    <td className="px-3 py-2 text-brand-muted">{log.subject}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Card>
 
       <Card className="space-y-3">
@@ -349,6 +729,185 @@ export function RegistrationDetail({
           </ul>
         )}
       </Card>
+
+      {confirmAcceptedOpen ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-brand-bg/85 p-4">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="accepted-email-confirm-title"
+            className="w-full max-w-2xl rounded-2xl border border-brand-electric/35 bg-brand-surface p-5 shadow-2xl"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2
+                  id="accepted-email-confirm-title"
+                  className="font-display text-base uppercase text-brand-white"
+                >
+                  Confirmar correo de aceptación
+                </h2>
+                <p className="mt-1 text-sm text-brand-muted">
+                  Se enviará un solo correo al representante del equipo.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="font-mono text-xs uppercase text-brand-muted hover:text-brand-white"
+                onClick={() => setConfirmAcceptedOpen(false)}
+                disabled={sendingAccepted}
+              >
+                Cerrar
+              </button>
+            </div>
+
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <DataLabel label="Equipo" value={current.teamName} />
+              <DataLabel
+                label="Representante"
+                value={`${acceptedEmailSummary.representativeName} · ${acceptedEmailSummary.to}`}
+              />
+              <DataLabel label="Asunto" value={acceptedEmailSummary.subject} />
+              <DataLabel label="Adjuntos" value={`${acceptedEmailSummary.attachmentCount} JPG`} />
+              <DataLabel
+                className="sm:col-span-2"
+                label="CC"
+                value={
+                  acceptedEmailSummary.cc.length
+                    ? acceptedEmailSummary.cc.join(", ")
+                    : "Sin copias"
+                }
+              />
+            </div>
+
+            {acceptedStatus === "sent" ? (
+              <div className="mt-4">
+                <AlertState
+                  title="Advertencia"
+                  description="Este equipo ya tiene un correo de aceptación enviado. Confirmar creará un nuevo envío/log."
+                  variant="warning"
+                />
+              </div>
+            ) : null}
+
+            {!emailNotificationsEnabled ? (
+              <div className="mt-4">
+                <AlertState
+                  title="Simulación"
+                  description="EMAIL_NOTIFICATIONS_ENABLED está apagado. No se enviará correo real por Brevo."
+                  variant="warning"
+                />
+              </div>
+            ) : null}
+
+            <div className="mt-5 flex flex-wrap justify-end gap-2">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setConfirmAcceptedOpen(false)}
+                disabled={sendingAccepted}
+              >
+                Cancelar
+              </Button>
+              <Button type="button" onClick={sendAcceptedEmail} disabled={sendingAccepted}>
+                {sendingAccepted ? "Enviando..." : "Confirmar envío"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {confirmChallengeAssignedOpen ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-brand-bg/85 p-4">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="challenge-email-confirm-title"
+            className="w-full max-w-2xl rounded-2xl border border-brand-electric/35 bg-brand-surface p-5 shadow-2xl"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2
+                  id="challenge-email-confirm-title"
+                  className="font-display text-base uppercase text-brand-white"
+                >
+                  Confirmar correo de reto asignado
+                </h2>
+                <p className="mt-1 text-sm text-brand-muted">
+                  Se enviará un solo correo al representante del equipo.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="font-mono text-xs uppercase text-brand-muted hover:text-brand-white"
+                onClick={() => setConfirmChallengeAssignedOpen(false)}
+                disabled={sendingChallengeAssigned}
+              >
+                Cerrar
+              </button>
+            </div>
+
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <DataLabel label="Equipo" value={current.teamName} />
+              <DataLabel
+                label="Reto asignado"
+                value={challengeAssignedEmailSummary.assignedChallengeName}
+              />
+              <DataLabel
+                label="Representante"
+                value={`${challengeAssignedEmailSummary.representativeName} · ${challengeAssignedEmailSummary.to}`}
+              />
+              <DataLabel label="Asunto" value={challengeAssignedEmailSummary.subject} />
+              <DataLabel
+                className="sm:col-span-2"
+                label="CC"
+                value={
+                  challengeAssignedEmailSummary.cc.length
+                    ? challengeAssignedEmailSummary.cc.join(", ")
+                    : "Sin copias"
+                }
+              />
+            </div>
+
+            {challengeAssignedStatus === "sent" ? (
+              <div className="mt-4">
+                <AlertState
+                  title="Advertencia"
+                  description="Este equipo ya tiene un correo de reto asignado enviado. Confirmar creará un nuevo envío/log."
+                  variant="warning"
+                />
+              </div>
+            ) : null}
+
+            {!emailNotificationsEnabled ? (
+              <div className="mt-4">
+                <AlertState
+                  title="Simulación"
+                  description="EMAIL_NOTIFICATIONS_ENABLED está apagado. No se enviará correo real por Brevo."
+                  variant="warning"
+                />
+              </div>
+            ) : null}
+
+            <div className="mt-5 flex flex-wrap justify-end gap-2">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setConfirmChallengeAssignedOpen(false)}
+                disabled={sendingChallengeAssigned}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="button"
+                onClick={sendChallengeAssignedEmail}
+                disabled={sendingChallengeAssigned}
+              >
+                {sendingChallengeAssigned ? "Enviando..." : "Confirmar envío"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

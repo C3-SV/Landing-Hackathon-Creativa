@@ -15,7 +15,7 @@ const ORGANIZERS: OrganizerCard[] = [
     href: "https://c3.com.sv/",
     logoSrc: "/images/logo-c3-blanco.png",
     logoAlt: "C3 — Organizador",
-    linkLabel: "Abrir sitio oficial de C3 en una nueva pestana",
+    linkLabel: "Abrir sitio oficial de C3 en una nueva pestaña",
     logoClassName: "max-h-[220px]",
   },
   {
@@ -23,7 +23,7 @@ const ORGANIZERS: OrganizerCard[] = [
     href: "https://www.poliedrica.sv/",
     logoSrc: "/images/logo-poliedrica-original.png",
     logoAlt: "Poliédrica — Organizador",
-    linkLabel: "Abrir sitio oficial de Poliedrica en una nueva pestana",
+    linkLabel: "Abrir sitio oficial de Poliédrica en una nueva pestaña",
     logoClassName: "max-h-[190px]",
   },
 ];
@@ -41,9 +41,9 @@ export function OrganizersSection() {
         </h2>
 
         <p className="mt-8 max-w-[980px] text-base leading-relaxed text-brand-white/92 sm:text-lg">
-          El Hackathon de Turismo Creativo I es organizado por C3 y Poliédrica, uniendo creatividad,
-          comunidad, tecnología y ejecución para activar un espacio donde el talento pueda construir
-          soluciones sobre retos reales del país.
+          El Hackathon de Turismo Creativo Vol. 1 es organizado por C3 y Poliédrica, uniendo
+          creatividad, comunidad, tecnología y ejecución para activar un espacio donde el talento
+          pueda construir soluciones sobre retos reales del país.
         </p>
 
         <div className="mt-10 grid gap-5 md:grid-cols-2 lg:mt-12 lg:gap-6">

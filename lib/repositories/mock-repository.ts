@@ -236,6 +236,48 @@ export const mockRegistrationRepository: RegistrationRepository = {
     return next;
   },
 
+  async updateRegistrationEmailStatus(id, emailType, update) {
+    const store = getMockStore();
+    const index = store.registrations.findIndex((item) => item.id === id);
+    if (index === -1) {
+      return null;
+    }
+
+    const current = store.registrations[index];
+    const next: TeamRegistrationDoc = {
+      ...current,
+      emailStatus: {
+        ...current.emailStatus,
+        [emailType]: {
+          status: update.status,
+          lastSentAt: update.lastSentAt,
+          lastLogId: update.lastLogId,
+        },
+      },
+      updatedAt: new Date().toISOString(),
+    };
+
+    store.registrations[index] = next;
+    return next;
+  },
+
+  async createEmailLog(input) {
+    const now = new Date().toISOString();
+    const log = {
+      id: `email_log_${Date.now()}`,
+      ...input,
+      createdAt: now,
+    };
+    getMockStore().emailLogs.unshift(log);
+    return log;
+  },
+
+  async listEmailLogsForRegistration(teamRegistrationId) {
+    return getMockStore().emailLogs
+      .filter((log) => log.teamRegistrationId === teamRegistrationId)
+      .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  },
+
   async exportRegistrationsCsv() {
     return buildRegistrationsCsv(getMockStore().registrations);
   },

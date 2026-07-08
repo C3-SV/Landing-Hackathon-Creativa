@@ -25,11 +25,11 @@ import {
 
 export const metadata: Metadata = {
   metadataBase: SITE_ORIGIN,
-  title: "Hackathon de Turismo Creativo I | C3 + Poliédrica",
+  title: "Hackathon de Turismo Creativo Vol. 1 | C3 + Poliédrica",
   description:
-    "Hackathon de Turismo Creativo I une turismo, código y cultura para crear prototipos y soluciones colaborativas a retos reales. Una iniciativa organizada por C3 y Poliédrica.",
+    "Hackathon de Turismo Creativo Vol. 1 une turismo, código y cultura para crear prototipos y soluciones colaborativas a retos reales. Una iniciativa organizada por C3 y Poliédrica.",
   keywords: [
-    "Hackathon de Turismo Creativo I",
+    "Hackathon de Turismo Creativo Vol. 1",
     "hackathon turismo El Salvador",
     "hackathon El Salvador",
     "hackathon tecnología El Salvador",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     canonical: SITE_ROOT_URL,
   },
   openGraph: {
-    title: "Hackathon de Turismo Creativo I | + Turismo + Código + Cultura",
+    title: "Hackathon de Turismo Creativo Vol. 1 | + Turismo + Código + Cultura",
     description:
       "Una experiencia de creación colaborativa donde turismo, código y cultura se unen para construir prototipos y soluciones a retos reales. Organizado por C3 y Poliédrica.",
     url: SITE_ROOT_URL,
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Hackathon de Turismo Creativo I",
+    title: "Hackathon de Turismo Creativo Vol. 1",
     description:
       "+ Turismo + Código + Cultura. Todo Suma. Un hackathon organizado por C3 y Poliédrica para crear soluciones desde tecnología, turismo y cultura.",
     images: [

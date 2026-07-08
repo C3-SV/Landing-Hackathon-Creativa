@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { BRANDING } from "@/lib/constants/branding";
-import { ButtonLink, Card } from "@/lib/ui";
 import { buildPageMetadata } from "@/lib/seo/metadata";
+import { ButtonLink, Card } from "@/lib/ui";
 
 export const metadata: Metadata = buildPageMetadata({
   path: "/register/success",
-  title: "Inscripción enviada | Hackathon de Turismo Creativo I",
+  title: "Inscripción enviada | Hackathon de Turismo Creativo Vol. 1",
   description:
-    "Confirmación de envío de inscripción para el Hackathon de Turismo Creativo I.",
+    "Confirmación de envío de inscripción para el Hackathon de Turismo Creativo Vol. 1.",
   indexable: false,
 });
 
@@ -41,8 +41,8 @@ export default async function RegisterSuccessPage({ searchParams }: SuccessPageP
             {BRANDING.eventName} · {BRANDING.thematicLine}
           </p>
           <p className="font-mono text-sm leading-relaxed text-brand-muted sm:text-base">
-            Recibimos la postulación de tu equipo. Revisaremos la información y les contactaremos con
-            los siguientes pasos.
+            Recibimos la postulación de tu equipo. Revisaremos la información y les contactaremos
+            con los siguientes pasos.
           </p>
           <div className="flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap">
             <ButtonLink href="/" className="w-full sm:w-auto">

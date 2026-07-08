@@ -29,7 +29,7 @@ export function RegisterPageShell({ children }: { children: React.ReactNode }) {
                 La competencia está dirigida a estudiantes universitarios y personas recién
                 graduadas, con hasta 2 años de haber egresado. Completa la información de tu
                 equipo, integrantes y preferencias de retos para participar en Hackathon de
-                Turismo Creativo I.
+                Turismo Creativo Vol. 1.
               </p>
             </div>
             <ButtonLink href="/" variant="secondary" className="w-full sm:w-auto">

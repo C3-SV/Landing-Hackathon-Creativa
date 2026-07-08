@@ -1,4 +1,5 @@
 import { APP_ENV } from "@/lib/constants/env";
+import { parseReplyToEmails } from "@/lib/email/team-email";
 import type { RegistrationStatus, TeamRegistrationDoc } from "@/lib/types/domain";
 import {
   getRepresentativeEmail,
@@ -22,16 +23,16 @@ type EmailPayload = {
 function statusMessage(status: RegistrationStatus) {
   switch (status) {
     case "approved":
-      return "Tu equipo fue aprobado para participar en el Hackathon de Turismo Creativo I.";
+      return "Tu equipo fue aprobado para participar en el Hackathon de Turismo Creativo Vol. 1.";
     case "waitlist":
       return "Tu equipo fue movido a lista de espera. Te contactaremos si se libera cupo.";
     case "rejected":
-      return "Gracias por aplicar. En esta ocasion tu equipo no fue seleccionado.";
+      return "Gracias por aplicar. En esta ocasión tu equipo no fue seleccionado.";
     case "needs_fix":
-      return "Necesitamos que revises o completes informacion de tu inscripcion.";
+      return "Necesitamos que revises o completes información de tu inscripción.";
     case "submitted":
     default:
-      return "Tu inscripcion quedo marcada como enviada.";
+      return "Tu inscripción quedó marcada como enviada.";
   }
 }
 
@@ -58,7 +59,7 @@ function buildStatusEmail(input: StatusNotificationInput): EmailPayload | null {
 
   return {
     to,
-    subject: `Actualizacion de estado: ${input.registration.teamName}`,
+    subject: `Actualización de estado: ${input.registration.teamName}`,
     text: [
       `Hola ${representativeName},`,
       "",
@@ -91,6 +92,9 @@ async function sendEmail(payload: EmailPayload) {
     return { sent: false, reason: "missing_config" as const };
   }
 
+  const replyToEmails = parseReplyToEmails(APP_ENV.email.replyTo);
+  const primaryReplyTo = replyToEmails[0];
+
   const response = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: {
@@ -106,11 +110,20 @@ async function sendEmail(payload: EmailPayload) {
           email: payload.to,
         },
       ],
-      replyTo: APP_ENV.email.replyTo
+      ...(primaryReplyTo
         ? {
-            email: APP_ENV.email.replyTo,
+            replyTo: {
+              email: primaryReplyTo,
+            },
           }
-        : undefined,
+        : {}),
+      ...(replyToEmails.length
+        ? {
+            headers: {
+              "Reply-To": replyToEmails.join(", "),
+            },
+          }
+        : {}),
       subject: payload.subject,
       textContent: payload.text,
       htmlContent: payload.html,
@@ -138,7 +151,7 @@ export async function notifyRegistrationStatusChange(input: StatusNotificationIn
   try {
     return await sendEmail(payload);
   } catch (error) {
-    console.error("Error enviando notificacion de estado", {
+    console.error("Error enviando notificación de estado", {
       registrationId: input.registration.id,
       actorEmail: input.actorEmail,
       error,

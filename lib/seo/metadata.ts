@@ -4,14 +4,14 @@ export const SITE_URL = "https://hackathon.c3.com.sv";
 export const SITE_ORIGIN = new URL(SITE_URL);
 export const SITE_ROOT_URL = new URL("/", SITE_ORIGIN).toString();
 
-export const SITE_NAME = "Hackathon de Turismo Creativo I";
+export const SITE_NAME = "Hackathon de Turismo Creativo Vol. 1";
 export const SITE_SUBTITLE = "+ Turismo + Código + Cultura";
 export const DEFAULT_TITLE = `${SITE_NAME} | C3 + Poliédrica`;
 export const DEFAULT_DESCRIPTION =
-  "Hackathon de Turismo Creativo I une turismo, código y cultura para crear prototipos y soluciones colaborativas a retos reales. Una iniciativa organizada por C3 y Poliédrica.";
+  "Hackathon de Turismo Creativo Vol. 1 une turismo, código y cultura para crear prototipos y soluciones colaborativas a retos reales. Una iniciativa organizada por C3 y Poliédrica.";
 export const DEFAULT_OG_IMAGE = "/opengraph-image";
 export const DEFAULT_OG_IMAGE_ALT =
-  "Hackathon de Turismo Creativo I, + Turismo + Código + Cultura, organizado por C3 y Poliédrica";
+  "Hackathon de Turismo Creativo Vol. 1, + Turismo + Código + Cultura, organizado por C3 y Poliédrica";
 
 export const OG_LOCALE = "es_SV";
 export const CONTENT_LANGUAGE = "es-SV";

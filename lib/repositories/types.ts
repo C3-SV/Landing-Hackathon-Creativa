@@ -3,10 +3,15 @@ import type {
   Challenge,
   ChallengeOverviewRegistration,
   DashboardStats,
+  EmailDeliveryStatus,
+  EmailLog,
+  EmailLogAttachment,
+  EmailType,
   Edition,
   RegistrationListFilters,
   RegistrationListItem,
   RegistrationStatus,
+  TeamEmailStatusKey,
   TeamRegistrationDoc,
   TeamRegistrationPayload,
 } from "@/lib/types/domain";
@@ -18,6 +23,23 @@ export type RegistrationUpdateInput = {
     authorEmail: string;
     message: string;
   };
+};
+
+export type CreateEmailLogInput = {
+  teamRegistrationId: string;
+  teamName: string;
+  emailType: EmailType;
+  subject: string;
+  to: string[];
+  cc: string[];
+  status: EmailDeliveryStatus;
+  brevoMessageId?: string | null;
+  assignedChallengeId?: string | null;
+  assignedChallengeName?: string | null;
+  attachments: EmailLogAttachment[];
+  sentAt: string;
+  sentBy?: string | null;
+  errorMessage?: string | null;
 };
 
 export type RegistrationRepository = {
@@ -32,6 +54,17 @@ export type RegistrationRepository = {
     id: string,
     update: RegistrationUpdateInput,
   ): Promise<TeamRegistrationDoc | null>;
+  updateRegistrationEmailStatus(
+    id: string,
+    emailType: TeamEmailStatusKey,
+    update: {
+      status: EmailDeliveryStatus;
+      lastSentAt: string;
+      lastLogId: string;
+    },
+  ): Promise<TeamRegistrationDoc | null>;
+  createEmailLog(input: CreateEmailLogInput): Promise<EmailLog>;
+  listEmailLogsForRegistration(teamRegistrationId: string): Promise<EmailLog[]>;
   exportRegistrationsCsv(): Promise<string>;
   hasTeamNameInEdition(
     teamNameNormalized: string,

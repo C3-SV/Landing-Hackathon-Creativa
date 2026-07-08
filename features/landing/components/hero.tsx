@@ -9,11 +9,11 @@ export function LandingHero() {
         <div className="grid gap-6 lg:grid-cols-[1.4fr_1.1fr] lg:items-center lg:gap-10">
           <div className="space-y-6 py-1 sm:space-y-7 lg:max-w-[44rem] lg:py-2">
             <p className="inline-flex items-center rounded-full border border-brand-orange px-4 py-2 font-mono text-xs uppercase tracking-[0.18em] text-brand-orange-soft sm:px-5">
-              &gt;_ HACKATHON DE TURISMO CREATIVO I
+              &gt;_ HTC VOL. 1
             </p>
             <h1 className="max-w-[16ch] font-display text-[1.85rem] uppercase leading-[1.15] tracking-[0.04em] text-brand-white [text-shadow:4px_4px_0_var(--brand-electric)] sm:text-[2.45rem] lg:text-[3.35rem] lg:leading-[1.1]">
               <span className="block">HACKATHON DE</span>
-              <span className="mt-2 block">TURISMO CREATIVO I</span>
+              <span className="mt-2 block">TURISMO CREATIVO VOL. 1</span>
             </h1>
             <p className="max-w-[35ch] text-lg leading-relaxed text-brand-white/90">
               Un fin de semana para construir soluciones reales donde el turismo, el código y la
@@ -45,7 +45,7 @@ export function LandingHero() {
             <div className="relative aspect-video w-full overflow-hidden rounded-[1.25rem] bg-transparent lg:w-[min(100%,560px)]">
               <Image
                 src="/images/hero-hackathon-pc-transparent.png"
-                alt="Ilustración principal del Hackathon de Turismo Creativo I"
+                alt="Ilustración principal del Hackathon de Turismo Creativo Vol. 1"
                 fill
                 priority
                 sizes="(max-width: 768px) 100vw, (max-width: 1024px) 72vw, 44vw"
