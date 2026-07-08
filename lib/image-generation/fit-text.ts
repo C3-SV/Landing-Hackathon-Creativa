@@ -4,27 +4,26 @@ export type FitTextInput = {
   boxHeight: number;
   maxFontSize: number;
   minFontSize: number;
-  fontFamily: string;
   maxLines: number;
+  lineHeightMultiplier: number;
 };
 
 export type FittedText = {
   lines: string[];
   fontSize: number;
   lineHeight: number;
-  totalHeight: number;
-  fontFamily: string;
+  totalTextHeight: number;
 };
 
 function charWeight(char: string) {
   if (char === " ") {
-    return 0.35;
+    return 0.34;
   }
-  if ("il.,'|!".includes(char)) {
+  if ("il.,'|![]()".includes(char)) {
     return 0.32;
   }
   if ("mwMW@#%&".includes(char)) {
-    return 0.9;
+    return 0.92;
   }
   if (char >= "A" && char <= "Z") {
     return 0.68;
@@ -32,7 +31,7 @@ function charWeight(char: string) {
   return 0.56;
 }
 
-function estimateTextWidth(text: string, fontSize: number) {
+function measureText(text: string, fontSize: number) {
   return [...text].reduce((total, char) => total + charWeight(char) * fontSize, 0);
 }
 
@@ -42,7 +41,7 @@ function splitLongWord(word: string, fontSize: number, maxWidth: number) {
 
   for (const char of [...word]) {
     const next = `${current}${char}`;
-    if (current && estimateTextWidth(next, fontSize) > maxWidth) {
+    if (current && measureText(next, fontSize) > maxWidth) {
       chunks.push(current);
       current = char;
     } else {
@@ -58,20 +57,17 @@ function splitLongWord(word: string, fontSize: number, maxWidth: number) {
 }
 
 function wrapText(text: string, fontSize: number, maxWidth: number, maxLines: number) {
-  const normalized = text.replace(/\s+/g, " ").trim();
-  const words = normalized.split(" ").filter(Boolean);
+  const words = text.replace(/\s+/g, " ").trim().split(" ").filter(Boolean);
   const lines: string[] = [];
   let current = "";
 
   for (const word of words) {
     const parts =
-      estimateTextWidth(word, fontSize) > maxWidth
-        ? splitLongWord(word, fontSize, maxWidth)
-        : [word];
+      measureText(word, fontSize) > maxWidth ? splitLongWord(word, fontSize, maxWidth) : [word];
 
     for (const part of parts) {
       const next = current ? `${current} ${part}` : part;
-      if (estimateTextWidth(next, fontSize) <= maxWidth) {
+      if (measureText(next, fontSize) <= maxWidth) {
         current = next;
         continue;
       }
@@ -95,13 +91,13 @@ function wrapText(text: string, fontSize: number, maxWidth: number, maxLines: nu
 }
 
 function truncateToWidth(text: string, fontSize: number, maxWidth: number) {
-  if (estimateTextWidth(text, fontSize) <= maxWidth) {
+  if (measureText(text, fontSize) <= maxWidth) {
     return text;
   }
 
   const ellipsis = "...";
   let output = text.trim();
-  while (output.length > 0 && estimateTextWidth(`${output}${ellipsis}`, fontSize) > maxWidth) {
+  while (output && measureText(`${output}${ellipsis}`, fontSize) > maxWidth) {
     output = output.slice(0, -1).trimEnd();
   }
 
@@ -111,26 +107,26 @@ function truncateToWidth(text: string, fontSize: number, maxWidth: number) {
 export function fitTextToBox(input: FitTextInput): FittedText {
   const text = input.text.trim() || "-";
   const maxLines = Math.max(1, input.maxLines);
+  const maxFontSize = Math.max(input.maxFontSize, input.minFontSize);
 
-  for (let fontSize = input.maxFontSize; fontSize >= input.minFontSize; fontSize -= 1) {
+  for (let fontSize = maxFontSize; fontSize >= input.minFontSize; fontSize -= 1) {
     const lines = wrapText(text, fontSize, input.boxWidth, maxLines);
-    const lineHeight = Math.round(fontSize * 1.16);
-    const totalHeight = lines.length * lineHeight;
-    const fitsWidth = lines.every((line) => estimateTextWidth(line, fontSize) <= input.boxWidth);
+    const lineHeight = fontSize * input.lineHeightMultiplier;
+    const totalTextHeight = lines.length * lineHeight;
+    const fitsWidth = lines.every((line) => measureText(line, fontSize) <= input.boxWidth);
 
-    if (lines.length <= maxLines && totalHeight <= input.boxHeight && fitsWidth) {
+    if (lines.length <= maxLines && totalTextHeight <= input.boxHeight && fitsWidth) {
       return {
         lines,
         fontSize,
         lineHeight,
-        totalHeight,
-        fontFamily: input.fontFamily,
+        totalTextHeight,
       };
     }
   }
 
   const fontSize = input.minFontSize;
-  const lineHeight = Math.round(fontSize * 1.16);
+  const lineHeight = fontSize * input.lineHeightMultiplier;
   const allowedLines = Math.max(1, Math.min(maxLines, Math.floor(input.boxHeight / lineHeight)));
   const lines = wrapText(text, fontSize, input.boxWidth, allowedLines).map((line) =>
     truncateToWidth(line, fontSize, input.boxWidth),
@@ -140,7 +136,6 @@ export function fitTextToBox(input: FitTextInput): FittedText {
     lines: lines.length ? lines : ["-"],
     fontSize,
     lineHeight,
-    totalHeight: Math.max(1, lines.length) * lineHeight,
-    fontFamily: input.fontFamily,
+    totalTextHeight: Math.max(1, lines.length) * lineHeight,
   };
 }

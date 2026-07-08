@@ -86,7 +86,7 @@ if (getApps().length === 0) {
 const db = getFirestore();
 const id = "mock_mock_mock_accepted_email_test";
 const now = new Date().toISOString();
-const teamName = "MOCK MOCK MOCK - Accepted Email Test - NO REAL";
+const teamName = "MOCK MOCK MOCK - Equipo Aurora";
 
 const registration = {
   id,
@@ -104,14 +104,14 @@ const registration = {
   members: [
     member(
       "hacker",
-      "MOCK MOCK MOCK Hacker Rep",
-      "No Real",
+      "MOCK MOCK MOCK - Chris",
+      "Marroquin",
       "chris.marroquin2309@gmail.com",
       true,
     ),
-    member("hipster", "MOCK MOCK MOCK Hipster", "No Real", "mock.accepted.hipster@example.com"),
-    member("hustler", "MOCK MOCK MOCK Hustler", "No Real", "mock.accepted.hustler@example.com"),
-    member("hacker", "MOCK MOCK MOCK Extra Hacker", "No Real", "mock.accepted.extra@example.com"),
+    member("hipster", "MOCK MOCK MOCK - Luis", "Hernandez", "marroquin.chris2309@gmail.com"),
+    member("hustler", "MOCK MOCK MOCK - Sofia", "Lopez", "mock.accepted.sofia@example.com"),
+    member("hacker", "MOCK MOCK MOCK - Carlos", "Rivera", "mock.accepted.carlos@example.com"),
   ],
   consents: {
     acceptCodeOfConduct: true,

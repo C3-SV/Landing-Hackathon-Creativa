@@ -2,7 +2,7 @@ import { APP_ENV } from "@/lib/constants/env";
 import {
   assertAcceptedTemplatesExist,
   generateAcceptedEmailAttachments,
-} from "@/lib/email/accepted-image-generator";
+} from "@/lib/image-generation/generate-accepted-assets";
 import { sendBrevoEmail } from "@/lib/email/brevo";
 import { registrationRepository } from "@/lib/repositories";
 import type {
