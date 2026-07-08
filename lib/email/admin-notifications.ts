@@ -117,13 +117,6 @@ async function sendEmail(payload: EmailPayload) {
             },
           }
         : {}),
-      ...(replyToEmails.length
-        ? {
-            headers: {
-              "Reply-To": replyToEmails.join(", "),
-            },
-          }
-        : {}),
       subject: payload.subject,
       textContent: payload.text,
       htmlContent: payload.html,

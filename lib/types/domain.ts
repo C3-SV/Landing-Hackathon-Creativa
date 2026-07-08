@@ -76,10 +76,10 @@ export type AdminNote = {
   createdAt: string;
 };
 
-export type EmailType = "accepted" | "challenge_assigned";
+export type EmailType = "accepted" | "challenge_assigned" | "final_instructions";
 export type EmailDeliveryStatus = "sent" | "failed" | "dry_run";
 export type EmailStatusValue = "not_sent" | EmailDeliveryStatus;
-export type TeamEmailStatusKey = "accepted" | "challengeAssigned";
+export type TeamEmailStatusKey = "accepted" | "challengeAssigned" | "finalInstructions";
 
 export type TeamEmailStatus = {
   accepted?: {
@@ -88,6 +88,11 @@ export type TeamEmailStatus = {
     lastLogId?: string;
   };
   challengeAssigned?: {
+    status: EmailStatusValue;
+    lastSentAt?: string;
+    lastLogId?: string;
+  };
+  finalInstructions?: {
     status: EmailStatusValue;
     lastSentAt?: string;
     lastLogId?: string;
@@ -180,3 +185,29 @@ export type DashboardStats = {
 };
 
 export type RepositoryMode = "mock" | "firebase";
+
+export type CodeOfConductAcceptanceStatus = "pending" | "accepted" | "expired";
+
+export type CodeOfConductAcceptance = {
+  id: string;
+  teamId: string;
+  teamName: string;
+  challengeId: string | null;
+  challengeName: string | null;
+  token: string;
+  status: CodeOfConductAcceptanceStatus;
+  sentAt: string | null;
+  acceptedAt: string | null;
+  acceptedByName: string | null;
+  acceptedByEmail: string | null;
+  acceptedByRole: string | null;
+  codeOfConductVersion: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CodeOfConductAcceptanceInput = {
+  acceptedByName: string;
+  acceptedByEmail: string;
+  acceptedByRole: "Capitan" | "Integrante";
+};
