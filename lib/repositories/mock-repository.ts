@@ -143,6 +143,25 @@ function buildDashboardStats(records: TeamRegistrationDoc[]): DashboardStats {
 }
 
 export const mockRegistrationRepository: RegistrationRepository = {
+  async getRegistrationSettings() {
+    return getMockStore().registrationSettings;
+  },
+
+  async updateRegistrationSettings(update) {
+    const store = getMockStore();
+    const now = new Date().toISOString();
+    store.registrationSettings = {
+      ...store.registrationSettings,
+      registrationsOpen: update.registrationsOpen,
+      updatedAt: now,
+      updatedBy: update.updatedBy ?? null,
+      closedAt: update.registrationsOpen ? null : now,
+      closedBy: update.registrationsOpen ? null : update.updatedBy ?? null,
+    };
+
+    return store.registrationSettings;
+  },
+
   async getChallenges() {
     return getMockStore().challenges;
   },

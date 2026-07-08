@@ -1,13 +1,14 @@
 ﻿import Link from "next/link";
 import { BRANDING } from "@/lib/constants/branding";
-import { DashboardStatsGrid } from "@/features/admin/components";
+import { DashboardStatsGrid, RegistrationSettingsSwitch } from "@/features/admin/components";
 import { registrationRepository } from "@/lib/repositories";
 import { ButtonLink, Card, EmptyState } from "@/lib/ui";
 
 export default async function AdminDashboardPage() {
-  const [stats, challenges] = await Promise.all([
+  const [stats, challenges, registrationSettings] = await Promise.all([
     registrationRepository.getDashboardStats(),
     registrationRepository.getChallenges(),
+    registrationRepository.getRegistrationSettings(),
   ]);
 
   return (
@@ -26,6 +27,8 @@ export default async function AdminDashboardPage() {
           Ver tabla completa
         </ButtonLink>
       </Card>
+
+      <RegistrationSettingsSwitch initialSettings={registrationSettings} />
 
       {stats.totalTeams === 0 ? (
         <EmptyState

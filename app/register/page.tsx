@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
-import { RegisterPageShell, TeamRegistrationForm } from "@/features/register/components";
+import {
+  RegisterPageShell,
+  RegistrationClosedScreen,
+  TeamRegistrationForm,
+} from "@/features/register/components";
 import { registrationRepository } from "@/lib/repositories";
 import { SITE_ORIGIN, SITE_ROOT_URL, buildPageMetadata } from "@/lib/seo/metadata";
 
@@ -13,9 +17,10 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 export default async function RegisterPage() {
-  const [edition, challenges] = await Promise.all([
+  const [edition, challenges, registrationSettings] = await Promise.all([
     registrationRepository.getCurrentEdition(),
     registrationRepository.getChallenges(),
+    registrationRepository.getRegistrationSettings(),
   ]);
 
   return (
@@ -43,9 +48,13 @@ export default async function RegisterPage() {
           }),
         }}
       />
-      <RegisterPageShell>
-        <TeamRegistrationForm editionId={edition.id} challenges={challenges} />
-      </RegisterPageShell>
+      {registrationSettings.registrationsOpen ? (
+        <RegisterPageShell>
+          <TeamRegistrationForm editionId={edition.id} challenges={challenges} />
+        </RegisterPageShell>
+      ) : (
+        <RegistrationClosedScreen />
+      )}
     </>
   );
 }

@@ -8,6 +8,7 @@ import type {
   Challenge,
   EmailLog,
   Edition,
+  RegistrationSettings,
   RegistrationStatus,
   TeamRegistrationDoc,
   TeamMember,
@@ -18,6 +19,7 @@ type MockStore = {
   editions: Edition[];
   registrations: TeamRegistrationDoc[];
   emailLogs: EmailLog[];
+  registrationSettings: RegistrationSettings;
 };
 
 declare global {
@@ -171,6 +173,13 @@ export function getMockStore() {
       editions: [...EDITION_SEEDS],
       registrations: createSeedRegistrations(),
       emailLogs: [],
+      registrationSettings: {
+        registrationsOpen: true,
+        updatedAt: new Date().toISOString(),
+        updatedBy: null,
+        closedAt: null,
+        closedBy: null,
+      },
     };
   }
 
