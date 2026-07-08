@@ -22,7 +22,7 @@ type EmailPayload = {
 function statusMessage(status: RegistrationStatus) {
   switch (status) {
     case "approved":
-      return "Tu equipo fue aprobado para participar en el Hackathon de Turismo Creativo I.";
+      return "Tu equipo fue aprobado para participar en el Hackathon de Turismo Creativo Vol. 1.";
     case "waitlist":
       return "Tu equipo fue movido a lista de espera. Te contactaremos si se libera cupo.";
     case "rejected":

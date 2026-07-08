@@ -38,7 +38,7 @@ export function Team3HSection() {
           </h2>
 
           <p className="max-w-[980px] font-mono text-sm leading-relaxed text-brand-muted sm:text-base lg:text-lg">
-            En la Hackathon de Turismo Creativo, los equipos se construyen desde la multidisciplinariedad.
+            En la Hackathon de Turismo Creativo Vol. 1, los equipos se construyen desde la multidisciplinariedad.
             El formato 3H une tres perspectivas complementarias para potenciar mejores ideas, mejores
             prototipos y mejores soluciones.
           </p>

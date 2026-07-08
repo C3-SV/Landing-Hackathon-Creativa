@@ -4,13 +4,13 @@ export function SiteFooter() {
       <div className="mx-auto grid w-[min(1180px,calc(100%-2rem))] gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
         <div className="space-y-3">
           <p className="font-display text-[0.65rem] uppercase leading-[1.8] text-brand-white sm:text-xs">
-            {"HACKATHON DE TURISMO CREATIVO I"}
+            {"HACKATHON DE TURISMO CREATIVO VOL. 1"}
           </p>
           <p className="font-mono text-sm leading-relaxed text-brand-muted">
-            Hackathon de Turismo Creativo I
+            Hackathon de Turismo Creativo Vol. 1
           </p>
           <p className="font-mono text-xs uppercase tracking-[0.12em] text-brand-orange">
-            {"+ TURISMO + CÓDIGO + CULTURA"}
+            {"+ TURISMO + CÃ“DIGO + CULTURA"}
           </p>
         </div>
 
@@ -28,11 +28,11 @@ export function SiteFooter() {
 
         <div className="space-y-3">
           <p className="font-mono text-xs uppercase tracking-[0.14em] text-brand-electric">
-            {"ORGANIZACIÓN"}
+            {"ORGANIZACIÃ“N"}
           </p>
-          <p className="font-mono text-sm leading-relaxed text-brand-white">{"C3 + Poliédrica"}</p>
+          <p className="font-mono text-sm leading-relaxed text-brand-white">{"C3 + PoliÃ©drica"}</p>
           <p className="font-mono text-sm leading-relaxed text-brand-muted">
-            {"11 y 12 de julio · Key Institute"}
+            {"11 y 12 de julio Â· Key Institute"}
           </p>
         </div>
       </div>

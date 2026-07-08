@@ -17,19 +17,19 @@ export function RegisterPageShell({ children }: { children: React.ReactNode }) {
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <p className="inline-flex items-center rounded-full border border-brand-orange px-4 py-2 font-mono text-xs uppercase tracking-[0.18em] text-brand-orange-soft">
-                {"{} INSCRIPCIÓN"}
+                {"{} INSCRIPCIÃ“N"}
               </p>
               <h1 className="mt-4 font-display text-[1.2rem] uppercase leading-[1.45] text-brand-white [text-shadow:3px_3px_0_var(--brand-electric)] sm:text-[1.55rem] lg:text-[2rem]">
                 INSCRIBE TU EQUIPO
               </h1>
               <p className="mt-2 font-mono text-xs uppercase tracking-wide text-brand-orange-soft">
-                {BRANDING.eventName} · {BRANDING.thematicLine}
+                {BRANDING.eventName} Â· {BRANDING.thematicLine}
               </p>
               <p className="mt-3 max-w-3xl font-mono text-sm leading-relaxed text-brand-muted">
-                La competencia está dirigida a estudiantes universitarios y personas recién
-                graduadas, con hasta 2 años de haber egresado. Completa la información de tu
+                La competencia estÃ¡ dirigida a estudiantes universitarios y personas reciÃ©n
+                graduadas, con hasta 2 aÃ±os de haber egresado. Completa la informaciÃ³n de tu
                 equipo, integrantes y preferencias de retos para participar en Hackathon de
-                Turismo Creativo I.
+                Turismo Creativo Vol. 1.
               </p>
             </div>
             <ButtonLink href="/" variant="secondary" className="w-full sm:w-auto">

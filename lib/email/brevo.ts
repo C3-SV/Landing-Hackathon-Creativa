@@ -1,5 +1,8 @@
 import { APP_ENV } from "@/lib/constants/env";
-import { DEFAULT_BREVO_SENDER_NAME } from "@/lib/email/team-email";
+import {
+  DEFAULT_BREVO_SENDER_NAME,
+  parseReplyToEmails,
+} from "@/lib/email/team-email";
 
 export type BrevoAttachment = {
   name: string;
@@ -25,6 +28,9 @@ export async function sendBrevoEmail(payload: BrevoEmailPayload): Promise<BrevoS
     throw new Error("Faltan BREVO_API_KEY o BREVO_SENDER_EMAIL para enviar correos.");
   }
 
+  const replyToEmails = parseReplyToEmails(payload.replyTo);
+  const primaryReplyTo = replyToEmails[0];
+
   const response = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: {
@@ -38,9 +44,20 @@ export async function sendBrevoEmail(payload: BrevoEmailPayload): Promise<BrevoS
       },
       to: payload.to.map((email) => ({ email })),
       cc: payload.cc.map((email) => ({ email })),
-      replyTo: {
-        email: payload.replyTo,
-      },
+      ...(primaryReplyTo
+        ? {
+            replyTo: {
+              email: primaryReplyTo,
+            },
+          }
+        : {}),
+      ...(replyToEmails.length
+        ? {
+            headers: {
+              "Reply-To": replyToEmails.join(", "),
+            },
+          }
+        : {}),
       subject: payload.subject,
       textContent: payload.text,
       htmlContent: payload.html,

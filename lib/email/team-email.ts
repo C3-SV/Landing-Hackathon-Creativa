@@ -1,13 +1,11 @@
 import type { Challenge, TeamMember, TeamRegistrationDoc } from "@/lib/types/domain";
 
-export const DEFAULT_BREVO_SENDER_NAME = "Hackathon de Turismo Creativo";
-export const DEFAULT_EMAIL_REPLY_TO = "competitivecodingclub.sv@gmail.com";
-export const TEAM_EMAIL_FIXED_CC = [
-  "competitivecodingclub.sv@gmail.com",
-  //"carlosvalladares.sv@gmail.com",
-] as const;
+export const DEFAULT_BREVO_SENDER_NAME = "Hackathon de Turismo Creativo Vol. 1";
+export const DEFAULT_EMAIL_REPLY_TO =
+  "competitivecodingclub.sv@gmail.com,carlosvalladares.sv@gmail.com";
+export const TEAM_EMAIL_FIXED_CC = [] as const;
 export const CHALLENGE_ASSIGNED_SUBJECT =
-  "Reto asignado | Hackathon de Turismo Creativo";
+  "Reto asignado | Hackathon de Turismo Creativo Vol. 1";
 
 export function escapeHtml(value: string) {
   return value
@@ -23,6 +21,14 @@ export function isValidEmail(value: string) {
 
 export function normalizeEmail(value: string) {
   return value.trim().toLowerCase();
+}
+
+export function parseReplyToEmails(value: string | undefined) {
+  if (!value) {
+    return [];
+  }
+
+  return [...new Set(value.split(",").map(normalizeEmail).filter(isValidEmail))];
 }
 
 export function dedupeEmails(emails: readonly string[]) {
@@ -61,7 +67,7 @@ export function resolveAssignedChallenge(
   const assignedChallengeId = registration.assignedChallengeId?.trim();
   if (!assignedChallengeId) {
     throw new Error(
-      "Este equipo todavía no tiene reto asignado. Asigna un reto antes de enviar este correo.",
+      "Este equipo todavÃ­a no tiene reto asignado. Asigna un reto antes de enviar este correo.",
     );
   }
 
@@ -70,7 +76,7 @@ export function resolveAssignedChallenge(
 
   if (!assignedChallengeName) {
     throw new Error(
-      "El reto asignado de este equipo no tiene un nombre válido. Revisa la configuración antes de enviar este correo.",
+      "El reto asignado de este equipo no tiene un nombre vÃ¡lido. Revisa la configuraciÃ³n antes de enviar este correo.",
     );
   }
 

@@ -23,7 +23,7 @@ function buildBody(teamName: string, assignedChallengeName: string) {
   const text = [
     `Hola, equipo ${teamName}.`,
     "",
-    "Ya tenemos listo el reto asignado para su participacion en la Hackathon de Turismo Creativo.",
+    "Ya tenemos listo el reto asignado para su participacion en la Hackathon de Turismo Creativo Vol. 1.",
     "",
     "Su reto asignado es:",
     assignedChallengeName,
@@ -37,7 +37,7 @@ function buildBody(teamName: string, assignedChallengeName: string) {
 
   const html = [
     `<p>Hola, equipo ${escapeHtml(teamName)}.</p>`,
-    "<p>Ya tenemos listo el reto asignado para su participacion en la Hackathon de Turismo Creativo.</p>",
+    "<p>Ya tenemos listo el reto asignado para su participacion en la Hackathon de Turismo Creativo Vol. 1.</p>",
     "<p>Su reto asignado es:</p>",
     `<p><strong>${escapeHtml(assignedChallengeName)}</strong></p>`,
     "<p>Por ahora, les pedimos estar atentos a las proximas indicaciones del evento. Muy pronto recibiran mas detalles sobre dinamica, horarios y siguientes pasos.</p>",

@@ -39,7 +39,7 @@ export const FAQ_ITEMS = [
   {
     question: "¿CUÁNTO DURA EL HACKATHON?",
     answer:
-      "El Hackathon de Turismo Creativo I se desarrollará durante dos días, el 11 y 12 de julio, en Key Institute, San Salvador.",
+      "El Hackathon de Turismo Creativo Vol. 1 se desarrollará durante dos días, el 11 y 12 de julio, en Key Institute, San Salvador.",
   },
   {
     question: "¿NECESITO SABER PROGRAMAR?",

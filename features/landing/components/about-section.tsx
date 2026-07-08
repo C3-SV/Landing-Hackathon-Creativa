@@ -13,18 +13,18 @@ const ABOUT_ITEMS: AboutItem[] = [
     Icon: RocketIcon,
   },
   {
-    title: "[ Competencia y colaboración real",
-    description: "La competencia impulsa, pero la colaboración multiplica.",
+    title: "[ Competencia y colaboraciÃ³n real",
+    description: "La competencia impulsa, pero la colaboraciÃ³n multiplica.",
     Icon: HandshakeIcon,
   },
   {
-    title: "[ Equipos híbridos",
-    description: "Perfiles distintos trabajando juntos para crear soluciones más completas",
+    title: "[ Equipos hÃ­bridos",
+    description: "Perfiles distintos trabajando juntos para crear soluciones mÃ¡s completas",
     Icon: UsersIcon,
   },
   {
-    title: "[ Mentoría práctica",
-    description: "Guía directa para mejorar la idea, el prototipo y la presentación final",
+    title: "[ MentorÃ­a prÃ¡ctica",
+    description: "GuÃ­a directa para mejorar la idea, el prototipo y la presentaciÃ³n final",
     Icon: MessageCircleIcon,
   },
 ];
@@ -44,15 +44,15 @@ export function AboutSection() {
           id="about-hackathon-title"
           className="font-display text-[1.8rem] uppercase leading-[1.2] tracking-[0.04em] text-brand-white [text-shadow:3px_3px_0_var(--brand-electric)] sm:text-[2.3rem] lg:text-[3.25rem]"
         >
-          ¿QUÉ ES?
+          Â¿QUÃ‰ ES?
         </h2>
 
         <p className="max-w-[78ch] text-base leading-relaxed text-brand-white/88 sm:text-lg">
-          El Hackathon de Turismo Creativo I es un evento intensivo donde equipos multidisciplinarios
-          trabajan durante dos días para diseñar, prototipar y presentar soluciones aplicables a retos
-          reales del país. La experiencia une turismo, código y cultura para transformar ideas en
-          propuestas demostrables, combinando creatividad, tecnología, contexto local y ejecución
-          práctica. Más que una competencia tradicional, es un espacio de colaboración donde distintos
+          El Hackathon de Turismo Creativo Vol. 1 es un evento intensivo donde equipos multidisciplinarios
+          trabajan durante dos dÃ­as para diseÃ±ar, prototipar y presentar soluciones aplicables a retos
+          reales del paÃ­s. La experiencia une turismo, cÃ³digo y cultura para transformar ideas en
+          propuestas demostrables, combinando creatividad, tecnologÃ­a, contexto local y ejecuciÃ³n
+          prÃ¡ctica. MÃ¡s que una competencia tradicional, es un espacio de colaboraciÃ³n donde distintos
           perfiles construyen juntos soluciones con potencial de impacto.
         </p>
 
