@@ -1,5 +1,6 @@
 import { CODE_OF_CONDUCT_EMAIL_CONFIG } from "@/lib/code-of-conduct/config";
 import { APP_ENV } from "@/lib/constants/env";
+import { getHackathonEmailStatusEntry } from "@/lib/email/allowed-types";
 import { sendBrevoEmail } from "@/lib/email/brevo";
 import {
   buildTeamEmailRecipients,
@@ -114,7 +115,8 @@ export async function sendFinalInstructionsEmailForRegistration(input: {
   const { registration, sentBy } = input;
 
   if (
-    registration.emailStatus?.finalInstructions?.status === "sent" &&
+    getHackathonEmailStatusEntry(registration.emailStatus, "final_instructions")?.status ===
+      "sent" &&
     !input.confirmResend
   ) {
     throw new Error(
@@ -147,6 +149,7 @@ export async function sendFinalInstructionsEmailForRegistration(input: {
   if (APP_ENV.emailNotificationsEnabled) {
     try {
       const result = await sendBrevoEmail({
+        emailType: "final_instructions",
         to: [to],
         cc,
         subject: FINAL_INSTRUCTIONS_SUBJECT,
@@ -171,7 +174,7 @@ export async function sendFinalInstructionsEmailForRegistration(input: {
 
   const updated = await registrationRepository.updateRegistrationEmailStatus(
     registration.id,
-    "finalInstructions",
+    "final_instructions",
     {
       status,
       lastSentAt: now,

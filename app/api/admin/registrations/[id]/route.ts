@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { requireAdminUser } from "@/lib/auth/admin";
-import { notifyRegistrationStatusChange } from "@/lib/email/admin-notifications";
 import { registrationRepository } from "@/lib/repositories";
 import type { RegistrationUpdateInput } from "@/lib/repositories/types";
 import { adminUpdateRegistrationSchema } from "@/lib/validation/admin";
@@ -94,14 +93,6 @@ export async function PATCH(request: Request, context: Context) {
           status: 404,
         },
       );
-    }
-
-    if (parsed.data.status) {
-      await notifyRegistrationStatusChange({
-        registration: updated,
-        previousStatus: current.status,
-        actorEmail: auth.user.email,
-      });
     }
 
     return NextResponse.json({ registration: updated });

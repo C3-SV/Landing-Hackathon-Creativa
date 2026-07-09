@@ -1,4 +1,5 @@
 import { APP_ENV } from "@/lib/constants/env";
+import { getHackathonEmailStatusEntry } from "@/lib/email/allowed-types";
 import { sendBrevoEmail } from "@/lib/email/brevo";
 import {
   buildTeamEmailRecipients,
@@ -86,7 +87,8 @@ export async function sendChallengeAssignedEmailForRegistration(input: {
   const { registration, sentBy } = input;
 
   if (
-    registration.emailStatus?.challengeAssigned?.status === "sent" &&
+    getHackathonEmailStatusEntry(registration.emailStatus, "challenge_assigned")?.status ===
+      "sent" &&
     !input.confirmResend
   ) {
     throw new Error(
@@ -123,6 +125,7 @@ export async function sendChallengeAssignedEmailForRegistration(input: {
   if (APP_ENV.emailNotificationsEnabled) {
     try {
       const result = await sendBrevoEmail({
+        emailType: "challenge_assigned",
         to: [to],
         cc,
         subject: CHALLENGE_ASSIGNED_SUBJECT,
@@ -147,7 +150,7 @@ export async function sendChallengeAssignedEmailForRegistration(input: {
 
   const updated = await registrationRepository.updateRegistrationEmailStatus(
     registration.id,
-    "challengeAssigned",
+    "challenge_assigned",
     {
       status,
       lastSentAt: now,

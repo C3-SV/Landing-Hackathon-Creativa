@@ -4,6 +4,7 @@ import {
   markCodeOfConductAcceptanceSent,
 } from "@/lib/code-of-conduct/acceptance";
 import { APP_ENV } from "@/lib/constants/env";
+import { getHackathonEmailStatusEntry } from "@/lib/email/allowed-types";
 import {
   assertAcceptedTemplatesExist,
   generateAcceptedEmailAttachments,
@@ -120,7 +121,10 @@ export async function sendAcceptedEmailForRegistration(input: {
 }): Promise<AcceptedEmailResult> {
   const { registration, sentBy } = input;
 
-  if (registration.emailStatus?.accepted?.status === "sent" && !input.confirmResend) {
+  if (
+    getHackathonEmailStatusEntry(registration.emailStatus, "accepted")?.status === "sent" &&
+    !input.confirmResend
+  ) {
     throw new Error(
       "Este correo de aceptación ya fue enviado. Confirma el reenvío para continuar.",
     );
@@ -172,6 +176,7 @@ export async function sendAcceptedEmailForRegistration(input: {
   if (APP_ENV.emailNotificationsEnabled) {
     try {
       const result = await sendBrevoEmail({
+        emailType: "accepted",
         to: [to],
         cc,
         subject: ACCEPTED_SUBJECT,

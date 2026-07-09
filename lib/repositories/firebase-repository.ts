@@ -2,6 +2,10 @@ import { randomBytes } from "crypto";
 import { FieldValue, type QueryDocumentSnapshot, type Timestamp } from "firebase-admin/firestore";
 import { CODE_OF_CONDUCT_VERSION } from "@/lib/code-of-conduct/content";
 import { CHALLENGE_SEEDS, EDITION_SEEDS } from "@/lib/constants/event";
+import {
+  assertAllowedHackathonEmailType,
+  isAllowedHackathonEmailType,
+} from "@/lib/email/allowed-types";
 import { getFirebaseAdminDb } from "@/lib/firebase/admin";
 import { buildRegistrationsCsv } from "@/lib/repositories/csv-export";
 import type {
@@ -120,7 +124,7 @@ type StoredRegistration = Partial<Omit<TeamRegistrationDoc, "id">> & {
 type StoredEmailLog = {
   teamRegistrationId?: string;
   teamName?: string;
-  emailType?: "accepted" | "challenge_assigned" | "final_instructions";
+  emailType?: string;
   subject?: string;
   to?: string[];
   cc?: string[];
@@ -234,11 +238,15 @@ function toRegistration(docId: string, rawData: StoredRegistration): TeamRegistr
 
 function toEmailLog(docId: string, rawData: StoredEmailLog) {
   const createdAt = timestampToIso(rawData.createdAt);
+  const emailType = isAllowedHackathonEmailType(rawData.emailType)
+    ? rawData.emailType
+    : "accepted";
+
   return {
     id: docId,
     teamRegistrationId: rawData.teamRegistrationId ?? "",
     teamName: rawData.teamName ?? "",
-    emailType: rawData.emailType ?? "accepted",
+    emailType,
     subject: rawData.subject ?? "",
     to: rawData.to ?? [],
     cc: rawData.cc ?? [],
@@ -581,6 +589,8 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
   },
 
   async updateRegistrationEmailStatus(id, emailType, update) {
+    assertAllowedHackathonEmailType(emailType);
+
     const db = getFirebaseAdminDb();
     const ref = db.collection(COLLECTIONS.registrations).doc(id);
     const snap = await ref.get();
@@ -602,6 +612,8 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
   },
 
   async createEmailLog(input) {
+    assertAllowedHackathonEmailType(input.emailType);
+
     const db = getFirebaseAdminDb();
     const ref = db.collection(COLLECTIONS.emailLogs).doc();
     const log = {
@@ -627,7 +639,9 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
       .get();
 
     return snapshot.docs
-      .map((doc) => toEmailLog(doc.id, (doc.data() ?? {}) as StoredEmailLog))
+      .map((doc) => ({ id: doc.id, data: (doc.data() ?? {}) as StoredEmailLog }))
+      .filter(({ data }) => !data.emailType || isAllowedHackathonEmailType(data.emailType))
+      .map(({ id, data }) => toEmailLog(id, data))
       .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
   },
 

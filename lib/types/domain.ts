@@ -79,25 +79,16 @@ export type AdminNote = {
 export type EmailType = "accepted" | "challenge_assigned" | "final_instructions";
 export type EmailDeliveryStatus = "sent" | "failed" | "dry_run";
 export type EmailStatusValue = "not_sent" | EmailDeliveryStatus;
-export type TeamEmailStatusKey = "accepted" | "challengeAssigned" | "finalInstructions";
+export type TeamEmailStatusKey = EmailType;
 
-export type TeamEmailStatus = {
-  accepted?: {
-    status: EmailStatusValue;
-    lastSentAt?: string;
-    lastLogId?: string;
-  };
-  challengeAssigned?: {
-    status: EmailStatusValue;
-    lastSentAt?: string;
-    lastLogId?: string;
-  };
-  finalInstructions?: {
-    status: EmailStatusValue;
-    lastSentAt?: string;
-    lastLogId?: string;
-  };
+export type TeamEmailStatusEntry = {
+  status: EmailStatusValue;
+  lastSentAt?: string;
+  lastLogId?: string;
 };
+
+export type TeamEmailStatus = Partial<Record<TeamEmailStatusKey, TeamEmailStatusEntry>> &
+  Partial<Record<"challengeAssigned" | "finalInstructions", TeamEmailStatusEntry>>;
 
 export type EmailLogAttachment = {
   fileName: string;

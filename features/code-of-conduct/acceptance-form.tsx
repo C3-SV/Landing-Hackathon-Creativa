@@ -134,11 +134,6 @@ export function CodeOfConductAcceptanceForm({
         <h2 className="mt-2 font-display text-base uppercase leading-7 text-brand-white sm:text-lg">
           {acceptance.teamName}
         </h2>
-        {acceptance.challengeName ? (
-          <p className="mt-2 text-sm text-brand-muted">
-            Reto asignado: {acceptance.challengeName}
-          </p>
-        ) : null}
       </div>
 
       <div className="border-t border-brand-electric/20 pt-4">

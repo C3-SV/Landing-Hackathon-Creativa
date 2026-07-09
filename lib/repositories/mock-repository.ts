@@ -5,6 +5,10 @@ import {
   EDITION_SEEDS,
 } from "@/lib/constants/event";
 import { BRANDING } from "@/lib/constants/branding";
+import {
+  assertAllowedHackathonEmailType,
+  isAllowedHackathonEmailType,
+} from "@/lib/email/allowed-types";
 import { buildRegistrationsCsv } from "@/lib/repositories/csv-export";
 import { getMockStore } from "@/lib/repositories/mock-store";
 import type {
@@ -267,6 +271,8 @@ export const mockRegistrationRepository: RegistrationRepository = {
   },
 
   async updateRegistrationEmailStatus(id, emailType, update) {
+    assertAllowedHackathonEmailType(emailType);
+
     const store = getMockStore();
     const index = store.registrations.findIndex((item) => item.id === id);
     if (index === -1) {
@@ -292,6 +298,8 @@ export const mockRegistrationRepository: RegistrationRepository = {
   },
 
   async createEmailLog(input) {
+    assertAllowedHackathonEmailType(input.emailType);
+
     const now = new Date().toISOString();
     const log = {
       id: `email_log_${Date.now()}`,
@@ -304,7 +312,11 @@ export const mockRegistrationRepository: RegistrationRepository = {
 
   async listEmailLogsForRegistration(teamRegistrationId) {
     return getMockStore().emailLogs
-      .filter((log) => log.teamRegistrationId === teamRegistrationId)
+      .filter(
+        (log) =>
+          log.teamRegistrationId === teamRegistrationId &&
+          isAllowedHackathonEmailType(log.emailType),
+      )
       .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
   },
 

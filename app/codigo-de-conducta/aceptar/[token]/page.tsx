@@ -138,11 +138,6 @@ export default async function AcceptCodeOfConductPage({ params }: PageProps) {
                 <h2 className="mt-2 font-display text-base uppercase leading-7 text-brand-white sm:text-lg">
                   {acceptance?.teamName ?? "Enlace de equipo"}
                 </h2>
-                {acceptance?.challengeName ? (
-                  <p className="mt-2 text-sm text-brand-muted">
-                    Reto asignado: {acceptance.challengeName}
-                  </p>
-                ) : null}
               </div>
               <div className="space-y-2 text-right">
                 <p className="font-mono text-[11px] uppercase tracking-wide text-brand-muted">

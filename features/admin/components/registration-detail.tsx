@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { getHackathonEmailStatusEntry } from "@/lib/email/allowed-types";
 import {
   buildTeamEmailRecipients,
   CHALLENGE_ASSIGNED_SUBJECT,
@@ -239,16 +240,21 @@ export function RegistrationDetail({
   const [error, setError] = useState<string | null>(null);
 
   const representative = getRepresentativeMember(current.members);
-  const acceptedStatus = current.emailStatus?.accepted?.status ?? "not_sent";
-  const acceptedLastSentAt = current.emailStatus?.accepted?.lastSentAt;
-  const challengeAssignedStatus =
-    current.emailStatus?.challengeAssigned?.status ?? "not_sent";
-  const challengeAssignedLastSentAt =
-    current.emailStatus?.challengeAssigned?.lastSentAt;
-  const finalInstructionsStatus =
-    current.emailStatus?.finalInstructions?.status ?? "not_sent";
-  const finalInstructionsLastSentAt =
-    current.emailStatus?.finalInstructions?.lastSentAt;
+  const acceptedEmailStatus = getHackathonEmailStatusEntry(current.emailStatus, "accepted");
+  const challengeAssignedEmailStatus = getHackathonEmailStatusEntry(
+    current.emailStatus,
+    "challenge_assigned",
+  );
+  const finalInstructionsEmailStatus = getHackathonEmailStatusEntry(
+    current.emailStatus,
+    "final_instructions",
+  );
+  const acceptedStatus = acceptedEmailStatus?.status ?? "not_sent";
+  const acceptedLastSentAt = acceptedEmailStatus?.lastSentAt;
+  const challengeAssignedStatus = challengeAssignedEmailStatus?.status ?? "not_sent";
+  const challengeAssignedLastSentAt = challengeAssignedEmailStatus?.lastSentAt;
+  const finalInstructionsStatus = finalInstructionsEmailStatus?.status ?? "not_sent";
+  const finalInstructionsLastSentAt = finalInstructionsEmailStatus?.lastSentAt;
   const codeOfConductDisplayStatus = codeOfConductStatusLabel(codeOfConductAcceptance);
   const challengeAssignedEmailSummary = buildChallengeAssignedEmailSummary(
     current,

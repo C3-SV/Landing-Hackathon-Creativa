@@ -1,9 +1,11 @@
 import { APP_ENV } from "@/lib/constants/env";
+import { assertAllowedHackathonEmailType } from "@/lib/email/allowed-types";
 import {
   DEFAULT_BREVO_SENDER_NAME,
   isValidEmail,
   parseReplyToEmails,
 } from "@/lib/email/team-email";
+import type { EmailType } from "@/lib/types/domain";
 
 export type BrevoAttachment = {
   name: string;
@@ -11,6 +13,7 @@ export type BrevoAttachment = {
 };
 
 export type BrevoEmailPayload = {
+  emailType: EmailType;
   to: string[];
   cc: string[];
   subject: string;
@@ -25,6 +28,8 @@ export type BrevoSendResult = {
 };
 
 export async function sendBrevoEmail(payload: BrevoEmailPayload): Promise<BrevoSendResult> {
+  assertAllowedHackathonEmailType(payload.emailType);
+
   if (!APP_ENV.email.brevoApiKey) {
     throw new Error("Falta BREVO_API_KEY para enviar correos.");
   }
