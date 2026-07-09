@@ -1,5 +1,4 @@
 import type { AgendaItem } from "@/features/landing/data/agenda";
-import { AgendaCategoryBadge } from "@/features/landing/components/agenda-category-badge";
 
 type AgendaMobileCardsProps = {
   items: AgendaItem[];
@@ -22,7 +21,6 @@ export function AgendaMobileCards({ items }: AgendaMobileCardsProps) {
             <p className="inline-flex rounded-full bg-brand-electric/10 px-3 py-1 font-mono text-sm font-semibold text-brand-white">
               {item.time}
             </p>
-            <AgendaCategoryBadge category={item.category} className="shrink-0" />
           </div>
 
           <p className="mt-4 text-sm leading-6 text-brand-white/90">{item.activity}</p>

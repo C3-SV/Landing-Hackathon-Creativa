@@ -1,5 +1,4 @@
 import type { AgendaItem } from "@/features/landing/data/agenda";
-import { AgendaCategoryBadge } from "@/features/landing/components/agenda-category-badge";
 
 type AgendaTableProps = {
   items: AgendaItem[];
@@ -41,10 +40,7 @@ export function AgendaTable({ items }: AgendaTableProps) {
                     index < items.length - 1 ? "border-b border-brand-electric/18" : ""
                   }`}
                 >
-                  <div className="space-y-3">
-                    <p className="text-[0.98rem] leading-7 text-brand-white/90">{item.activity}</p>
-                    <AgendaCategoryBadge category={item.category} />
-                  </div>
+                  <p className="text-[0.98rem] leading-7 text-brand-white/90">{item.activity}</p>
                 </td>
               </tr>
             ))}
