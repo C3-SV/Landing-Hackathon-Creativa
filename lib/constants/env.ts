@@ -13,6 +13,30 @@ function readBooleanEnv(value: string | undefined, fallback: boolean) {
   return ["1", "true", "yes", "on"].includes(value.trim().toLowerCase());
 }
 
+function readStringEnv(value: string | undefined) {
+  const trimmed = value?.trim();
+  return trimmed || undefined;
+}
+
+function resolveEnvReference(value: string | undefined) {
+  const trimmed = readStringEnv(value);
+  if (!trimmed) {
+    return undefined;
+  }
+
+  const reference = trimmed.match(/^\$\{?([A-Z0-9_]+)\}?$/i)?.[1];
+  if (!reference) {
+    return trimmed;
+  }
+
+  return readStringEnv(process.env[reference]);
+}
+
+const brevoSenderEmail =
+  resolveEnvReference(process.env.BREVO_SENDER_EMAIL) ??
+  resolveEnvReference(process.env.EMAIL_FROM) ??
+  "";
+
 export const APP_ENV = {
   dataMode: (process.env.DATA_MODE ?? "mock") as RepositoryMode,
   currentEditionId: process.env.CURRENT_EDITION_ID ?? CURRENT_EDITION_FALLBACK,
@@ -23,14 +47,15 @@ export const APP_ENV = {
     .filter(Boolean),
   emailNotificationsEnabled: readBooleanEnv(process.env.EMAIL_NOTIFICATIONS_ENABLED, false),
   email: {
-    from: process.env.BREVO_SENDER_EMAIL ?? process.env.EMAIL_FROM ?? "",
-    senderEmail: process.env.BREVO_SENDER_EMAIL ?? process.env.EMAIL_FROM ?? "",
-    senderName: process.env.BREVO_SENDER_NAME ?? DEFAULT_BREVO_SENDER_NAME,
+    from: brevoSenderEmail,
+    senderEmail: brevoSenderEmail,
+    senderName:
+      resolveEnvReference(process.env.BREVO_SENDER_NAME) ?? DEFAULT_BREVO_SENDER_NAME,
     replyTo:
-      process.env.BREVO_REPLY_TO_EMAIL ??
-      process.env.EMAIL_REPLY_TO ??
+      resolveEnvReference(process.env.BREVO_REPLY_TO_EMAIL) ??
+      resolveEnvReference(process.env.EMAIL_REPLY_TO) ??
       DEFAULT_EMAIL_REPLY_TO,
-    brevoApiKey: process.env.BREVO_API_KEY ?? "",
+    brevoApiKey: resolveEnvReference(process.env.BREVO_API_KEY) ?? "",
   },
   firebaseAdmin: {
     projectId: process.env.FIREBASE_PROJECT_ID ?? "",

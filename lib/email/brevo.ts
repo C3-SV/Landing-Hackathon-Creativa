@@ -1,6 +1,7 @@
 import { APP_ENV } from "@/lib/constants/env";
 import {
   DEFAULT_BREVO_SENDER_NAME,
+  isValidEmail,
   parseReplyToEmails,
 } from "@/lib/email/team-email";
 
@@ -24,18 +25,26 @@ export type BrevoSendResult = {
 };
 
 export async function sendBrevoEmail(payload: BrevoEmailPayload): Promise<BrevoSendResult> {
-  if (!APP_ENV.email.brevoApiKey || !APP_ENV.email.senderEmail) {
-    throw new Error("Faltan BREVO_API_KEY o BREVO_SENDER_EMAIL para enviar correos.");
+  if (!APP_ENV.email.brevoApiKey) {
+    throw new Error("Falta BREVO_API_KEY para enviar correos.");
   }
 
   const replyToEmails = parseReplyToEmails(payload.replyTo);
   const primaryReplyTo = replyToEmails[0];
   const sender = {
     name: APP_ENV.email.senderName || DEFAULT_BREVO_SENDER_NAME,
-    email: APP_ENV.email.senderEmail,
+    email: APP_ENV.email.senderEmail.trim().toLowerCase(),
   };
 
   console.log("Brevo sender email:", sender.email);
+
+  if (!isValidEmail(sender.email)) {
+    throw new Error(
+      `BREVO_SENDER_EMAIL debe ser un correo válido y verificado en Brevo. Valor actual: ${
+        sender.email || "(vacío)"
+      }`,
+    );
+  }
 
   const response = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
