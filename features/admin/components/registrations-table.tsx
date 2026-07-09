@@ -2,10 +2,16 @@
 
 import { useMemo, useState, type FormEvent } from "react";
 import Link from "next/link";
-import { REGISTRATION_STATUS_VALUES } from "@/lib/types/domain";
-import type { Challenge, RegistrationListItem, RegistrationStatus } from "@/lib/types/domain";
+import {
+  ASSIGNED_CHALLENGE_FILTER,
+  REGISTRATION_STATUS_VALUES,
+  type Challenge,
+  type RegistrationListItem,
+  type RegistrationStatus,
+  UNASSIGNED_CHALLENGE_FILTER,
+} from "@/lib/types/domain";
 import { parseJsonResponse, toQueryString } from "@/lib/http";
-import { Badge, ButtonLink, Card, EmptyState, Input, Label, Select } from "@/lib/ui";
+import { Badge, Button, ButtonLink, Card, EmptyState, Input, Label, Select } from "@/lib/ui";
 import { formatDateTime, registrationStatusLabel } from "@/lib/utils";
 
 type RegistrationsTableProps = {
@@ -18,7 +24,32 @@ type RowFilters = {
   status: string;
   institution: string;
   preferredChallenge: string;
+  assignedChallenge: string;
+  teamSize: string;
+  sortBy: string;
+  sortDirection: string;
 };
+
+const defaultFilters: RowFilters = {
+  query: "",
+  status: "",
+  institution: "",
+  preferredChallenge: "",
+  assignedChallenge: "",
+  teamSize: "",
+  sortBy: "createdAt",
+  sortDirection: "desc",
+};
+
+const sortOptions = [
+  { value: "createdAt", label: "Fecha de registro" },
+  { value: "teamName", label: "Nombre del equipo" },
+  { value: "institution", label: "Institución" },
+  { value: "status", label: "Estado" },
+  { value: "teamSize", label: "Tamaño" },
+  { value: "assignedChallenge", label: "Reto asignado" },
+  { value: "preferredChallenge", label: "Reto #1" },
+];
 
 export function RegistrationsTable({
   initialRows,
@@ -30,6 +61,10 @@ export function RegistrationsTable({
   const [status, setStatus] = useState("");
   const [institution, setInstitution] = useState("");
   const [preferredChallenge, setPreferredChallenge] = useState("");
+  const [assignedChallenge, setAssignedChallenge] = useState("");
+  const [teamSize, setTeamSize] = useState("");
+  const [sortBy, setSortBy] = useState(defaultFilters.sortBy);
+  const [sortDirection, setSortDirection] = useState(defaultFilters.sortDirection);
 
   const challengeMap = useMemo(
     () => new Map(challenges.map((challenge) => [challenge.id, challenge.name])),
@@ -41,12 +76,67 @@ export function RegistrationsTable({
     return [...set].sort((a, b) => a.localeCompare(b));
   }, [initialRows]);
 
+  const activeFilters = useMemo(() => {
+    const filters: string[] = [];
+
+    if (query.trim()) {
+      filters.push(`Búsqueda: ${query.trim()}`);
+    }
+    if (status) {
+      filters.push(`Estado: ${registrationStatusLabel(status as RegistrationStatus)}`);
+    }
+    if (institution) {
+      filters.push(`Institución: ${institution}`);
+    }
+    if (preferredChallenge) {
+      filters.push(`Reto #1: ${challengeMap.get(preferredChallenge) ?? preferredChallenge}`);
+    }
+    if (assignedChallenge) {
+      const assignedLabel =
+        assignedChallenge === ASSIGNED_CHALLENGE_FILTER
+          ? "Con reto asignado"
+          : assignedChallenge === UNASSIGNED_CHALLENGE_FILTER
+            ? "Sin reto asignado"
+            : challengeMap.get(assignedChallenge) ?? assignedChallenge;
+      filters.push(`Reto asignado: ${assignedLabel}`);
+    }
+    if (teamSize) {
+      filters.push(`Tamaño: ${teamSize} integrantes`);
+    }
+
+    const isDefaultSort =
+      sortBy === defaultFilters.sortBy &&
+      sortDirection === defaultFilters.sortDirection;
+    if (!isDefaultSort) {
+      const sortLabel = sortOptions.find((option) => option.value === sortBy)?.label ?? sortBy;
+      filters.push(
+        `Orden: ${sortLabel} ${sortDirection === "asc" ? "ascendente" : "descendente"}`,
+      );
+    }
+
+    return filters;
+  }, [
+    assignedChallenge,
+    challengeMap,
+    institution,
+    preferredChallenge,
+    query,
+    sortBy,
+    sortDirection,
+    status,
+    teamSize,
+  ]);
+
   async function loadRows(overrides?: RowFilters) {
     const filters = overrides ?? {
       query,
       status,
       institution,
       preferredChallenge,
+      assignedChallenge,
+      teamSize,
+      sortBy,
+      sortDirection,
     };
 
     setLoading(true);
@@ -56,6 +146,18 @@ export function RegistrationsTable({
         status: filters.status || undefined,
         institution: filters.institution || undefined,
         preferredChallenge: filters.preferredChallenge || undefined,
+        assignedChallenge: filters.assignedChallenge || undefined,
+        teamSize: filters.teamSize || undefined,
+        sortBy:
+          filters.sortBy !== defaultFilters.sortBy ||
+          filters.sortDirection !== defaultFilters.sortDirection
+            ? filters.sortBy
+            : undefined,
+        sortDirection:
+          filters.sortBy !== defaultFilters.sortBy ||
+          filters.sortDirection !== defaultFilters.sortDirection
+            ? filters.sortDirection
+            : undefined,
       });
       const response = await fetch(`/api/admin/registrations${queryString}`);
       const payload = await parseJsonResponse<{ registrations: RegistrationListItem[] }>(
@@ -71,29 +173,26 @@ export function RegistrationsTable({
 
   async function onApplyFilters(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    loadRows();
+    await loadRows();
   }
 
   async function onResetFilters() {
-    const emptyFilters = {
-      query: "",
-      status: "",
-      institution: "",
-      preferredChallenge: "",
-    };
-
-    setQuery("");
-    setStatus("");
-    setInstitution("");
-    setPreferredChallenge("");
-    await loadRows(emptyFilters);
+    setQuery(defaultFilters.query);
+    setStatus(defaultFilters.status);
+    setInstitution(defaultFilters.institution);
+    setPreferredChallenge(defaultFilters.preferredChallenge);
+    setAssignedChallenge(defaultFilters.assignedChallenge);
+    setTeamSize(defaultFilters.teamSize);
+    setSortBy(defaultFilters.sortBy);
+    setSortDirection(defaultFilters.sortDirection);
+    await loadRows(defaultFilters);
   }
 
   return (
     <div className="space-y-4">
       <Card>
-        <form className="grid gap-3 lg:grid-cols-5" onSubmit={onApplyFilters}>
-          <div className="lg:col-span-2">
+        <form className="grid gap-3 lg:grid-cols-12" onSubmit={onApplyFilters}>
+          <div className="lg:col-span-4">
             <Label htmlFor="query">Buscar por equipo/representante/email</Label>
             <Input
               id="query"
@@ -102,7 +201,7 @@ export function RegistrationsTable({
               onChange={(event) => setQuery(event.target.value)}
             />
           </div>
-          <div>
+          <div className="lg:col-span-2">
             <Label htmlFor="status">Estado</Label>
             <Select
               id="status"
@@ -117,7 +216,19 @@ export function RegistrationsTable({
               ))}
             </Select>
           </div>
-          <div>
+          <div className="lg:col-span-2">
+            <Label htmlFor="teamSize">Tamaño</Label>
+            <Select
+              id="teamSize"
+              value={teamSize}
+              onChange={(event) => setTeamSize(event.target.value)}
+            >
+              <option value="">Todos</option>
+              <option value="3">3 integrantes</option>
+              <option value="4">4 integrantes</option>
+            </Select>
+          </div>
+          <div className="lg:col-span-4">
             <Label htmlFor="institution">Institución</Label>
             <Select
               id="institution"
@@ -132,7 +243,7 @@ export function RegistrationsTable({
               ))}
             </Select>
           </div>
-          <div>
+          <div className="lg:col-span-3">
             <Label htmlFor="challenge">Reto #1</Label>
             <Select
               id="challenge"
@@ -147,20 +258,76 @@ export function RegistrationsTable({
               ))}
             </Select>
           </div>
-          <div className="lg:col-span-5 flex flex-wrap justify-end gap-2 pt-1">
-            <button
-              type="button"
-              onClick={onResetFilters}
-              className="rounded-lg border border-brand-electric/30 px-3 py-2 font-mono text-xs uppercase text-brand-muted transition hover:bg-brand-bg/45"
+          <div className="lg:col-span-3">
+            <Label htmlFor="assignedChallenge">Reto asignado</Label>
+            <Select
+              id="assignedChallenge"
+              value={assignedChallenge}
+              onChange={(event) => setAssignedChallenge(event.target.value)}
             >
-              Limpiar
-            </button>
-            <button
-              type="submit"
-              className="rounded-lg bg-brand-orange px-3 py-2 font-mono text-xs uppercase text-brand-white transition hover:bg-brand-orange-soft"
+              <option value="">Todos</option>
+              <option value={UNASSIGNED_CHALLENGE_FILTER}>Sin asignar</option>
+              <option value={ASSIGNED_CHALLENGE_FILTER}>Con reto asignado</option>
+              {challenges.map((challenge) => (
+                <option key={challenge.id} value={challenge.id}>
+                  {challenge.name}
+                </option>
+              ))}
+            </Select>
+          </div>
+          <div className="lg:col-span-3">
+            <Label htmlFor="sortBy">Ordenar por</Label>
+            <Select
+              id="sortBy"
+              value={sortBy}
+              onChange={(event) => setSortBy(event.target.value)}
             >
-              Aplicar filtros
-            </button>
+              {sortOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </Select>
+          </div>
+          <div className="lg:col-span-3">
+            <Label htmlFor="sortDirection">Dirección</Label>
+            <Select
+              id="sortDirection"
+              value={sortDirection}
+              onChange={(event) => setSortDirection(event.target.value)}
+            >
+              <option value="desc">Descendente</option>
+              <option value="asc">Ascendente</option>
+            </Select>
+          </div>
+          <div className="lg:col-span-12 flex flex-wrap items-center justify-between gap-3 pt-1">
+            <div className="flex min-h-8 flex-wrap items-center gap-2">
+              <span className="font-mono text-xs uppercase text-brand-muted">
+                {loading ? "Actualizando..." : `${rows.length} equipos`}
+              </span>
+              {activeFilters.map((filter) => (
+                <Badge key={filter} className="normal-case tracking-normal">
+                  {filter}
+                </Badge>
+              ))}
+            </div>
+            <div className="flex flex-wrap justify-end gap-2">
+              <Button
+                type="button"
+                onClick={onResetFilters}
+                variant="ghost"
+                className="px-3 py-2 text-xs"
+              >
+                Limpiar
+              </Button>
+              <Button
+                type="submit"
+                disabled={loading}
+                className="px-3 py-2 text-xs"
+              >
+                Aplicar filtros
+              </Button>
+            </div>
           </div>
         </form>
       </Card>

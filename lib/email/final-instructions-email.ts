@@ -16,7 +16,7 @@ import type {
   TeamRegistrationDoc,
 } from "@/lib/types/domain";
 
-export const FINAL_INSTRUCTIONS_SUBJECT = "Indicaciones finales - HTC Vol. 1";
+export const FINAL_INSTRUCTIONS_SUBJECT = "Indicaciones finales | HTC Vol. 1";
 
 type FinalInstructionsEmailResult = {
   registration: TeamRegistrationDoc;

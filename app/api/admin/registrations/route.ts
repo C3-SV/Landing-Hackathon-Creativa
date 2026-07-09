@@ -16,6 +16,10 @@ export async function GET(request: Request) {
       status: url.searchParams.get("status") ?? undefined,
       institution: url.searchParams.get("institution") ?? undefined,
       preferredChallenge: url.searchParams.get("preferredChallenge") ?? undefined,
+      assignedChallenge: url.searchParams.get("assignedChallenge") ?? undefined,
+      teamSize: url.searchParams.get("teamSize") ?? undefined,
+      sortBy: url.searchParams.get("sortBy") ?? undefined,
+      sortDirection: url.searchParams.get("sortDirection") ?? undefined,
     });
 
     if (!parsed.success) {

@@ -8,6 +8,7 @@ import {
 } from "@/lib/email/allowed-types";
 import { getFirebaseAdminDb } from "@/lib/firebase/admin";
 import { buildRegistrationsCsv } from "@/lib/repositories/csv-export";
+import { applyRegistrationListFilters } from "@/lib/repositories/registration-list";
 import type {
   RegistrationRepository,
   RegistrationUpdateInput,
@@ -18,7 +19,6 @@ import type {
   CodeOfConductAcceptance,
   DashboardStats,
   Edition,
-  RegistrationListFilters,
   RegistrationListItem,
   RegistrationSettings,
   TeamConsents,
@@ -318,40 +318,6 @@ function fromDoc(doc: QueryDocumentSnapshot): TeamRegistrationDoc {
   return toRegistration(doc.id, data);
 }
 
-function applyFilters(
-  records: TeamRegistrationDoc[],
-  filters: RegistrationListFilters = {},
-) {
-  return records.filter((record) => {
-    if (filters.status && record.status !== filters.status) {
-      return false;
-    }
-    if (
-      filters.institution &&
-      record.institution.toLowerCase() !== filters.institution.toLowerCase()
-    ) {
-      return false;
-    }
-    if (
-      filters.preferredChallenge &&
-      record.challengePreferences[0] !== filters.preferredChallenge
-    ) {
-      return false;
-    }
-    if (filters.query) {
-      const term = filters.query.toLowerCase();
-      const hasTerm =
-        record.teamName.toLowerCase().includes(term) ||
-        getRepresentativeName(record.members).toLowerCase().includes(term) ||
-        getRepresentativeEmail(record.members).toLowerCase().includes(term);
-      if (!hasTerm) {
-        return false;
-      }
-    }
-    return true;
-  });
-}
-
 function buildStats(registrations: TeamRegistrationDoc[]): DashboardStats {
   const base: DashboardStats = {
     totalTeams: registrations.length,
@@ -530,7 +496,7 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
       .orderBy("createdAt", "desc")
       .get();
     const records = snapshot.docs.map(fromDoc);
-    return applyFilters(records, filters).map(toListItem);
+    return applyRegistrationListFilters(records, filters).map(toListItem);
   },
 
   async listRegistrationsForChallengeOverview() {

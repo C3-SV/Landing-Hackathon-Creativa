@@ -13,6 +13,9 @@ export const REGISTRATION_STATUS_VALUES = [
 
 export type RegistrationStatus = (typeof REGISTRATION_STATUS_VALUES)[number];
 
+export const ASSIGNED_CHALLENGE_FILTER = "__assigned__";
+export const UNASSIGNED_CHALLENGE_FILTER = "__unassigned__";
+
 export type ChallengeStatus = "confirmed" | "proposed";
 
 export type Challenge = {
@@ -130,6 +133,17 @@ export type RegistrationListFilters = {
   status?: RegistrationStatus;
   institution?: string;
   preferredChallenge?: string;
+  assignedChallenge?: string;
+  teamSize?: TeamSize;
+  sortBy?:
+    | "createdAt"
+    | "teamName"
+    | "institution"
+    | "status"
+    | "teamSize"
+    | "assignedChallenge"
+    | "preferredChallenge";
+  sortDirection?: "asc" | "desc";
 };
 
 export type RegistrationListItem = {

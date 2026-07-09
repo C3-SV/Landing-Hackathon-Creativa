@@ -11,6 +11,7 @@ import {
 } from "@/lib/email/allowed-types";
 import { buildRegistrationsCsv } from "@/lib/repositories/csv-export";
 import { getMockStore } from "@/lib/repositories/mock-store";
+import { applyRegistrationListFilters } from "@/lib/repositories/registration-list";
 import type {
   RegistrationRepository,
   RegistrationUpdateInput,
@@ -19,7 +20,6 @@ import type {
   DashboardStats,
   ChallengeOverviewRegistration,
   CodeOfConductAcceptance,
-  RegistrationListFilters,
   RegistrationListItem,
   TeamRegistrationDoc,
   TeamRegistrationPayload,
@@ -67,45 +67,6 @@ function mapToChallengeOverviewItem(record: TeamRegistrationDoc): ChallengeOverv
     assignedChallengeId: record.assignedChallengeId ?? null,
     createdAt: record.createdAt,
   };
-}
-
-function applyFilters(
-  records: TeamRegistrationDoc[],
-  filters: RegistrationListFilters = {},
-) {
-  return records.filter((record) => {
-    if (filters.status && record.status !== filters.status) {
-      return false;
-    }
-
-    if (
-      filters.institution &&
-      record.institution.toLowerCase() !== filters.institution.toLowerCase()
-    ) {
-      return false;
-    }
-
-    if (
-      filters.preferredChallenge &&
-      record.challengePreferences[0] !== filters.preferredChallenge
-    ) {
-      return false;
-    }
-
-    if (filters.query) {
-      const term = filters.query.toLowerCase();
-      const hasTerm =
-        record.teamName.toLowerCase().includes(term) ||
-        getRepresentativeName(record.members).toLowerCase().includes(term) ||
-        getRepresentativeEmail(record.members).toLowerCase().includes(term);
-
-      if (!hasTerm) {
-        return false;
-      }
-    }
-
-    return true;
-  });
 }
 
 function buildDashboardStats(records: TeamRegistrationDoc[]): DashboardStats {
@@ -219,7 +180,7 @@ export const mockRegistrationRepository: RegistrationRepository = {
   },
 
   async listRegistrations(filters = {}) {
-    const records = applyFilters(getMockStore().registrations, filters);
+    const records = applyRegistrationListFilters(getMockStore().registrations, filters);
     return records.map(mapToListItem);
   },
 
