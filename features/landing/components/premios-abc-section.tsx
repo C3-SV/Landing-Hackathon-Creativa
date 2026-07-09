@@ -3,7 +3,7 @@ import { Card, cn } from "@/lib/ui";
 const PRIZE_HIGHLIGHTS = [
   "6 equipos ganadores",
   "1 por reto",
-  "+USD 5,000 valorado",
+  "Valoración de US 5,000.00",
 ] as const;
 
 const PRIZE_TIERS = [
@@ -19,7 +19,7 @@ const PRIZE_TIERS = [
     letter: "B",
     title: "Business Connections",
     description:
-      "Visibilidad y conexión con aliados, mentores, jurados y actores del ecosistema de innovación, emprendimiento y oportunidades para abrir conversaciones reales alrededor de los mejores proyectos.",
+      "Visibilidad y conexión con aliados del HTC 1.0, mentores, jurados y actores del ecosistema de innovación para abrir conversaciones reales alrededor de los mejores proyectos y oportunidades de inversión o colaboración, incluyendo competiciones, fondos de inversión y certámenes.",
   },
   {
     label: "C 03",
@@ -129,9 +129,11 @@ export function PremiosABCSection() {
 
         <div className="mt-10 flex justify-center xl:mt-12">
           <p className="max-w-4xl rounded-full border border-brand-electric/45 bg-brand-surface/35 px-5 py-3 text-center font-mono text-sm leading-relaxed text-brand-white/88 shadow-[0_0_0_1px_rgba(26,130,255,0.12)] sm:px-6 sm:py-4 sm:text-base">
-            Una ruta de crecimiento:{" "}
-            <span className="text-brand-orange">asesoría</span>,{" "}
-            <span className="text-brand-orange-soft">conexiones</span> y colaboración.
+            <span className="text-brand-orange">Asesoría</span>
+            {" - "}
+            <span className="text-brand-orange">Conexiones</span>
+            {" - "}
+            <span className="text-brand-orange">Colaboración</span>
           </p>
         </div>
       </div>
