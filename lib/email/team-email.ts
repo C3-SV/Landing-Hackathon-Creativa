@@ -1,8 +1,7 @@
 import type { Challenge, TeamMember, TeamRegistrationDoc } from "@/lib/types/domain";
 
-export const DEFAULT_BREVO_SENDER_NAME = "Hackathon de Turismo Creativo Vol. 1";
-export const DEFAULT_EMAIL_REPLY_TO =
-  "competitivecodingclub.sv@gmail.com,carlosvalladares.sv@gmail.com";
+export const DEFAULT_BREVO_SENDER_NAME = "Hackathon de Turismo Creativo";
+export const DEFAULT_EMAIL_REPLY_TO = "competitivecodingclub.sv@gmail.com";
 export const TEAM_EMAIL_FIXED_CC = [] as const;
 export const CHALLENGE_ASSIGNED_SUBJECT =
   "Reto asignado | Hackathon de Turismo Creativo Vol. 1";

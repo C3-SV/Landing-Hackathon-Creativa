@@ -30,6 +30,12 @@ export async function sendBrevoEmail(payload: BrevoEmailPayload): Promise<BrevoS
 
   const replyToEmails = parseReplyToEmails(payload.replyTo);
   const primaryReplyTo = replyToEmails[0];
+  const sender = {
+    name: APP_ENV.email.senderName || DEFAULT_BREVO_SENDER_NAME,
+    email: APP_ENV.email.senderEmail,
+  };
+
+  console.log("Brevo sender email:", sender.email);
 
   const response = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
@@ -38,10 +44,7 @@ export async function sendBrevoEmail(payload: BrevoEmailPayload): Promise<BrevoS
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      sender: {
-        name: APP_ENV.email.senderName || DEFAULT_BREVO_SENDER_NAME,
-        email: APP_ENV.email.senderEmail,
-      },
+      sender,
       to: payload.to.map((email) => ({ email })),
       cc: payload.cc.map((email) => ({ email })),
       ...(primaryReplyTo

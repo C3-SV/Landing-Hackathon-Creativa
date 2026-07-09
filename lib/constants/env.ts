@@ -26,7 +26,10 @@ export const APP_ENV = {
     from: process.env.BREVO_SENDER_EMAIL ?? process.env.EMAIL_FROM ?? "",
     senderEmail: process.env.BREVO_SENDER_EMAIL ?? process.env.EMAIL_FROM ?? "",
     senderName: process.env.BREVO_SENDER_NAME ?? DEFAULT_BREVO_SENDER_NAME,
-    replyTo: process.env.EMAIL_REPLY_TO ?? DEFAULT_EMAIL_REPLY_TO,
+    replyTo:
+      process.env.BREVO_REPLY_TO_EMAIL ??
+      process.env.EMAIL_REPLY_TO ??
+      DEFAULT_EMAIL_REPLY_TO,
     brevoApiKey: process.env.BREVO_API_KEY ?? "",
   },
   firebaseAdmin: {
