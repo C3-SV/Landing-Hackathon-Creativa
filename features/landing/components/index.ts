@@ -8,5 +8,6 @@ export * from "@/features/landing/components/challenge-grid";
 export * from "@/features/landing/components/facts-strip";
 export * from "@/features/landing/components/organizers";
 export * from "@/features/landing/components/sponsors";
+export * from "@/features/landing/components/agenda-section";
 export * from "@/features/landing/components/faq";
 export * from "@/features/landing/components/site-footer";

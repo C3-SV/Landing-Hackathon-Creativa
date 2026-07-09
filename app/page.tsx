@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import {
   AboutSection,
+  AgendaSection,
   ChallengeGrid,
   EventSpiritSection,
   FaqSection,
@@ -135,6 +136,7 @@ export default function HomePage() {
         <PremiosABCSection />
         <OrganizersSection />
         <SponsorsSection />
+        <AgendaSection />
         <FaqSection />
       </main>
       <SiteFooter />
