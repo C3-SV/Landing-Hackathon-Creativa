@@ -37,7 +37,7 @@ export const TEXT_STYLE = {
   maxFontSize: 64,
   minFontSize: 24,
   lineHeightMultiplier: 1.15,
-  verticalNudge: -6,
+  verticalNudge: 0,
   color: "#111111",
   fontWeight: 800,
   maxLines: 2,

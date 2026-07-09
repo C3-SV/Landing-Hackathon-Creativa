@@ -65,7 +65,7 @@ function renderFontFace(font: ImageGenerationFont) {
     "<defs>",
     "<style>",
     "<![CDATA[",
-    `@font-face { font-family: "${font.family}"; src: url("data:${font.mimeType};base64,${font.base64}") format("truetype"); font-weight: ${TEXT_STYLE.fontWeight}; font-style: normal; }`,
+    `@font-face { font-family: "${font.family}"; src: url("data:${font.mimeType};base64,${font.base64}") format("${font.format}"); font-weight: ${TEXT_STYLE.fontWeight}; font-style: normal; }`,
     "]]>",
     "</style>",
     "</defs>",
