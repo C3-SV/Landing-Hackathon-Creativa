@@ -336,8 +336,8 @@ export const mockRegistrationRepository: RegistrationRepository = {
       const next: CodeOfConductAcceptance = {
         ...current,
         teamName: registration.teamName,
-        challengeId,
-        challengeName,
+        ...(challengeId !== undefined ? { challengeId } : {}),
+        ...(challengeName !== undefined ? { challengeName } : {}),
         status: "pending",
         token:
           current.status === "expired" || !current.token
@@ -354,8 +354,8 @@ export const mockRegistrationRepository: RegistrationRepository = {
       id: registration.id,
       teamId: registration.id,
       teamName: registration.teamName,
-      challengeId,
-      challengeName,
+      challengeId: challengeId ?? null,
+      challengeName: challengeName ?? null,
       token: generateSecureToken(),
       status: "pending",
       sentAt: null,
@@ -373,6 +373,25 @@ export const mockRegistrationRepository: RegistrationRepository = {
   },
 
   async markCodeOfConductFinalInstructionsSent(teamRegistrationId, sentAt) {
+    const store = getMockStore();
+    const index = store.codeOfConductAcceptances.findIndex(
+      (item) => item.teamId === teamRegistrationId,
+    );
+
+    if (index === -1) {
+      return null;
+    }
+
+    const next: CodeOfConductAcceptance = {
+      ...store.codeOfConductAcceptances[index],
+      sentAt,
+      updatedAt: new Date().toISOString(),
+    };
+    store.codeOfConductAcceptances[index] = next;
+    return next;
+  },
+
+  async markCodeOfConductAcceptanceSent(teamRegistrationId, sentAt) {
     const store = getMockStore();
     const index = store.codeOfConductAcceptances.findIndex(
       (item) => item.teamId === teamRegistrationId,

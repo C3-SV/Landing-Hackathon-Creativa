@@ -80,9 +80,13 @@ export type RegistrationRepository = {
   getCodeOfConductAcceptanceByToken(token: string): Promise<CodeOfConductAcceptance | null>;
   getOrCreateCodeOfConductAcceptance(input: {
     registration: TeamRegistrationDoc;
-    challengeId: string;
-    challengeName: string;
+    challengeId?: string | null;
+    challengeName?: string | null;
   }): Promise<CodeOfConductAcceptance>;
+  markCodeOfConductAcceptanceSent(
+    teamRegistrationId: string,
+    sentAt: string,
+  ): Promise<CodeOfConductAcceptance | null>;
   markCodeOfConductFinalInstructionsSent(
     teamRegistrationId: string,
     sentAt: string,

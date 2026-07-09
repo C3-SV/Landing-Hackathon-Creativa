@@ -686,8 +686,8 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
       const patch = {
         teamId: registration.id,
         teamName: registration.teamName,
-        challengeId,
-        challengeName,
+        ...(challengeId !== undefined ? { challengeId } : {}),
+        ...(challengeName !== undefined ? { challengeName } : {}),
         status: "pending",
         token:
           existing.status === "expired" || !existing.token
@@ -708,8 +708,8 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
     const record = {
       teamId: registration.id,
       teamName: registration.teamName,
-      challengeId,
-      challengeName,
+      challengeId: challengeId ?? null,
+      challengeName: challengeName ?? null,
       token: generateSecureToken(),
       status: "pending" as const,
       sentAt: null,
@@ -724,6 +724,27 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
 
     await ref.set(record);
     return toCodeOfConductAcceptance(ref.id, record);
+  },
+
+  async markCodeOfConductAcceptanceSent(teamRegistrationId, sentAt) {
+    const db = getFirebaseAdminDb();
+    const ref = db.collection(COLLECTIONS.codeOfConductAcceptances).doc(teamRegistrationId);
+    const snap = await ref.get();
+
+    if (!snap.exists) {
+      return null;
+    }
+
+    await ref.update({
+      sentAt,
+      updatedAt: new Date().toISOString(),
+    });
+
+    const saved = await ref.get();
+    return toCodeOfConductAcceptance(
+      saved.id,
+      (saved.data() ?? {}) as StoredCodeOfConductAcceptance,
+    );
   },
 
   async markCodeOfConductFinalInstructionsSent(teamRegistrationId, sentAt) {

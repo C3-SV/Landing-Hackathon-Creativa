@@ -1,4 +1,4 @@
-import { CODE_OF_CONDUCT_EMAIL_CONFIG, buildCodeOfConductAcceptUrl } from "@/lib/code-of-conduct/config";
+import { CODE_OF_CONDUCT_EMAIL_CONFIG } from "@/lib/code-of-conduct/config";
 import { APP_ENV } from "@/lib/constants/env";
 import { sendBrevoEmail } from "@/lib/email/brevo";
 import {
@@ -19,19 +19,15 @@ export const FINAL_INSTRUCTIONS_SUBJECT = "Indicaciones finales - HTC Vol. 1";
 
 type FinalInstructionsEmailResult = {
   registration: TeamRegistrationDoc;
-  acceptance: CodeOfConductAcceptance;
+  acceptance: CodeOfConductAcceptance | null;
   status: EmailDeliveryStatus;
   logId: string;
   messageId?: string | null;
   errorMessage?: string | null;
 };
 
-function buildFinalInstructionsBody(input: {
-  teamName: string;
-  codeOfConductAcceptUrl: string;
-}) {
+function buildFinalInstructionsBody(teamName: string) {
   const {
-    publicCodeOfConductUrl,
     whatsappGroupLink,
     keyRegulationsUrl,
     keyRegulationsText,
@@ -39,24 +35,18 @@ function buildFinalInstructionsBody(input: {
     eventLogisticsText,
   } = CODE_OF_CONDUCT_EMAIL_CONFIG;
 
+  const regulationsValue = keyRegulationsUrl || keyRegulationsText;
+
   const text = [
-    `Hola, equipo ${input.teamName}.`,
+    `Hola, equipo ${teamName}.`,
     "",
-    "¡Bienvenidos oficialmente a la Hackathon de Turismo Creativo Vol. 1!",
-    "",
-    "Antes del evento, necesitamos que el capitán o un representante del equipo lea y confirme el Código de Conducta en nombre del equipo.",
-    "",
-    "Confirmar Código de Conducta:",
-    input.codeOfConductAcceptUrl,
+    "Les compartimos las indicaciones finales para HTC Vol. 1.",
     "",
     "Información importante:",
-    `- Código de Conducta: ${publicCodeOfConductUrl}`,
-    `- Reglamento Key: ${keyRegulationsUrl || keyRegulationsText}`,
+    `- Reglamento Key: ${regulationsValue}`,
     `- Grupo de WhatsApp: ${whatsappGroupLink}`,
     `- Bienvenida / indicaciones generales: ${welcomeMessage}`,
     `- Horarios / llegada / logística: ${eventLogisticsText}`,
-    "",
-    "Esta confirmación es obligatoria para participar y nos ayuda a garantizar una experiencia segura, respetuosa y colaborativa para todos.",
     "",
     "Nos vemos en HTC Vol. 1.",
     "",
@@ -64,19 +54,15 @@ function buildFinalInstructionsBody(input: {
   ].join("\n");
 
   const html = [
-    `<p>Hola, equipo ${escapeHtml(input.teamName)}.</p>`,
-    "<p><strong>¡Bienvenidos oficialmente a la Hackathon de Turismo Creativo Vol. 1!</strong></p>",
-    "<p>Antes del evento, necesitamos que el capitán o un representante del equipo lea y confirme el Código de Conducta en nombre del equipo.</p>",
-    `<p><a href="${escapeHtml(input.codeOfConductAcceptUrl)}" style="display:inline-block;background:#ffa726;color:#0a1f3d;padding:12px 18px;border-radius:10px;font-weight:700;text-decoration:none;">Confirmar Código de Conducta</a></p>`,
+    `<p>Hola, equipo ${escapeHtml(teamName)}.</p>`,
+    "<p>Les compartimos las indicaciones finales para HTC Vol. 1.</p>",
     "<p><strong>Información importante:</strong></p>",
     "<ul>",
-    `<li>Código de Conducta: <a href="${escapeHtml(publicCodeOfConductUrl)}">${escapeHtml(publicCodeOfConductUrl)}</a></li>`,
-    `<li>Reglamento Key: ${escapeHtml(keyRegulationsUrl || keyRegulationsText)}</li>`,
+    `<li>Reglamento Key: ${escapeHtml(regulationsValue)}</li>`,
     `<li>Grupo de WhatsApp: ${escapeHtml(whatsappGroupLink)}</li>`,
     `<li>Bienvenida / indicaciones generales: ${escapeHtml(welcomeMessage)}</li>`,
     `<li>Horarios / llegada / logística: ${escapeHtml(eventLogisticsText)}</li>`,
     "</ul>",
-    "<p>Esta confirmación es obligatoria para participar y nos ayuda a garantizar una experiencia segura, respetuosa y colaborativa para todos.</p>",
     "<p>Nos vemos en HTC Vol. 1.</p>",
     "<p>Equipo C3 / HTC</p>",
   ].join("");
@@ -137,17 +123,8 @@ export async function sendFinalInstructionsEmailForRegistration(input: {
   }
 
   const { assignedChallenge } = await validateFinalInstructionsEmailRegistration(registration);
-  const acceptance = await registrationRepository.getOrCreateCodeOfConductAcceptance({
-    registration,
-    challengeId: assignedChallenge.id,
-    challengeName: assignedChallenge.name,
-  });
   const { to, cc } = buildTeamEmailRecipients(registration);
-  const codeOfConductAcceptUrl = buildCodeOfConductAcceptUrl(acceptance.token);
-  const body = buildFinalInstructionsBody({
-    teamName: registration.teamName,
-    codeOfConductAcceptUrl,
-  });
+  const body = buildFinalInstructionsBody(registration.teamName);
   const now = new Date().toISOString();
   const logBase = {
     teamRegistrationId: registration.id,
@@ -202,17 +179,12 @@ export async function sendFinalInstructionsEmailForRegistration(input: {
     },
   );
 
-  const updatedAcceptance =
-    status === "failed"
-      ? acceptance
-      : await registrationRepository.markCodeOfConductFinalInstructionsSent(
-          registration.id,
-          now,
-        );
+  const acceptance =
+    await registrationRepository.getCodeOfConductAcceptanceForRegistration(registration.id);
 
   return {
     registration: updated ?? registration,
-    acceptance: updatedAcceptance ?? acceptance,
+    acceptance,
     status,
     logId: log.id,
     messageId: brevoMessageId,

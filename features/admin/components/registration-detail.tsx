@@ -95,7 +95,7 @@ function emailTypeLabel(emailType: EmailLog["emailType"]) {
     return "Indicaciones finales";
   }
 
-  return "Aceptación";
+  return "Team Accepted + Código de Conducta";
 }
 
 function emailStatusClassName(status: string | undefined) {
@@ -565,7 +565,7 @@ export function RegistrationDetail({
           {[
             {
               step: "1",
-              label: "Team Accepted",
+              label: "Team Accepted + Código de Conducta",
               status: acceptedStatus,
               date: acceptedLastSentAt,
             },
@@ -738,19 +738,6 @@ export function RegistrationDetail({
             label="Reto asignado"
             value={finalInstructionsReadiness.assignedChallengeName}
           />
-          <DataLabel label="Código de conducta" value={codeOfConductDisplayStatus} />
-          <DataLabel
-            label="Confirmó"
-            value={codeOfConductAcceptance?.acceptedByName ?? "Pendiente"}
-          />
-          <DataLabel
-            label="Fecha de aceptación"
-            value={
-              codeOfConductAcceptance?.acceptedAt
-                ? formatDateTime(codeOfConductAcceptance.acceptedAt)
-                : "Pendiente"
-            }
-          />
         </div>
 
         {finalInstructionsReadiness.error ? (
@@ -764,7 +751,7 @@ export function RegistrationDetail({
         {finalInstructionsStatus === "sent" ? (
           <AlertState
             title="Reenvío"
-            description="Este correo ya fue enviado. Si lo reenvías, se reutilizará el token pendiente o se mantendrá la aceptación existente."
+            description="Este correo ya fue enviado. Si lo reenvías, se guardará un nuevo log sin tocar el estado del Código de Conducta."
             variant="warning"
           />
         ) : null}
@@ -772,7 +759,7 @@ export function RegistrationDetail({
         {!emailNotificationsEnabled ? (
           <AlertState
             title="Envío real desactivado"
-            description="EMAIL_NOTIFICATIONS_ENABLED no está en true. Se guardará un log dry_run y se generará/reutilizará el token de aceptación."
+            description="EMAIL_NOTIFICATIONS_ENABLED no está en true. Se guardará un log dry_run sin llamar a Brevo."
             variant="warning"
           />
         ) : null}
@@ -782,7 +769,7 @@ export function RegistrationDetail({
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 className="font-mono text-xs uppercase tracking-wide text-brand-electric">
-              Correo de aceptación
+              Correo de aceptación + Código de Conducta
             </h2>
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <span
@@ -1037,7 +1024,7 @@ export function RegistrationDetail({
                   id="accepted-email-confirm-title"
                   className="font-display text-base uppercase text-brand-white"
                 >
-                  Confirmar correo de aceptación
+                  Confirmar Team Accepted + Código de Conducta
                 </h2>
                 <p className="mt-1 text-sm text-brand-muted">
                   Se enviará un solo correo al representante del equipo.
@@ -1076,7 +1063,7 @@ export function RegistrationDetail({
               <div className="mt-4">
                 <AlertState
                   title="Advertencia"
-                  description="Este equipo ya tiene un correo de aceptación enviado. Confirmar creará un nuevo envío/log."
+                  description="Este equipo ya tiene un correo de aceptación enviado. Confirmar creará un nuevo envío/log para el correo 1."
                   variant="warning"
                 />
               </div>
@@ -1219,7 +1206,7 @@ export function RegistrationDetail({
                   Confirmar indicaciones finales
                 </h2>
                 <p className="mt-1 text-sm text-brand-muted">
-                  Se enviará el correo 3 al representante y se generará o reutilizará el token de aceptación.
+                  Se enviará el correo 3 con bienvenida, reglamento, WhatsApp y logística.
                 </p>
               </div>
               <button
@@ -1235,10 +1222,6 @@ export function RegistrationDetail({
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               <DataLabel label="Equipo" value={current.teamName} />
               <DataLabel label="Asunto" value={finalInstructionsEmailSummary.subject} />
-              <DataLabel
-                label="Código de conducta"
-                value={codeOfConductDisplayStatus}
-              />
               <DataLabel
                 label="Reto asignado"
                 value={finalInstructionsReadiness.assignedChallengeName}

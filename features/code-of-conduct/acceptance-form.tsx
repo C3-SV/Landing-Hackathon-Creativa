@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { codeOfConductSections } from "@/lib/code-of-conduct/content";
 import { parseJsonResponse } from "@/lib/http";
 import type { CodeOfConductAcceptance } from "@/lib/types/domain";
 import { AlertState, Button, Card, Checkbox, FieldError, Input, Label, Select } from "@/lib/ui";
@@ -21,7 +19,7 @@ function isValidEmail(value: string) {
 
 function AcceptedState({ acceptance }: { acceptance: CodeOfConductAcceptance }) {
   return (
-    <Card className="space-y-4">
+    <Card className="mx-auto w-full max-w-[920px] space-y-4 p-5 sm:p-6">
       <AlertState
         title="Código de Conducta confirmado"
         description="Este equipo ya confirmó el Código de Conducta."
@@ -128,107 +126,81 @@ export function CodeOfConductAcceptanceForm({
   }
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[1fr_0.9fr]">
-      <Card className="space-y-4">
-        <div>
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-brand-electric">
-            Equipo
+    <Card className="mx-auto w-full max-w-[920px] space-y-4 p-5 sm:p-6">
+      <div>
+        <p className="font-mono text-xs uppercase tracking-[0.2em] text-brand-electric">
+          Equipo
+        </p>
+        <h2 className="mt-2 font-display text-base uppercase leading-7 text-brand-white sm:text-lg">
+          {acceptance.teamName}
+        </h2>
+        {acceptance.challengeName ? (
+          <p className="mt-2 text-sm text-brand-muted">
+            Reto asignado: {acceptance.challengeName}
           </p>
-          <h2 className="mt-2 font-display text-base uppercase leading-7 text-brand-white sm:text-lg">
-            {acceptance.teamName}
-          </h2>
-          {acceptance.challengeName ? (
-            <p className="mt-2 text-sm text-brand-muted">
-              Reto asignado: {acceptance.challengeName}
-            </p>
-          ) : null}
-        </div>
-
-        <div className="rounded-2xl border border-brand-electric/25 bg-brand-bg/45 p-4">
-          <p className="font-mono text-xs uppercase tracking-wide text-brand-orange-soft">
-            Resumen del Código de Conducta
-          </p>
-          <ul className="mt-3 grid gap-2 text-sm leading-6 text-brand-muted sm:grid-cols-2">
-            {codeOfConductSections.map((section) => (
-              <li key={section.title} className="flex gap-2">
-                <span className="text-brand-electric">#</span>
-                <span>{section.title}</span>
-              </li>
-            ))}
-          </ul>
-          <Link
-            href="/codigo-de-conducta"
-            className="mt-4 inline-block font-mono text-xs uppercase tracking-wide text-brand-electric hover:text-brand-white"
-          >
-            Leer Código de Conducta completo
-          </Link>
-        </div>
-      </Card>
-
-      <Card className="space-y-4">
-        <div>
-          <h2 className="font-display text-base uppercase leading-7 text-brand-white">
-            Confirmar aceptación
-          </h2>
-          <p className="mt-2 text-sm leading-6 text-brand-muted">
-            El capitán o un representante puede confirmar en nombre del equipo.
-          </p>
-        </div>
-
-        {systemError ? (
-          <AlertState title="Error" description={systemError} variant="error" />
         ) : null}
+      </div>
 
-        <div>
-          <Label htmlFor="acceptedByName">Nombre de quien confirma</Label>
-          <Input
-            id="acceptedByName"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            autoComplete="name"
-          />
-          <FieldError message={errors.name} />
-        </div>
+      <div className="border-t border-brand-electric/20 pt-4">
+        <h2 className="font-display text-base uppercase leading-7 text-brand-white">
+          Confirmar aceptación
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-brand-muted">
+          El capitán o un representante puede confirmar en nombre del equipo.
+        </p>
+      </div>
 
-        <div>
-          <Label htmlFor="acceptedByEmail">Correo de quien confirma</Label>
-          <Input
-            id="acceptedByEmail"
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            autoComplete="email"
-          />
-          <FieldError message={errors.email} />
-        </div>
+      {systemError ? <AlertState title="Error" description={systemError} variant="error" /> : null}
 
-        <div>
-          <Label htmlFor="acceptedByRole">Rol dentro del equipo</Label>
-          <Select
-            id="acceptedByRole"
-            value={role}
-            onChange={(event) => setRole(event.target.value)}
-          >
-            <option value="">Seleccionar rol</option>
-            <option value="Capitan">Capitán</option>
-            <option value="Integrante">Integrante</option>
-          </Select>
-          <FieldError message={errors.role} />
-        </div>
+      <div>
+        <Label htmlFor="acceptedByName">Nombre de quien confirma</Label>
+        <Input
+          id="acceptedByName"
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          autoComplete="name"
+        />
+        <FieldError message={errors.name} />
+      </div>
 
-        <div>
-          <Checkbox
-            checked={confirmed}
-            onChange={(event) => setConfirmed(event.target.checked)}
-            label="Confirmo que mi equipo leyó y acepta el Código de Conducta de HTC Vol. 1."
-          />
-          <FieldError message={errors.confirmed} />
-        </div>
+      <div>
+        <Label htmlFor="acceptedByEmail">Correo de quien confirma</Label>
+        <Input
+          id="acceptedByEmail"
+          type="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          autoComplete="email"
+        />
+        <FieldError message={errors.email} />
+      </div>
 
-        <Button type="button" onClick={submitAcceptance} disabled={submitting}>
-          {submitting ? "Confirmando..." : "Confirmar aceptación"}
-        </Button>
-      </Card>
-    </div>
+      <div>
+        <Label htmlFor="acceptedByRole">Rol dentro del equipo</Label>
+        <Select
+          id="acceptedByRole"
+          value={role}
+          onChange={(event) => setRole(event.target.value)}
+        >
+          <option value="">Seleccionar rol</option>
+          <option value="Capitan">Capitán</option>
+          <option value="Integrante">Integrante</option>
+        </Select>
+        <FieldError message={errors.role} />
+      </div>
+
+      <div>
+        <Checkbox
+          checked={confirmed}
+          onChange={(event) => setConfirmed(event.target.checked)}
+          label="Confirmo que mi equipo leyó y acepta el Código de Conducta de HTC Vol. 1."
+        />
+        <FieldError message={errors.confirmed} />
+      </div>
+
+      <Button type="button" onClick={submitAcceptance} disabled={submitting}>
+        {submitting ? "Confirmando..." : "Confirmar aceptación"}
+      </Button>
+    </Card>
   );
 }
