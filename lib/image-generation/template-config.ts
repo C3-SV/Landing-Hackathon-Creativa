@@ -1,4 +1,5 @@
 import path from "node:path";
+import { IMAGE_FONT_FAMILY } from "./image-font";
 import type { Role3H } from "../types/domain";
 
 export type NormalizedTextBox = {
@@ -31,7 +32,8 @@ export const SHARED_TEXT_BOX: NormalizedTextBox = {
 };
 
 export const TEXT_STYLE = {
-  fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+  fontFamily: IMAGE_FONT_FAMILY,
+  fallbackFontFamily: "Arial, Helvetica, sans-serif",
   maxFontSize: 64,
   minFontSize: 24,
   lineHeightMultiplier: 1.15,

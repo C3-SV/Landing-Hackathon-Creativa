@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import sharp from "sharp";
+import { loadHackathonFont } from "./image-font";
 import { renderTextOverlay } from "./render-text-overlay";
 import {
   ACCEPTED_IMAGE_DEBUG,
@@ -56,10 +57,12 @@ async function generateFromTemplate(input: {
     throw new Error(`No se pudieron leer dimensiones de la plantilla: ${input.template.templatePath}`);
   }
 
+  const font = await loadHackathonFont();
   const svg = renderTextOverlay({
     imageWidth,
     imageHeight,
-    text: input.text,
+    text: input.text.normalize("NFC"),
+    font,
     debug: input.debug,
     templateName: input.template.key,
   });

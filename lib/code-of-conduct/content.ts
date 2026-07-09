@@ -3,7 +3,7 @@ export type CodeOfConductSection = {
   content: string[];
 };
 
-export const CODE_OF_CONDUCT_VERSION = "HTC_VOL_1_2026";
+export const CODE_OF_CONDUCT_VERSION = "HTC_VOL_1_2026_V2";
 
 export const codeOfConductSummary =
   "Marco base de convivencia, colaboración y espíritu del evento para asegurar un ambiente seguro, respetuoso, colaborativo y enfocado en la creación de soluciones con impacto.";
@@ -27,6 +27,7 @@ export const codeOfConductSections: CodeOfConductSection[] = [
       "- Apertura para escuchar, aprender y recibir retroalimentación.",
       "- Cuidado del espacio, los recursos y la experiencia colectiva.",
       "- Actitud constructiva ante retos, diferencias y presión del evento.",
+      "- Motivamos la integración en las actividades colectivas de entretenimiento.",
     ],
   },
   {
@@ -35,7 +36,7 @@ export const codeOfConductSections: CodeOfConductSection[] = [
       "Durante la hackathon, se espera que todas las personas mantengan una conducta adecuada para un espacio profesional, educativo y colaborativo.",
       "Reglas mínimas:",
       "- Tratar a todas las personas con respeto.",
-      "- Evitar comentarios ofensivos, discriminatorios, humillantes o agresivos.",
+      "- Evitar comentarios ofensivos, discriminatorios, humillantes, de acoso sexual o agresivos.",
       "- Respetar límites personales, espacios de descanso y dinámicas de trabajo.",
       "- Cumplir indicaciones de la organización, sede, mentores y equipo operativo.",
       "- Cuidar las instalaciones, materiales, equipos y recursos compartidos.",
@@ -46,10 +47,10 @@ export const codeOfConductSections: CodeOfConductSection[] = [
   {
     title: "Instalaciones, horarios y permanencia",
     content: [
-      "El evento se realizará en las instalaciones de Key Institute. Todas las personas participantes deberán respetar las normas de la sede y las indicaciones del equipo organizador durante toda la hackathon.",
+      "El evento se realizará en las instalaciones de Key Institute. Todas las personas participantes deberán respetar las normas de la sede, reglamento de Key Institute de uso de sus instalaciones y las indicaciones del equipo organizador durante toda la hackathon.",
       "Reglas específicas:",
       "- Usar únicamente las áreas habilitadas para trabajo, descanso, alimentación y circulación.",
-      "- Cuidar mobiliario, equipo, baños, áreas comunes y recursos de la sede.",
+      "- Cuidar mobiliario, equipo, baños, áreas comunes, jardines y recursos de la sede.",
       "- No ingresar a zonas restringidas o no autorizadas.",
       "- Cumplir los horarios oficiales de registro, actividades, mentorías, entregas, presentaciones y cierre.",
       "- Permanecer en la sede y en las áreas autorizadas según las dinámicas del evento.",
@@ -65,6 +66,7 @@ export const codeOfConductSections: CodeOfConductSection[] = [
       "- Hablar con otros equipos y conocer sus ideas.",
       "- Pedir ayuda cuando sea necesario.",
       "- Ofrecer apoyo cuando sea posible.",
+      "- Desarrollar fusiones de equipos en los momentos de Simbiogénesis que se habilitarán.",
       "- Escuchar la retroalimentación de mentores y jurado.",
       "- Compartir aprendizajes sin sabotear ni perjudicar a otros equipos.",
       "- Hacer networking de forma respetuosa y genuina.",
@@ -75,12 +77,12 @@ export const codeOfConductSections: CodeOfConductSection[] = [
     title: "Integridad del trabajo",
     content: [
       "Cada equipo debe presentar una solución honesta, propia y coherente con el reto asignado.",
-      "Se permite apoyarse en herramientas, referencias, librerías, frameworks, inteligencia artificial u otros recursos, siempre que su uso sea responsable y no implique apropiarse indebidamente del trabajo de otras personas.",
+      "Se permite apoyarse en herramientas, referencias, librerías, frameworks, inteligencia artificial u otros recursos, siempre que su uso sea responsable y no implique apropiarse indebidamente del trabajo de otras personas o infringir propiedad intelectual, derechos de autor o cualquier potencial delito cibernético tipificado en la Ley Especial de Delitos Cibernéticos o la Ley contra los Delitos Informáticos y Conexos y sus reformas.",
       "Reglas preliminares:",
       "- No presentar como propio el trabajo de otro equipo o persona.",
       "- No sabotear, copiar o interferir con el trabajo de otros equipos.",
       "- Reconocer aportes externos cuando corresponda.",
-      "- Usar herramientas digitales de forma ética y transparente.",
+      "- Usar herramientas digitales de forma ética y transparente, sin infringir las leyes salvadoreñas.",
       "- Respetar las reglas específicas de entrega, presentación y evaluación.",
     ],
   },
@@ -89,7 +91,7 @@ export const codeOfConductSections: CodeOfConductSection[] = [
     content: [
       "No se tolerarán conductas que contradigan el ambiente de respeto, seguridad y colaboración del evento.",
       "Ejemplos:",
-      "- Acoso, intimidación o trato agresivo.",
+      "- Acoso sexual, intimidación o trato agresivo.",
       "- Discriminación por origen, género, edad, religión, apariencia, condición, institución o cualquier otra característica personal.",
       "- Burlas, humillaciones o comentarios ofensivos.",
       "- Plagio, copia o sabotaje.",
@@ -108,7 +110,7 @@ export const codeOfConductSections: CodeOfConductSection[] = [
       "- Solicitud de corrección de conducta.",
       "- Restricción de participación en una actividad específica.",
       "- Descalificación del equipo o participante.",
-      "- Retiro del evento, cuando sea necesario.",
+      "- Retiro del evento, cuando sea necesario, en cualquier momento y según sea la gravedad de la falta y amerite expulsión.",
     ],
   },
   {
