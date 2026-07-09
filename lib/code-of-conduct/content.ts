@@ -3,7 +3,7 @@ export type CodeOfConductSection = {
   content: string[];
 };
 
-export const CODE_OF_CONDUCT_VERSION = "HTC_VOL_1_2026_V2";
+export const CODE_OF_CONDUCT_VERSION = "HTC_VOL_1_2026_V3";
 
 export const codeOfConductSummary =
   "Marco base de convivencia, colaboración y espíritu del evento para asegurar un ambiente seguro, respetuoso, colaborativo y enfocado en la creación de soluciones con impacto.";
@@ -77,7 +77,7 @@ export const codeOfConductSections: CodeOfConductSection[] = [
     title: "Integridad del trabajo",
     content: [
       "Cada equipo debe presentar una solución honesta, propia y coherente con el reto asignado.",
-      "Se permite apoyarse en herramientas, referencias, librerías, frameworks, inteligencia artificial u otros recursos, siempre que su uso sea responsable y no implique apropiarse indebidamente del trabajo de otras personas o infringir propiedad intelectual, derechos de autor o cualquier potencial delito cibernético tipificado en la Ley Especial de Delitos Cibernéticos o la Ley contra los Delitos Informáticos y Conexos y sus reformas.",
+      "Se permite apoyarse en herramientas, referencias, librerías, frameworks, inteligencia artificial u otros recursos, siempre que su uso sea responsable y no implique apropiarse indebidamente del trabajo de otras personas o infringir las leyes nacionales e internacionales de propiedad intelectual, derechos de autor o cualquier potencial delito cibernético tipificado en la Ley Especial de Delitos Cibernéticos o la Ley contra los Delitos Informáticos y Conexos y sus reformas.",
       "Reglas preliminares:",
       "- No presentar como propio el trabajo de otro equipo o persona.",
       "- No sabotear, copiar o interferir con el trabajo de otros equipos.",
