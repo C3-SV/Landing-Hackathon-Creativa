@@ -8,12 +8,10 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/api/admin/registrations/[id]/send-accepted-email": [
       "./lib/image-generation/fonts/Geist-Regular.ttf",
-      "./lib/image-generation/fonts/GeistMono-Regular.woff2",
       "./public/email-templates/accepted/**/*",
     ],
     "/api/admin/debug/accepted-image": [
       "./lib/image-generation/fonts/Geist-Regular.ttf",
-      "./lib/image-generation/fonts/GeistMono-Regular.woff2",
       "./public/email-templates/accepted/**/*",
     ],
   },
