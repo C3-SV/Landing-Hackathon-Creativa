@@ -51,13 +51,6 @@ export async function sendBrevoEmail(payload: BrevoEmailPayload): Promise<BrevoS
             },
           }
         : {}),
-      ...(replyToEmails.length
-        ? {
-            headers: {
-              "Reply-To": replyToEmails.join(", "),
-            },
-          }
-        : {}),
       subject: payload.subject,
       textContent: payload.text,
       htmlContent: payload.html,

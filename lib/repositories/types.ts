@@ -7,6 +7,8 @@ import type {
   EmailLog,
   EmailLogAttachment,
   EmailType,
+  CodeOfConductAcceptance,
+  CodeOfConductAcceptanceInput,
   Edition,
   RegistrationListFilters,
   RegistrationListItem,
@@ -72,6 +74,30 @@ export type RegistrationRepository = {
   ): Promise<TeamRegistrationDoc | null>;
   createEmailLog(input: CreateEmailLogInput): Promise<EmailLog>;
   listEmailLogsForRegistration(teamRegistrationId: string): Promise<EmailLog[]>;
+  getCodeOfConductAcceptanceForRegistration(
+    teamRegistrationId: string,
+  ): Promise<CodeOfConductAcceptance | null>;
+  getCodeOfConductAcceptanceByToken(token: string): Promise<CodeOfConductAcceptance | null>;
+  getOrCreateCodeOfConductAcceptance(input: {
+    registration: TeamRegistrationDoc;
+    challengeId?: string | null;
+    challengeName?: string | null;
+  }): Promise<CodeOfConductAcceptance>;
+  markCodeOfConductAcceptanceSent(
+    teamRegistrationId: string,
+    sentAt: string,
+  ): Promise<CodeOfConductAcceptance | null>;
+  markCodeOfConductFinalInstructionsSent(
+    teamRegistrationId: string,
+    sentAt: string,
+  ): Promise<CodeOfConductAcceptance | null>;
+  acceptCodeOfConductByToken(
+    token: string,
+    input: CodeOfConductAcceptanceInput,
+  ): Promise<{
+    status: "accepted" | "already_accepted" | "invalid" | "expired";
+    acceptance: CodeOfConductAcceptance | null;
+  }>;
   exportRegistrationsCsv(): Promise<string>;
   hasTeamNameInEdition(
     teamNameNormalized: string,

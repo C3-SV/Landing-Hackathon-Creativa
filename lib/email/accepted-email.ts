@@ -1,3 +1,8 @@
+import { buildCodeOfConductAcceptUrl, PUBLIC_CODE_OF_CONDUCT_URL } from "@/lib/code-of-conduct/config";
+import {
+  getOrCreateCodeOfConductAcceptanceForTeam,
+  markCodeOfConductAcceptanceSent,
+} from "@/lib/code-of-conduct/acceptance";
 import { APP_ENV } from "@/lib/constants/env";
 import {
   assertAcceptedTemplatesExist,
@@ -27,11 +32,18 @@ type AcceptedEmailResult = {
   errorMessage?: string | null;
 };
 
-function buildBody(teamName: string) {
+function buildBody(teamName: string, codeOfConductAcceptUrl: string) {
   const text = [
     `Hola, equipo ${teamName}.`,
     "",
     "¡Felicidades! Su equipo ha sido aceptado para participar en la Hackathon de Turismo Creativo Vol. 1.",
+    "",
+    "Antes del evento, necesitamos que el capitán o un representante del equipo lea y confirme el Código de Conducta de HTC Vol. 1 en nombre del equipo.",
+    "",
+    "Confirmar Código de Conducta:",
+    codeOfConductAcceptUrl,
+    "",
+    `Código de Conducta público: ${PUBLIC_CODE_OF_CONDUCT_URL}`,
     "",
     "Adjuntamos sus piezas de aceptación del equipo y de cada integrante. Muy pronto recibirán más información sobre los próximos pasos del evento.",
     "",
@@ -45,6 +57,9 @@ function buildBody(teamName: string) {
   const html = [
     `<p>Hola, equipo ${escapeHtml(teamName)}.</p>`,
     "<p>¡Felicidades! Su equipo ha sido aceptado para participar en la Hackathon de Turismo Creativo Vol. 1.</p>",
+    "<p>Antes del evento, necesitamos que el capitán o un representante del equipo lea y confirme el Código de Conducta de HTC Vol. 1 en nombre del equipo.</p>",
+    `<p><a href="${escapeHtml(codeOfConductAcceptUrl)}" style="display:inline-block;background:#ffa726;color:#0a1f3d;padding:12px 18px;border-radius:10px;font-weight:700;text-decoration:none;">Confirmar Código de Conducta</a></p>`,
+    `<p>Código de Conducta público: <a href="${escapeHtml(PUBLIC_CODE_OF_CONDUCT_URL)}">${escapeHtml(PUBLIC_CODE_OF_CONDUCT_URL)}</a></p>`,
     "<p>Adjuntamos sus piezas de aceptación del equipo y de cada integrante. Muy pronto recibirán más información sobre los próximos pasos del evento.</p>",
     "<p>Por favor, cualquier consulta pueden responder a este correo.</p>",
     "<p>Nos vemos pronto.</p>",
@@ -113,9 +128,27 @@ export async function sendAcceptedEmailForRegistration(input: {
 
   await validateAcceptedEmailRegistration(registration);
 
+  let acceptanceChallengeId: string | null = null;
+  let acceptanceChallengeName: string | null = null;
+  if (registration.assignedChallengeId) {
+    const challenges = await registrationRepository.getChallenges();
+    const assignedChallenge = challenges.find(
+      (challenge) => challenge.id === registration.assignedChallengeId,
+    );
+    acceptanceChallengeId = assignedChallenge?.id ?? registration.assignedChallengeId;
+    acceptanceChallengeName = assignedChallenge?.name ?? null;
+  }
+
+  const acceptance = await getOrCreateCodeOfConductAcceptanceForTeam({
+    registration,
+    challengeId: acceptanceChallengeId,
+    challengeName: acceptanceChallengeName,
+  });
+
   const { to, cc } = buildAcceptedRecipients(registration);
   const attachments = await generateAcceptedEmailAttachments(registration);
-  const body = buildBody(registration.teamName);
+  const codeOfConductAcceptUrl = buildCodeOfConductAcceptUrl(acceptance.token);
+  const body = buildBody(registration.teamName, codeOfConductAcceptUrl);
   const now = new Date().toISOString();
   const logBase = {
     teamRegistrationId: registration.id,
@@ -174,6 +207,10 @@ export async function sendAcceptedEmailForRegistration(input: {
       lastLogId: log.id,
     },
   );
+
+  if (status !== "failed") {
+    await markCodeOfConductAcceptanceSent(registration.id, now);
+  }
 
   return {
     registration: updated ?? registration,

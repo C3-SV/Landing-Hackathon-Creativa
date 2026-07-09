@@ -11,6 +11,7 @@ import { parseJsonResponse } from "@/lib/http";
 import { REGISTRATION_STATUS_VALUES } from "@/lib/types/domain";
 import type {
   Challenge,
+  CodeOfConductAcceptance,
   EmailLog,
   RegistrationStatus,
   TeamConsents,
@@ -37,6 +38,7 @@ type RegistrationDetailProps = {
   registration: TeamRegistrationDoc;
   challenges: Challenge[];
   emailLogs: EmailLog[];
+  codeOfConductAcceptance: CodeOfConductAcceptance | null;
   acceptedEmailSummary: {
     subject: string;
     representativeName: string;
@@ -45,6 +47,14 @@ type RegistrationDetailProps = {
     attachmentCount: number;
     notificationsEnabled: boolean;
     error: string | null;
+  };
+  finalInstructionsEmailSummary: {
+    subject: string;
+    codeOfConductStatus: string;
+    codeOfConductSentAt: string | null;
+    codeOfConductAcceptedAt: string | null;
+    codeOfConductAcceptedBy: string | null;
+    notificationsEnabled: boolean;
   };
   emailNotificationsEnabled: boolean;
 };
@@ -77,7 +87,15 @@ function emailStatusLabel(status: string | undefined) {
 }
 
 function emailTypeLabel(emailType: EmailLog["emailType"]) {
-  return emailType === "challenge_assigned" ? "Reto asignado" : "Aceptación";
+  if (emailType === "challenge_assigned") {
+    return "Reto asignado";
+  }
+
+  if (emailType === "final_instructions") {
+    return "Indicaciones finales";
+  }
+
+  return "Team Accepted + Código de Conducta";
 }
 
 function emailStatusClassName(status: string | undefined) {
@@ -91,6 +109,18 @@ function emailStatusClassName(status: string | undefined) {
     default:
       return "border-brand-electric/30 bg-brand-surface text-brand-muted";
   }
+}
+
+function codeOfConductStatusLabel(acceptance: CodeOfConductAcceptance | null) {
+  if (acceptance?.status === "accepted") {
+    return "Aceptado";
+  }
+
+  if (acceptance?.sentAt) {
+    return "Enviado";
+  }
+
+  return "Pendiente";
 }
 
 function ConsentMark({ value }: { value: boolean }) {
@@ -142,11 +172,49 @@ function buildChallengeAssignedEmailSummary(
   }
 }
 
+function buildFinalInstructionsReadiness(
+  registration: TeamRegistrationDoc,
+  challenges: readonly Challenge[],
+) {
+  const assignedChallengeFallback = registration.assignedChallengeId
+    ? challenges.find((challenge) => challenge.id === registration.assignedChallengeId)?.name ??
+      registration.assignedChallengeId
+    : "Sin asignar";
+
+  if (registration.status !== "approved") {
+    return {
+      assignedChallengeName: assignedChallengeFallback,
+      error:
+        "No se puede enviar indicaciones finales: primero marca el equipo como aprobado y guarda los cambios.",
+    };
+  }
+
+  try {
+    const assignedChallenge = resolveAssignedChallenge(registration, challenges);
+    buildTeamEmailRecipients(registration);
+
+    return {
+      assignedChallengeName: assignedChallenge.name,
+      error: null,
+    };
+  } catch (error) {
+    return {
+      assignedChallengeName: assignedChallengeFallback,
+      error:
+        error instanceof Error
+          ? error.message
+          : "No se pudo preparar el correo de indicaciones finales.",
+    };
+  }
+}
+
 export function RegistrationDetail({
   registration,
   challenges,
   emailLogs: initialEmailLogs,
+  codeOfConductAcceptance: initialCodeOfConductAcceptance,
   acceptedEmailSummary,
+  finalInstructionsEmailSummary,
   emailNotificationsEnabled,
 }: RegistrationDetailProps) {
   const challengeMap = new Map(challenges.map((challenge) => [challenge.id, challenge.name]));
@@ -158,10 +226,15 @@ export function RegistrationDetail({
   const [note, setNote] = useState("");
   const [saving, setSaving] = useState(false);
   const [emailLogs, setEmailLogs] = useState(initialEmailLogs);
+  const [codeOfConductAcceptance, setCodeOfConductAcceptance] = useState(
+    initialCodeOfConductAcceptance,
+  );
   const [confirmAcceptedOpen, setConfirmAcceptedOpen] = useState(false);
   const [confirmChallengeAssignedOpen, setConfirmChallengeAssignedOpen] = useState(false);
+  const [confirmFinalInstructionsOpen, setConfirmFinalInstructionsOpen] = useState(false);
   const [sendingAccepted, setSendingAccepted] = useState(false);
   const [sendingChallengeAssigned, setSendingChallengeAssigned] = useState(false);
+  const [sendingFinalInstructions, setSendingFinalInstructions] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -172,10 +245,19 @@ export function RegistrationDetail({
     current.emailStatus?.challengeAssigned?.status ?? "not_sent";
   const challengeAssignedLastSentAt =
     current.emailStatus?.challengeAssigned?.lastSentAt;
+  const finalInstructionsStatus =
+    current.emailStatus?.finalInstructions?.status ?? "not_sent";
+  const finalInstructionsLastSentAt =
+    current.emailStatus?.finalInstructions?.lastSentAt;
+  const codeOfConductDisplayStatus = codeOfConductStatusLabel(codeOfConductAcceptance);
   const challengeAssignedEmailSummary = buildChallengeAssignedEmailSummary(
     current,
     challenges,
     emailNotificationsEnabled,
+  );
+  const finalInstructionsReadiness = buildFinalInstructionsReadiness(
+    current,
+    challenges,
   );
 
   async function saveChanges() {
@@ -296,6 +378,62 @@ export function RegistrationDetail({
       );
     } finally {
       setSendingChallengeAssigned(false);
+    }
+  }
+
+  async function sendFinalInstructionsEmail() {
+    if (finalInstructionsReadiness.error) {
+      setFeedback(null);
+      setError(finalInstructionsReadiness.error);
+      return;
+    }
+
+    setSendingFinalInstructions(true);
+    setFeedback(null);
+    setError(null);
+    try {
+      const response = await fetch(
+        `/api/admin/registrations/${registration.id}/send-final-instructions-email`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            confirmResend: finalInstructionsStatus === "sent",
+          }),
+        },
+      );
+      const payload = await parseJsonResponse<{
+        registration: TeamRegistrationDoc;
+        acceptance: CodeOfConductAcceptance;
+        emailLogs: EmailLog[];
+        status: "sent" | "failed" | "dry_run";
+        errorMessage?: string | null;
+      }>(response);
+      setCurrent(payload.registration);
+      setCodeOfConductAcceptance(payload.acceptance);
+      setEmailLogs(payload.emailLogs);
+      if (payload.status === "failed") {
+        setError(
+          payload.errorMessage ?? "Brevo no pudo enviar el correo de indicaciones finales.",
+        );
+      } else {
+        setFeedback(
+          payload.status === "dry_run"
+            ? "Correo de indicaciones finales simulado. EMAIL_NOTIFICATIONS_ENABLED está apagado."
+            : "Correo de indicaciones finales enviado correctamente.",
+        );
+        setConfirmFinalInstructionsOpen(false);
+      }
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "No se pudo enviar el correo de indicaciones finales",
+      );
+    } finally {
+      setSendingFinalInstructions(false);
     }
   }
 
@@ -420,6 +558,82 @@ export function RegistrationDetail({
       </Card>
 
       <Card className="space-y-4">
+        <h2 className="font-mono text-xs uppercase tracking-wide text-brand-electric">
+          Flujo de correos
+        </h2>
+        <div className="grid gap-3 md:grid-cols-3">
+          {[
+            {
+              step: "1",
+              label: "Team Accepted + Código de Conducta",
+              status: acceptedStatus,
+              date: acceptedLastSentAt,
+            },
+            {
+              step: "2",
+              label: "Reto asignado",
+              status: challengeAssignedStatus,
+              date: challengeAssignedLastSentAt,
+            },
+            {
+              step: "3",
+              label: "Indicaciones finales",
+              status: finalInstructionsStatus,
+              date: finalInstructionsLastSentAt,
+            },
+          ].map((item) => (
+            <div
+              key={item.step}
+              className="rounded-xl border border-brand-electric/20 bg-brand-bg/35 p-3"
+            >
+              <p className="font-mono text-[11px] uppercase tracking-wide text-brand-muted">
+                Paso {item.step}
+              </p>
+              <p className="mt-1 text-sm font-semibold text-brand-white">{item.label}</p>
+              <span
+                className={`mt-3 inline-flex items-center rounded-full px-2 py-0.5 font-mono text-[11px] uppercase tracking-wide ${emailStatusClassName(
+                  item.status,
+                )}`}
+              >
+                {emailStatusLabel(item.status)}
+              </span>
+              {item.date ? (
+                <p className="mt-2 text-xs text-brand-muted">{formatDateTime(item.date)}</p>
+              ) : null}
+            </div>
+          ))}
+        </div>
+        <div className="rounded-xl border border-brand-orange-soft/25 bg-brand-bg/35 p-3">
+          <p className="font-mono text-[11px] uppercase tracking-wide text-brand-muted">
+            Código de conducta
+          </p>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <span
+              className={`inline-flex items-center rounded-full px-2 py-0.5 font-mono text-[11px] uppercase tracking-wide ${
+                codeOfConductAcceptance?.status === "accepted"
+                  ? "border-status-approved/50 bg-status-approved/20 text-status-approved"
+                  : codeOfConductAcceptance?.sentAt
+                    ? "border-brand-orange-soft/50 bg-brand-orange-soft/20 text-brand-orange-soft"
+                    : "border-brand-electric/30 bg-brand-surface text-brand-muted"
+              }`}
+            >
+              {codeOfConductDisplayStatus}
+            </span>
+            {codeOfConductAcceptance?.acceptedAt ? (
+              <span className="text-xs text-brand-muted">
+                {formatDateTime(codeOfConductAcceptance.acceptedAt)}
+              </span>
+            ) : null}
+            {codeOfConductAcceptance?.acceptedByName ? (
+              <span className="text-xs text-brand-muted">
+                Confirmó: {codeOfConductAcceptance.acceptedByName}
+              </span>
+            ) : null}
+          </div>
+        </div>
+      </Card>
+
+      <Card className="space-y-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 className="font-mono text-xs uppercase tracking-wide text-brand-electric">
@@ -489,7 +703,73 @@ export function RegistrationDetail({
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 className="font-mono text-xs uppercase tracking-wide text-brand-electric">
-              Correo de aceptación
+              Correo de indicaciones finales
+            </h2>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <span
+                className={`inline-flex items-center rounded-full px-2.5 py-1 font-mono text-xs uppercase tracking-wide ${emailStatusClassName(
+                  finalInstructionsStatus,
+                )}`}
+              >
+                {emailStatusLabel(finalInstructionsStatus)}
+              </span>
+              {finalInstructionsLastSentAt ? (
+                <span className="text-sm text-brand-muted">
+                  Último intento: {formatDateTime(finalInstructionsLastSentAt)}
+                </span>
+              ) : null}
+            </div>
+          </div>
+          <Button
+            type="button"
+            variant={finalInstructionsStatus === "sent" ? "secondary" : "primary"}
+            onClick={() => setConfirmFinalInstructionsOpen(true)}
+            disabled={sendingFinalInstructions || Boolean(finalInstructionsReadiness.error)}
+          >
+            {finalInstructionsStatus === "sent"
+              ? "Reenviar indicaciones finales"
+              : "Enviar indicaciones finales"}
+          </Button>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <DataLabel label="Asunto" value={finalInstructionsEmailSummary.subject} />
+          <DataLabel
+            label="Reto asignado"
+            value={finalInstructionsReadiness.assignedChallengeName}
+          />
+        </div>
+
+        {finalInstructionsReadiness.error ? (
+          <AlertState
+            title="Envío bloqueado"
+            description={finalInstructionsReadiness.error}
+            variant="error"
+          />
+        ) : null}
+
+        {finalInstructionsStatus === "sent" ? (
+          <AlertState
+            title="Reenvío"
+            description="Este correo ya fue enviado. Si lo reenvías, se guardará un nuevo log sin tocar el estado del Código de Conducta."
+            variant="warning"
+          />
+        ) : null}
+
+        {!emailNotificationsEnabled ? (
+          <AlertState
+            title="Envío real desactivado"
+            description="EMAIL_NOTIFICATIONS_ENABLED no está en true. Se guardará un log dry_run sin llamar a Brevo."
+            variant="warning"
+          />
+        ) : null}
+      </Card>
+
+      <Card className="space-y-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h2 className="font-mono text-xs uppercase tracking-wide text-brand-electric">
+              Correo de aceptación + Código de Conducta
             </h2>
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <span
@@ -744,7 +1024,7 @@ export function RegistrationDetail({
                   id="accepted-email-confirm-title"
                   className="font-display text-base uppercase text-brand-white"
                 >
-                  Confirmar correo de aceptación
+                  Confirmar Team Accepted + Código de Conducta
                 </h2>
                 <p className="mt-1 text-sm text-brand-muted">
                   Se enviará un solo correo al representante del equipo.
@@ -783,7 +1063,7 @@ export function RegistrationDetail({
               <div className="mt-4">
                 <AlertState
                   title="Advertencia"
-                  description="Este equipo ya tiene un correo de aceptación enviado. Confirmar creará un nuevo envío/log."
+                  description="Este equipo ya tiene un correo de aceptación enviado. Confirmar creará un nuevo envío/log para el correo 1."
                   variant="warning"
                 />
               </div>
@@ -903,6 +1183,96 @@ export function RegistrationDetail({
                 disabled={sendingChallengeAssigned}
               >
                 {sendingChallengeAssigned ? "Enviando..." : "Confirmar envío"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {confirmFinalInstructionsOpen ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-brand-bg/85 p-4">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="final-instructions-confirm-title"
+            className="w-full max-w-2xl rounded-2xl border border-brand-electric/35 bg-brand-surface p-5 shadow-2xl"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2
+                  id="final-instructions-confirm-title"
+                  className="font-display text-base uppercase text-brand-white"
+                >
+                  Confirmar indicaciones finales
+                </h2>
+                <p className="mt-1 text-sm text-brand-muted">
+                  Se enviará el correo 3 con bienvenida, reglamento, WhatsApp y logística.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="font-mono text-xs uppercase text-brand-muted hover:text-brand-white"
+                onClick={() => setConfirmFinalInstructionsOpen(false)}
+                disabled={sendingFinalInstructions}
+              >
+                Cerrar
+              </button>
+            </div>
+
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <DataLabel label="Equipo" value={current.teamName} />
+              <DataLabel label="Asunto" value={finalInstructionsEmailSummary.subject} />
+              <DataLabel
+                label="Reto asignado"
+                value={finalInstructionsReadiness.assignedChallengeName}
+              />
+            </div>
+
+            {finalInstructionsReadiness.error ? (
+              <div className="mt-4">
+                <AlertState
+                  title="Envío bloqueado"
+                  description={finalInstructionsReadiness.error}
+                  variant="error"
+                />
+              </div>
+            ) : null}
+
+            {finalInstructionsStatus === "sent" ? (
+              <div className="mt-4">
+                <AlertState
+                  title="Advertencia"
+                  description="Este equipo ya tiene indicaciones finales enviadas. Confirmar creará un nuevo envío/log."
+                  variant="warning"
+                />
+              </div>
+            ) : null}
+
+            {!emailNotificationsEnabled ? (
+              <div className="mt-4">
+                <AlertState
+                  title="Simulación"
+                  description="EMAIL_NOTIFICATIONS_ENABLED está apagado. No se enviará correo real por Brevo."
+                  variant="warning"
+                />
+              </div>
+            ) : null}
+
+            <div className="mt-5 flex flex-wrap justify-end gap-2">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setConfirmFinalInstructionsOpen(false)}
+                disabled={sendingFinalInstructions}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="button"
+                onClick={sendFinalInstructionsEmail}
+                disabled={sendingFinalInstructions || Boolean(finalInstructionsReadiness.error)}
+              >
+                {sendingFinalInstructions ? "Enviando..." : "Confirmar envío"}
               </Button>
             </div>
           </div>

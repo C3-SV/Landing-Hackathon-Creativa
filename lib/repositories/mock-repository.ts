@@ -1,3 +1,5 @@
+import { randomBytes } from "crypto";
+import { CODE_OF_CONDUCT_VERSION } from "@/lib/code-of-conduct/content";
 import {
   CURRENT_EDITION_FALLBACK,
   EDITION_SEEDS,
@@ -12,6 +14,7 @@ import type {
 import type {
   DashboardStats,
   ChallengeOverviewRegistration,
+  CodeOfConductAcceptance,
   RegistrationListFilters,
   RegistrationListItem,
   TeamRegistrationDoc,
@@ -23,6 +26,14 @@ import {
   normalizeTeamName,
   toSlug,
 } from "@/lib/utils";
+
+function generateSecureToken() {
+  return randomBytes(32).toString("hex");
+}
+
+function findAcceptanceByToken(token: string) {
+  return getMockStore().codeOfConductAcceptances.find((item) => item.token === token) ?? null;
+}
 
 function mapToListItem(record: TeamRegistrationDoc): RegistrationListItem {
   return {
@@ -295,6 +306,139 @@ export const mockRegistrationRepository: RegistrationRepository = {
     return getMockStore().emailLogs
       .filter((log) => log.teamRegistrationId === teamRegistrationId)
       .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  },
+
+  async getCodeOfConductAcceptanceForRegistration(teamRegistrationId) {
+    return (
+      getMockStore().codeOfConductAcceptances.find(
+        (item) => item.teamId === teamRegistrationId,
+      ) ?? null
+    );
+  },
+
+  async getCodeOfConductAcceptanceByToken(token) {
+    return findAcceptanceByToken(token);
+  },
+
+  async getOrCreateCodeOfConductAcceptance({ registration, challengeId, challengeName }) {
+    const store = getMockStore();
+    const now = new Date().toISOString();
+    const index = store.codeOfConductAcceptances.findIndex(
+      (item) => item.teamId === registration.id,
+    );
+
+    if (index >= 0) {
+      const current = store.codeOfConductAcceptances[index];
+      if (current.status === "accepted") {
+        return current;
+      }
+
+      const next: CodeOfConductAcceptance = {
+        ...current,
+        teamName: registration.teamName,
+        ...(challengeId !== undefined ? { challengeId } : {}),
+        ...(challengeName !== undefined ? { challengeName } : {}),
+        status: "pending",
+        token:
+          current.status === "expired" || !current.token
+            ? generateSecureToken()
+            : current.token,
+        codeOfConductVersion: CODE_OF_CONDUCT_VERSION,
+        updatedAt: now,
+      };
+      store.codeOfConductAcceptances[index] = next;
+      return next;
+    }
+
+    const acceptance: CodeOfConductAcceptance = {
+      id: registration.id,
+      teamId: registration.id,
+      teamName: registration.teamName,
+      challengeId: challengeId ?? null,
+      challengeName: challengeName ?? null,
+      token: generateSecureToken(),
+      status: "pending",
+      sentAt: null,
+      acceptedAt: null,
+      acceptedByName: null,
+      acceptedByEmail: null,
+      acceptedByRole: null,
+      codeOfConductVersion: CODE_OF_CONDUCT_VERSION,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    store.codeOfConductAcceptances.unshift(acceptance);
+    return acceptance;
+  },
+
+  async markCodeOfConductFinalInstructionsSent(teamRegistrationId, sentAt) {
+    const store = getMockStore();
+    const index = store.codeOfConductAcceptances.findIndex(
+      (item) => item.teamId === teamRegistrationId,
+    );
+
+    if (index === -1) {
+      return null;
+    }
+
+    const next: CodeOfConductAcceptance = {
+      ...store.codeOfConductAcceptances[index],
+      sentAt,
+      updatedAt: new Date().toISOString(),
+    };
+    store.codeOfConductAcceptances[index] = next;
+    return next;
+  },
+
+  async markCodeOfConductAcceptanceSent(teamRegistrationId, sentAt) {
+    const store = getMockStore();
+    const index = store.codeOfConductAcceptances.findIndex(
+      (item) => item.teamId === teamRegistrationId,
+    );
+
+    if (index === -1) {
+      return null;
+    }
+
+    const next: CodeOfConductAcceptance = {
+      ...store.codeOfConductAcceptances[index],
+      sentAt,
+      updatedAt: new Date().toISOString(),
+    };
+    store.codeOfConductAcceptances[index] = next;
+    return next;
+  },
+
+  async acceptCodeOfConductByToken(token, input) {
+    const store = getMockStore();
+    const index = store.codeOfConductAcceptances.findIndex((item) => item.token === token);
+    if (index === -1) {
+      return { status: "invalid", acceptance: null };
+    }
+
+    const current = store.codeOfConductAcceptances[index];
+    if (current.status === "accepted") {
+      return { status: "already_accepted", acceptance: current };
+    }
+
+    if (current.status === "expired") {
+      return { status: "expired", acceptance: current };
+    }
+
+    const now = new Date().toISOString();
+    const next: CodeOfConductAcceptance = {
+      ...current,
+      status: "accepted",
+      acceptedAt: now,
+      acceptedByName: input.acceptedByName,
+      acceptedByEmail: input.acceptedByEmail,
+      acceptedByRole: input.acceptedByRole,
+      updatedAt: now,
+    };
+
+    store.codeOfConductAcceptances[index] = next;
+    return { status: "accepted", acceptance: next };
   },
 
   async exportRegistrationsCsv() {

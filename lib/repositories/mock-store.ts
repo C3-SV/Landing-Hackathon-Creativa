@@ -6,6 +6,7 @@ import {
 import { normalizeTeamName, toSlug } from "@/lib/utils";
 import type {
   Challenge,
+  CodeOfConductAcceptance,
   EmailLog,
   Edition,
   RegistrationSettings,
@@ -19,6 +20,7 @@ type MockStore = {
   editions: Edition[];
   registrations: TeamRegistrationDoc[];
   emailLogs: EmailLog[];
+  codeOfConductAcceptances: CodeOfConductAcceptance[];
   registrationSettings: RegistrationSettings;
 };
 
@@ -173,6 +175,7 @@ export function getMockStore() {
       editions: [...EDITION_SEEDS],
       registrations: createSeedRegistrations(),
       emailLogs: [],
+      codeOfConductAcceptances: [],
       registrationSettings: {
         registrationsOpen: true,
         updatedAt: new Date().toISOString(),

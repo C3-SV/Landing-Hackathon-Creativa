@@ -4,6 +4,7 @@ import { BRANDING } from "@/lib/constants/branding";
 import { APP_ENV } from "@/lib/constants/env";
 import { RegistrationDetail } from "@/features/admin/components";
 import { getAcceptedEmailClientSummary } from "@/lib/email/accepted-email";
+import { getFinalInstructionsEmailClientSummary } from "@/lib/email/final-instructions-email";
 import { registrationRepository } from "@/lib/repositories";
 import { ButtonLink, Card } from "@/lib/ui";
 
@@ -13,10 +14,11 @@ type PageProps = {
 
 export default async function RegistrationDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const [registration, challenges, emailLogs] = await Promise.all([
+  const [registration, challenges, emailLogs, codeOfConductAcceptance] = await Promise.all([
     registrationRepository.getRegistrationById(id),
     registrationRepository.getChallenges(),
     registrationRepository.listEmailLogsForRegistration(id),
+    registrationRepository.getCodeOfConductAcceptanceForRegistration(id),
   ]);
 
   if (!registration) {
@@ -48,7 +50,12 @@ export default async function RegistrationDetailPage({ params }: PageProps) {
         registration={registration}
         challenges={challenges}
         emailLogs={emailLogs}
+        codeOfConductAcceptance={codeOfConductAcceptance}
         acceptedEmailSummary={getAcceptedEmailClientSummary(registration)}
+        finalInstructionsEmailSummary={getFinalInstructionsEmailClientSummary(
+          registration,
+          codeOfConductAcceptance,
+        )}
         emailNotificationsEnabled={APP_ENV.emailNotificationsEnabled}
       />
     </section>

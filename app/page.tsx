@@ -7,6 +7,7 @@ import {
   HowItWorksSection,
   LandingHero,
   OrganizersSection,
+  PremiosABCSection,
   SiteFooter,
   SponsorsSection,
   Team3HSection,
@@ -131,6 +132,7 @@ export default function HomePage() {
         <ChallengeGrid />
         <HowItWorksSection />
         <Team3HSection />
+        <PremiosABCSection />
         <OrganizersSection />
         <SponsorsSection />
         <FaqSection />

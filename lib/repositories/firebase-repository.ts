@@ -1,4 +1,6 @@
+import { randomBytes } from "crypto";
 import { FieldValue, type QueryDocumentSnapshot, type Timestamp } from "firebase-admin/firestore";
+import { CODE_OF_CONDUCT_VERSION } from "@/lib/code-of-conduct/content";
 import { CHALLENGE_SEEDS, EDITION_SEEDS } from "@/lib/constants/event";
 import { getFirebaseAdminDb } from "@/lib/firebase/admin";
 import { buildRegistrationsCsv } from "@/lib/repositories/csv-export";
@@ -9,6 +11,7 @@ import type {
 import type {
   Challenge,
   ChallengeOverviewRegistration,
+  CodeOfConductAcceptance,
   DashboardStats,
   Edition,
   RegistrationListFilters,
@@ -27,6 +30,7 @@ import {
 
 const COLLECTIONS = {
   challenges: "challenges",
+  codeOfConductAcceptances: "code_of_conduct_acceptances",
   editions: "editions",
   emailLogs: "email_logs",
   registrations: "team_registrations",
@@ -116,7 +120,7 @@ type StoredRegistration = Partial<Omit<TeamRegistrationDoc, "id">> & {
 type StoredEmailLog = {
   teamRegistrationId?: string;
   teamName?: string;
-  emailType?: "accepted" | "challenge_assigned";
+  emailType?: "accepted" | "challenge_assigned" | "final_instructions";
   subject?: string;
   to?: string[];
   cc?: string[];
@@ -129,6 +133,23 @@ type StoredEmailLog = {
   sentBy?: string | null;
   errorMessage?: string | null;
   createdAt?: string | Timestamp;
+};
+
+type StoredCodeOfConductAcceptance = {
+  teamId?: string;
+  teamName?: string;
+  challengeId?: string | null;
+  challengeName?: string | null;
+  token?: string;
+  status?: "pending" | "accepted" | "expired";
+  sentAt?: string | Timestamp | null;
+  acceptedAt?: string | Timestamp | null;
+  acceptedByName?: string | null;
+  acceptedByEmail?: string | null;
+  acceptedByRole?: string | null;
+  codeOfConductVersion?: string;
+  createdAt?: string | Timestamp;
+  updatedAt?: string | Timestamp;
 };
 
 type StoredRegistrationSettings = Partial<RegistrationSettings> & {
@@ -248,6 +269,40 @@ function toRegistrationSettings(rawData: StoredRegistrationSettings | undefined)
     closedAt: rawData.closedAt ? timestampToIso(rawData.closedAt) : null,
     closedBy: rawData.closedBy ?? null,
   } satisfies RegistrationSettings;
+}
+
+function nullableTimestampToIso(value: string | Timestamp | null | undefined) {
+  if (!value) {
+    return null;
+  }
+  return timestampToIso(value);
+}
+
+function toCodeOfConductAcceptance(
+  docId: string,
+  rawData: StoredCodeOfConductAcceptance,
+): CodeOfConductAcceptance {
+  return {
+    id: docId,
+    teamId: rawData.teamId ?? docId,
+    teamName: rawData.teamName ?? "",
+    challengeId: rawData.challengeId ?? null,
+    challengeName: rawData.challengeName ?? null,
+    token: rawData.token ?? "",
+    status: rawData.status ?? "pending",
+    sentAt: nullableTimestampToIso(rawData.sentAt),
+    acceptedAt: nullableTimestampToIso(rawData.acceptedAt),
+    acceptedByName: rawData.acceptedByName ?? null,
+    acceptedByEmail: rawData.acceptedByEmail ?? null,
+    acceptedByRole: rawData.acceptedByRole ?? null,
+    codeOfConductVersion: rawData.codeOfConductVersion ?? CODE_OF_CONDUCT_VERSION,
+    createdAt: timestampToIso(rawData.createdAt),
+    updatedAt: timestampToIso(rawData.updatedAt),
+  };
+}
+
+function generateSecureToken() {
+  return randomBytes(32).toString("hex");
 }
 
 function fromDoc(doc: QueryDocumentSnapshot): TeamRegistrationDoc {
@@ -574,6 +629,204 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
     return snapshot.docs
       .map((doc) => toEmailLog(doc.id, (doc.data() ?? {}) as StoredEmailLog))
       .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  },
+
+  async getCodeOfConductAcceptanceForRegistration(teamRegistrationId) {
+    const db = getFirebaseAdminDb();
+    const snap = await db
+      .collection(COLLECTIONS.codeOfConductAcceptances)
+      .doc(teamRegistrationId)
+      .get();
+
+    if (!snap.exists) {
+      return null;
+    }
+
+    return toCodeOfConductAcceptance(
+      snap.id,
+      (snap.data() ?? {}) as StoredCodeOfConductAcceptance,
+    );
+  },
+
+  async getCodeOfConductAcceptanceByToken(token) {
+    const db = getFirebaseAdminDb();
+    const snapshot = await db
+      .collection(COLLECTIONS.codeOfConductAcceptances)
+      .where("token", "==", token)
+      .limit(1)
+      .get();
+
+    if (snapshot.empty) {
+      return null;
+    }
+
+    const doc = snapshot.docs[0];
+    return toCodeOfConductAcceptance(
+      doc.id,
+      (doc.data() ?? {}) as StoredCodeOfConductAcceptance,
+    );
+  },
+
+  async getOrCreateCodeOfConductAcceptance({ registration, challengeId, challengeName }) {
+    const db = getFirebaseAdminDb();
+    const ref = db.collection(COLLECTIONS.codeOfConductAcceptances).doc(registration.id);
+    const snap = await ref.get();
+    const now = new Date().toISOString();
+
+    if (snap.exists) {
+      const existing = toCodeOfConductAcceptance(
+        snap.id,
+        (snap.data() ?? {}) as StoredCodeOfConductAcceptance,
+      );
+
+      if (existing.status === "accepted") {
+        return existing;
+      }
+
+      const patch = {
+        teamId: registration.id,
+        teamName: registration.teamName,
+        ...(challengeId !== undefined ? { challengeId } : {}),
+        ...(challengeName !== undefined ? { challengeName } : {}),
+        status: "pending",
+        token:
+          existing.status === "expired" || !existing.token
+            ? generateSecureToken()
+            : existing.token,
+        codeOfConductVersion: CODE_OF_CONDUCT_VERSION,
+        updatedAt: now,
+      };
+
+      await ref.set(patch, { merge: true });
+      const saved = await ref.get();
+      return toCodeOfConductAcceptance(
+        saved.id,
+        (saved.data() ?? {}) as StoredCodeOfConductAcceptance,
+      );
+    }
+
+    const record = {
+      teamId: registration.id,
+      teamName: registration.teamName,
+      challengeId: challengeId ?? null,
+      challengeName: challengeName ?? null,
+      token: generateSecureToken(),
+      status: "pending" as const,
+      sentAt: null,
+      acceptedAt: null,
+      acceptedByName: null,
+      acceptedByEmail: null,
+      acceptedByRole: null,
+      codeOfConductVersion: CODE_OF_CONDUCT_VERSION,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    await ref.set(record);
+    return toCodeOfConductAcceptance(ref.id, record);
+  },
+
+  async markCodeOfConductAcceptanceSent(teamRegistrationId, sentAt) {
+    const db = getFirebaseAdminDb();
+    const ref = db.collection(COLLECTIONS.codeOfConductAcceptances).doc(teamRegistrationId);
+    const snap = await ref.get();
+
+    if (!snap.exists) {
+      return null;
+    }
+
+    await ref.update({
+      sentAt,
+      updatedAt: new Date().toISOString(),
+    });
+
+    const saved = await ref.get();
+    return toCodeOfConductAcceptance(
+      saved.id,
+      (saved.data() ?? {}) as StoredCodeOfConductAcceptance,
+    );
+  },
+
+  async markCodeOfConductFinalInstructionsSent(teamRegistrationId, sentAt) {
+    const db = getFirebaseAdminDb();
+    const ref = db.collection(COLLECTIONS.codeOfConductAcceptances).doc(teamRegistrationId);
+    const snap = await ref.get();
+
+    if (!snap.exists) {
+      return null;
+    }
+
+    await ref.update({
+      sentAt,
+      updatedAt: new Date().toISOString(),
+    });
+
+    const saved = await ref.get();
+    return toCodeOfConductAcceptance(
+      saved.id,
+      (saved.data() ?? {}) as StoredCodeOfConductAcceptance,
+    );
+  },
+
+  async acceptCodeOfConductByToken(token, input) {
+    const db = getFirebaseAdminDb();
+    const snapshot = await db
+      .collection(COLLECTIONS.codeOfConductAcceptances)
+      .where("token", "==", token)
+      .limit(1)
+      .get();
+
+    if (snapshot.empty) {
+      return { status: "invalid", acceptance: null };
+    }
+
+    const ref = snapshot.docs[0].ref;
+    const result = await db.runTransaction(async (transaction) => {
+      const snap = await transaction.get(ref);
+      if (!snap.exists) {
+        return { status: "invalid" as const };
+      }
+
+      const current = toCodeOfConductAcceptance(
+        snap.id,
+        (snap.data() ?? {}) as StoredCodeOfConductAcceptance,
+      );
+
+      if (current.status === "accepted") {
+        return { status: "already_accepted" as const };
+      }
+
+      if (current.status === "expired") {
+        return { status: "expired" as const };
+      }
+
+      const now = new Date().toISOString();
+      transaction.update(ref, {
+        status: "accepted",
+        acceptedAt: now,
+        acceptedByName: input.acceptedByName,
+        acceptedByEmail: input.acceptedByEmail,
+        acceptedByRole: input.acceptedByRole,
+        updatedAt: now,
+      });
+
+      return { status: "accepted" as const };
+    });
+
+    if (result.status === "invalid") {
+      return { status: "invalid", acceptance: null };
+    }
+
+    const saved = await ref.get();
+    const acceptance = toCodeOfConductAcceptance(
+      saved.id,
+      (saved.data() ?? {}) as StoredCodeOfConductAcceptance,
+    );
+
+    return {
+      status: result.status,
+      acceptance,
+    };
   },
 
   async exportRegistrationsCsv() {
