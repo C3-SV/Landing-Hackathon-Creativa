@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
       "./lib/image-generation/fonts/Geist-Regular.ttf",
       "./public/email-templates/accepted/**/*",
     ],
+    "/api/admin/debug/accepted-image": [
+      "./lib/image-generation/fonts/Geist-Regular.ttf",
+      "./public/email-templates/accepted/**/*",
+    ],
   },
 };
 

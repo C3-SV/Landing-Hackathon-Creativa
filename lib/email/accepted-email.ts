@@ -9,6 +9,7 @@ import {
   assertAcceptedTemplatesExist,
   generateAcceptedEmailAttachments,
 } from "@/lib/image-generation/generate-accepted-assets";
+import { ImageGenerationError } from "@/lib/image-generation/render-text-overlay";
 import { sendBrevoEmail } from "@/lib/email/brevo";
 import {
   buildTeamEmailRecipients,
@@ -150,10 +151,57 @@ export async function sendAcceptedEmailForRegistration(input: {
   });
 
   const { to, cc } = buildAcceptedRecipients(registration);
-  const attachments = await generateAcceptedEmailAttachments(registration);
   const codeOfConductAcceptUrl = buildCodeOfConductAcceptUrl(acceptance.token);
   const body = buildBody(registration.teamName, codeOfConductAcceptUrl);
   const now = new Date().toISOString();
+  let attachments: Awaited<ReturnType<typeof generateAcceptedEmailAttachments>> = [];
+
+  try {
+    attachments = await generateAcceptedEmailAttachments(registration);
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "image_generation_failed: dynamic text overlay could not be rendered";
+    const log = await registrationRepository.createEmailLog({
+      teamRegistrationId: registration.id,
+      teamName: registration.teamName,
+      emailType: "accepted",
+      subject: ACCEPTED_SUBJECT,
+      to: [to],
+      cc,
+      attachments: [],
+      sentAt: now,
+      sentBy,
+      status: "failed",
+      brevoMessageId: null,
+      errorMessage:
+        error instanceof ImageGenerationError
+          ? errorMessage
+          : `image_generation_failed: ${errorMessage}`,
+    });
+    const updated = await registrationRepository.updateRegistrationEmailStatus(
+      registration.id,
+      "accepted",
+      {
+        status: "failed",
+        lastSentAt: now,
+        lastLogId: log.id,
+      },
+    );
+
+    return {
+      registration: updated ?? registration,
+      status: "failed",
+      logId: log.id,
+      messageId: null,
+      errorMessage:
+        error instanceof ImageGenerationError
+          ? errorMessage
+          : `image_generation_failed: ${errorMessage}`,
+    };
+  }
+
   const logBase = {
     teamRegistrationId: registration.id,
     teamName: registration.teamName,
@@ -172,6 +220,19 @@ export async function sendAcceptedEmailForRegistration(input: {
   let status: EmailDeliveryStatus = "dry_run";
   let brevoMessageId: string | null = null;
   let errorMessage: string | null = null;
+
+  console.info("[accepted-image] Attachments ready before Brevo", {
+    teamRegistrationId: registration.id,
+    teamName: registration.teamName,
+    attachmentCount: attachments.length,
+    attachments: attachments.map((attachment) => ({
+      fileName: attachment.fileName,
+      type: attachment.type,
+      bytes: attachment.buffer.length,
+    })),
+    nodeEnv: process.env.NODE_ENV,
+    vercelEnv: process.env.VERCEL_ENV,
+  });
 
   if (APP_ENV.emailNotificationsEnabled) {
     try {
