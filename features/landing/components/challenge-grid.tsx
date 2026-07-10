@@ -9,7 +9,7 @@ const CHALLENGES = [
   },
   {
     number: "02",
-    category: "[MARKETPULSE]",
+    category: "[CREATOR KIT]",
     title: "Herramienta inteligente de marketing turístico para micro emprendedores.",
     description:
       "Una oportunidad para crear soluciones digitales que ayuden a pequeños negocios turísticos a generar contenido atractivo para promocionar sus servicios y conectar con más visitantes.",
@@ -17,7 +17,7 @@ const CHALLENGES = [
   },
   {
     number: "03",
-    category: "[CULTURAXR]",
+    category: "[AR-CULTURA]",
     title: "Experiencias culturales inmersivas con realidad aumentada.",
     description:
       "Un reto para diseñar experiencias interactivas que permitan a los turistas descubrir historia, patrimonio y cultura salvadoreña de forma visual, inmersiva y accesible.",
@@ -33,7 +33,7 @@ const CHALLENGES = [
   },
   {
     number: "05",
-    category: "[DATATOUR]",
+    category: "[DATAPULSE]",
     title: "Capa compartida de datos turísticos.",
     description:
       "Un reto orientado a crear una infraestructura de datos turísticos confiable y reutilizable que permita conectar información de lugares, eventos, negocios y experiencias para otros proyectos y plataformas.",
@@ -41,7 +41,7 @@ const CHALLENGES = [
   },
   {
     number: "06",
-    category: "[TWINSCAPE]",
+    category: "[TWINMAP]",
     title: "Digital Twin Turístico: territorio, datos y experiencia.",
     description:
       "Una oportunidad para visualizar y comprender destinos turísticos mediante mapas, capas de información y experiencias digitales que integren territorio, movilidad, negocios, sostenibilidad y comportamiento de visitantes.",
