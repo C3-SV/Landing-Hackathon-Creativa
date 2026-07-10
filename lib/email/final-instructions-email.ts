@@ -1,4 +1,3 @@
-import { CODE_OF_CONDUCT_EMAIL_CONFIG } from "@/lib/code-of-conduct/config";
 import { APP_ENV } from "@/lib/constants/env";
 import { getHackathonEmailStatusEntry } from "@/lib/email/allowed-types";
 import { sendBrevoEmail } from "@/lib/email/brevo";
@@ -16,7 +15,7 @@ import type {
   TeamRegistrationDoc,
 } from "@/lib/types/domain";
 
-export const FINAL_INSTRUCTIONS_SUBJECT = "Indicaciones finales | HTC Vol. 1";
+export const FINAL_INSTRUCTIONS_SUBJECT = "Indicaciones finales – HTC Vol. 1";
 
 type FinalInstructionsEmailResult = {
   registration: TeamRegistrationDoc;
@@ -28,44 +27,103 @@ type FinalInstructionsEmailResult = {
 };
 
 function buildFinalInstructionsBody(teamName: string) {
-  const {
-    whatsappGroupLink,
-    keyRegulationsUrl,
-    keyRegulationsText,
-    welcomeMessage,
-    eventLogisticsText,
-  } = CODE_OF_CONDUCT_EMAIL_CONFIG;
-
-  const regulationsValue = keyRegulationsUrl || keyRegulationsText;
+  const whatsappGroupLink = "https://chat.whatsapp.com/J8MxpKcISuAGKJErsCg107";
+  const agendaUrl = "hackathon.c3.com.sv";
+  const keyRegulationsPlaceholder = "TODO_AGREGAR_REGLAMENTO_KEY";
 
   const text = [
-    `Hola, equipo ${teamName}.`,
+    "Indicaciones finales – HTC Vol. 1",
     "",
-    "Les compartimos las indicaciones finales para HTC Vol. 1.",
+    `Hola, equipo ${teamName}:`,
     "",
-    "Información importante:",
-    `- Reglamento Key: ${regulationsValue}`,
-    `- Grupo de WhatsApp: ${whatsappGroupLink}`,
-    `- Bienvenida / indicaciones generales: ${welcomeMessage}`,
-    `- Horarios / llegada / logística: ${eventLogisticsText}`,
+    "Les compartimos las indicaciones finales para HTC Vol. 1",
     "",
-    "Nos vemos en HTC Vol. 1.",
+    "Nos alegra mucho contar con ustedes en esta primera edición. Esta hackathon nace con el espíritu de construir juntos: turismo, código, cultura, creatividad y colaboración en un mismo espacio. Queremos que vivan una experiencia intensa, práctica y retadora, donde cada equipo pueda aportar desde sus habilidades y crear soluciones con impacto real.",
     "",
-    "Equipo C3 / HTC",
+    "Información importante",
+    "",
+    "1. Reglamento de Key Institute",
+    "",
+    "Adjuntamos el reglamento de uso de las instalaciones de Key Institute:",
+    keyRegulationsPlaceholder,
+    "",
+    "Les pedimos leerlo antes del evento para garantizar una buena convivencia durante toda la experiencia.",
+    "",
+    "2. Grupo de WhatsApp",
+    "",
+    "Este será el canal principal para avisos rápidos, recordatorios y comunicación durante la hackathon:",
+    "",
+    whatsappGroupLink,
+    "",
+    "Les pedimos que todos los integrantes del equipo se unan al grupo.",
+    "",
+    "3. Horarios, llegada y logística",
+    "",
+    "La agenda completa está disponible en el sitio web:",
+    agendaUrl,
+    "",
+    "El evento inicia el sábado a las 7:30 a. m. con el registro y check-in. Les recomendamos llegar con tiempo para completar el ingreso, ubicarse con su equipo y estar listos para el inicio oficial de la experiencia.",
+    "",
+    "Recomendaciones finales",
+    "",
+    "- Llevar laptops, cargadores y cualquier periférico que necesiten.",
+    "- Llevar snacks ligeros de su preferencia, termo y botellas de agua.",
+    "- Llevar documentos personales o identificación.",
+    "- Si desean descansar durante la noche, pueden llevar sleeping bag o artículos personales básicos.",
+    "- Procuren llevar ropa cómoda para una jornada larga de trabajo.",
+    "- Revisen bien la agenda y coordinan previamente con su equipo.",
+    "- Pueden llegar con ideas, investigación o referencias, pero no con código o proyectos ya desarrollados previamente.",
+    "- El uso de herramientas de inteligencia artificial está permitido.",
+    "- Mantengan siempre una actitud colaborativa, respetuosa y abierta a aprender.",
+    "",
+    "Nota importante sobre alimentación: Por favor, si alguno de los miembros de su equipo no come carnes rojas (res) o no consume carnes, avísenos a la brevedad posible para poder gestionar las alternativas.",
+    "",
+    "Nos emociona mucho conocerlos, ver sus ideas en acción y acompañarlos durante esta experiencia.",
+    "",
+    "Nos vemos en el HTC Vol. 1.",
+    "",
+    "La colaboración multiplica los resultados.",
+    "",
+    "Saludos,",
+    "Comité Organizador de la Hackathon",
+    "C3 + Poliédrica",
   ].join("\n");
 
   const html = [
-    `<p>Hola, equipo ${escapeHtml(teamName)}.</p>`,
-    "<p>Les compartimos las indicaciones finales para HTC Vol. 1.</p>",
-    "<p><strong>Información importante:</strong></p>",
+    "<h1>Indicaciones finales – HTC Vol. 1</h1>",
+    `<p>Hola, equipo ${escapeHtml(teamName)}:</p>`,
+    "<p>Les compartimos las indicaciones finales para HTC Vol. 1</p>",
+    "<p>Nos alegra mucho contar con ustedes en esta primera edición. Esta hackathon nace con el espíritu de construir juntos: turismo, código, cultura, creatividad y colaboración en un mismo espacio. Queremos que vivan una experiencia intensa, práctica y retadora, donde cada equipo pueda aportar desde sus habilidades y crear soluciones con impacto real.</p>",
+    "<h2>Información importante</h2>",
+    "<h3>1. Reglamento de Key Institute</h3>",
+    "<p>Adjuntamos el reglamento de uso de las instalaciones de Key Institute:</p>",
+    `<p><strong>${escapeHtml(keyRegulationsPlaceholder)}</strong></p>`,
+    "<p>Les pedimos leerlo antes del evento para garantizar una buena convivencia durante toda la experiencia.</p>",
+    "<h3>2. Grupo de WhatsApp</h3>",
+    "<p>Este será el canal principal para avisos rápidos, recordatorios y comunicación durante la hackathon:</p>",
+    `<p><a href="${escapeHtml(whatsappGroupLink)}">${escapeHtml(whatsappGroupLink)}</a></p>`,
+    "<p>Les pedimos que todos los integrantes del equipo se unan al grupo.</p>",
+    "<h3>3. Horarios, llegada y logística</h3>",
+    "<p>La agenda completa está disponible en el sitio web:<br />",
+    `<a href="https://${escapeHtml(agendaUrl)}">${escapeHtml(agendaUrl)}</a></p>`,
+    "<p>El evento inicia el sábado a las 7:30 a. m. con el registro y check-in. Les recomendamos llegar con tiempo para completar el ingreso, ubicarse con su equipo y estar listos para el inicio oficial de la experiencia.</p>",
+    "<h2>Recomendaciones finales</h2>",
     "<ul>",
-    `<li>Reglamento Key: ${escapeHtml(regulationsValue)}</li>`,
-    `<li>Grupo de WhatsApp: ${escapeHtml(whatsappGroupLink)}</li>`,
-    `<li>Bienvenida / indicaciones generales: ${escapeHtml(welcomeMessage)}</li>`,
-    `<li>Horarios / llegada / logística: ${escapeHtml(eventLogisticsText)}</li>`,
+    "<li>Llevar laptops, cargadores y cualquier periférico que necesiten.</li>",
+    "<li>Llevar snacks ligeros de su preferencia, termo y botellas de agua.</li>",
+    "<li>Llevar documentos personales o identificación.</li>",
+    "<li>Si desean descansar durante la noche, pueden llevar sleeping bag o artículos personales básicos.</li>",
+    "<li>Procuren llevar ropa cómoda para una jornada larga de trabajo.</li>",
+    "<li>Revisen bien la agenda y coordinan previamente con su equipo.</li>",
+    "<li>Pueden llegar con ideas, investigación o referencias, pero no con código o proyectos ya desarrollados previamente.</li>",
+    "<li>El uso de herramientas de inteligencia artificial está permitido.</li>",
+    "<li>Mantengan siempre una actitud colaborativa, respetuosa y abierta a aprender.</li>",
     "</ul>",
-    "<p>Nos vemos en HTC Vol. 1.</p>",
-    "<p>Equipo C3 / HTC</p>",
+    "<p><strong>Nota importante sobre alimentación:</strong> Por favor, si alguno de los miembros de su equipo no come carnes rojas (res) o no consume carnes, avísenos a la brevedad posible para poder gestionar las alternativas.</p>",
+    "<p>Nos emociona mucho conocerlos, ver sus ideas en acción y acompañarlos durante esta experiencia.</p>",
+    "<p>Nos vemos en el HTC Vol. 1.</p>",
+    "<p>La colaboración multiplica los resultados.</p>",
+    "<p>Saludos,<br />Comité Organizador de la Hackathon<br />C3 + Poliédrica</p>",
   ].join("");
 
   return { text, html };

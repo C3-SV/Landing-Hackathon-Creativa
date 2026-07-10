@@ -366,7 +366,7 @@ function buildStats(registrations: TeamRegistrationDoc[]): DashboardStats {
   return base;
 }
 
-function toListItem(doc: TeamRegistrationDoc): RegistrationListItem {
+function toListItem(doc: TeamRegistrationDoc, codeOfConductAccepted: boolean): RegistrationListItem {
   return {
     id: doc.id,
     status: doc.status,
@@ -377,6 +377,7 @@ function toListItem(doc: TeamRegistrationDoc): RegistrationListItem {
     institution: doc.institution,
     preferredChallenge: doc.challengePreferences[0] ?? "",
     assignedChallengeId: doc.assignedChallengeId ?? null,
+    codeOfConductAccepted,
     createdAt: doc.createdAt,
   };
 }
@@ -491,12 +492,23 @@ export const firebaseRegistrationRepository: RegistrationRepository = {
 
   async listRegistrations(filters = {}) {
     const db = getFirebaseAdminDb();
-    const snapshot = await db
-      .collection(COLLECTIONS.registrations)
-      .orderBy("createdAt", "desc")
-      .get();
-    const records = snapshot.docs.map(fromDoc);
-    return applyRegistrationListFilters(records, filters).map(toListItem);
+    const [registrationSnapshot, acceptanceSnapshot] = await Promise.all([
+      db.collection(COLLECTIONS.registrations).orderBy("createdAt", "desc").get(),
+      db
+        .collection(COLLECTIONS.codeOfConductAcceptances)
+        .where("status", "==", "accepted")
+        .get(),
+    ]);
+    const records = registrationSnapshot.docs.map(fromDoc);
+    const acceptedTeamIds = new Set(
+      acceptanceSnapshot.docs
+        .map((doc) => ({ id: doc.id, data: (doc.data() ?? {}) as StoredCodeOfConductAcceptance }))
+        .filter(({ data }) => data.status === "accepted")
+        .map(({ id }) => id),
+    );
+    return applyRegistrationListFilters(records, filters).map((record) =>
+      toListItem(record, acceptedTeamIds.has(record.id)),
+    );
   },
 
   async listRegistrationsForChallengeOverview() {

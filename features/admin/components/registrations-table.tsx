@@ -354,6 +354,7 @@ export function RegistrationsTable({
                 <th className="px-4 py-3">Equipo</th>
                 <th className="px-4 py-3">Institución</th>
                 <th className="px-4 py-3">Reto asignado</th>
+                <th className="px-4 py-3">Conducta</th>
                 <th className="px-4 py-3">Reto #1</th>
                 <th className="px-4 py-3">Fecha</th>
                 <th className="px-4 py-3">Representante</th>
@@ -391,6 +392,11 @@ export function RegistrationsTable({
                     {row.assignedChallengeId
                       ? challengeMap.get(row.assignedChallengeId) ?? row.assignedChallengeId
                       : "Sin asignar"}
+                  </td>
+                  <td className="px-4 py-3">
+                    <Badge variant={row.codeOfConductAccepted ? "approved" : "default"}>
+                      {row.codeOfConductAccepted ? "Aceptado" : "Pendiente"}
+                    </Badge>
                   </td>
                   <td className="px-4 py-3 text-brand-muted">
                     {challengeMap.get(row.preferredChallenge) ?? row.preferredChallenge}

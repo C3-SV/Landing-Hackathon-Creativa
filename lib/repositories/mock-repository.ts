@@ -39,7 +39,7 @@ function findAcceptanceByToken(token: string) {
   return getMockStore().codeOfConductAcceptances.find((item) => item.token === token) ?? null;
 }
 
-function mapToListItem(record: TeamRegistrationDoc): RegistrationListItem {
+function mapToListItem(record: TeamRegistrationDoc, codeOfConductAccepted: boolean): RegistrationListItem {
   return {
     id: record.id,
     status: record.status,
@@ -50,6 +50,7 @@ function mapToListItem(record: TeamRegistrationDoc): RegistrationListItem {
     institution: record.institution,
     preferredChallenge: record.challengePreferences[0] ?? "",
     assignedChallengeId: record.assignedChallengeId ?? null,
+    codeOfConductAccepted,
     createdAt: record.createdAt,
   };
 }
@@ -180,8 +181,14 @@ export const mockRegistrationRepository: RegistrationRepository = {
   },
 
   async listRegistrations(filters = {}) {
-    const records = applyRegistrationListFilters(getMockStore().registrations, filters);
-    return records.map(mapToListItem);
+    const store = getMockStore();
+    const acceptedTeamIds = new Set(
+      store.codeOfConductAcceptances
+        .filter((item) => item.status === "accepted")
+        .map((item) => item.teamId),
+    );
+    const records = applyRegistrationListFilters(store.registrations, filters);
+    return records.map((record) => mapToListItem(record, acceptedTeamIds.has(record.id)));
   },
 
   async listRegistrationsForChallengeOverview() {

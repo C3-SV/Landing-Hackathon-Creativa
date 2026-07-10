@@ -156,6 +156,7 @@ export type RegistrationListItem = {
   institution: string;
   preferredChallenge: string;
   assignedChallengeId?: string | null;
+  codeOfConductAccepted: boolean;
   createdAt: string;
 };
 
