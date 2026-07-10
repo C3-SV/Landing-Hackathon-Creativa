@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { getHackathonEmailStatusEntry } from "@/lib/email/allowed-types";
 import {
+  buildChallengeAndFinalEmailCc,
   buildTeamEmailRecipients,
   CHALLENGE_ASSIGNED_SUBJECT,
   memberDisplayName,
@@ -159,7 +160,7 @@ function buildChallengeAssignedEmailSummary(
       ...base,
       representativeName: memberDisplayName(representative),
       to,
-      cc,
+      cc: buildChallengeAndFinalEmailCc(cc),
       assignedChallengeName: assignedChallenge.name,
     };
   } catch (error) {

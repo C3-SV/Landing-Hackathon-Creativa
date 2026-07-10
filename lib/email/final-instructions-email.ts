@@ -2,6 +2,7 @@ import { APP_ENV } from "@/lib/constants/env";
 import { getHackathonEmailStatusEntry } from "@/lib/email/allowed-types";
 import { sendBrevoEmail } from "@/lib/email/brevo";
 import {
+  buildChallengeAndFinalEmailCc,
   buildTeamEmailRecipients,
   escapeHtml,
   isValidEmail,
@@ -183,7 +184,8 @@ export async function sendFinalInstructionsEmailForRegistration(input: {
   }
 
   const { assignedChallenge } = await validateFinalInstructionsEmailRegistration(registration);
-  const { to, cc } = buildTeamEmailRecipients(registration);
+  const { to, cc: teamCc } = buildTeamEmailRecipients(registration);
+  const cc = buildChallengeAndFinalEmailCc(teamCc);
   const body = buildFinalInstructionsBody(registration.teamName);
   const now = new Date().toISOString();
   const logBase = {

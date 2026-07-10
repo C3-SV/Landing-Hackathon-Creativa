@@ -2,6 +2,7 @@ import { APP_ENV } from "@/lib/constants/env";
 import { getHackathonEmailStatusEntry } from "@/lib/email/allowed-types";
 import { sendBrevoEmail } from "@/lib/email/brevo";
 import {
+  buildChallengeAndFinalEmailCc,
   buildTeamEmailRecipients,
   CHALLENGE_ASSIGNED_SUBJECT,
   escapeHtml,
@@ -21,29 +22,54 @@ type ChallengeAssignedEmailResult = {
 };
 
 function buildBody(teamName: string, assignedChallengeName: string) {
+  const siteUrl = "hackathon.c3.com.sv";
+
   const text = [
-    `Hola, equipo ${teamName}.`,
+    `Hola, equipo ${teamName}:`,
     "",
-    "Ya tenemos listo el reto asignado para su participación en la Hackathon de Turismo Creativo Vol. 1.",
+    "Nos alegra mucho compartirles que ya tenemos listo el reto asignado para su participación en la Hackathon de Turismo Creativo Vol. 1.",
     "",
     "Su reto asignado es:",
+    "",
     assignedChallengeName,
     "",
-    "Por ahora, les pedimos estar atentos a las próximas indicaciones del evento. Muy pronto recibirán más detalles sobre dinámica, horarios y siguientes pasos.",
+    "Este reto forma parte de los desafíos reales que estaremos trabajando durante la hackathon, vinculados al turismo creativo, la cultura, la tecnología y el desarrollo de soluciones con impacto para El Salvador.",
+    "",
+    "Al inicio de la hackathon también les brindaremos más detalles finales sobre el reto: su contexto, criterios, enfoque esperado y consideraciones importantes para que puedan arrancar con claridad.",
+    "",
+    "Les invitamos a llegar con mucha energía, disposición para colaborar y ganas de construir. Esta experiencia está pensada para que cada equipo combine sus habilidades, ideas y enfoques para proponer una solución sólida, creativa y aplicable.",
+    "",
+    "Además, ya pueden conocer más sobre los premios de la hackathon en el sitio web:",
+    "",
+    siteUrl,
+    "",
+    "Los premios están construidos alrededor de la lógica ABC: Asesoría y mentoría 1:1, Business connections y Colaboración HTC Ecosystem. Con esto, buscamos que esta experiencia les abra puertas, conexiones y acompañamiento para seguir desarrollando sus ideas más allá del evento.",
+    "",
+    "Por ahora, les pedimos estar atentos a las próximas indicaciones del evento y a nuestras redes sociales. Muy pronto recibirán más detalles sobre dinámica, horarios y siguientes pasos.",
     "",
     "Cualquier consulta pueden responder a este correo.",
     "",
+    "Nos vemos pronto en HTC Vol. 1.",
+    "",
+    "Saludos,",
     "C3 + Poliédrica",
   ].join("\n");
 
   const html = [
-    `<p>Hola, equipo ${escapeHtml(teamName)}.</p>`,
-    "<p>Ya tenemos listo el reto asignado para su participación en la Hackathon de Turismo Creativo Vol. 1.</p>",
+    `<p>Hola, equipo ${escapeHtml(teamName)}:</p>`,
+    "<p>Nos alegra mucho compartirles que ya tenemos listo el reto asignado para su participación en la Hackathon de Turismo Creativo Vol. 1.</p>",
     "<p>Su reto asignado es:</p>",
     `<p><strong>${escapeHtml(assignedChallengeName)}</strong></p>`,
-    "<p>Por ahora, les pedimos estar atentos a las próximas indicaciones del evento. Muy pronto recibirán más detalles sobre dinámica, horarios y siguientes pasos.</p>",
+    "<p>Este reto forma parte de los desafíos reales que estaremos trabajando durante la hackathon, vinculados al turismo creativo, la cultura, la tecnología y el desarrollo de soluciones con impacto para El Salvador.</p>",
+    "<p>Al inicio de la hackathon también les brindaremos más detalles finales sobre el reto: su contexto, criterios, enfoque esperado y consideraciones importantes para que puedan arrancar con claridad.</p>",
+    "<p>Les invitamos a llegar con mucha energía, disposición para colaborar y ganas de construir. Esta experiencia está pensada para que cada equipo combine sus habilidades, ideas y enfoques para proponer una solución sólida, creativa y aplicable.</p>",
+    "<p>Además, ya pueden conocer más sobre los premios de la hackathon en el sitio web:</p>",
+    `<p><a href="https://${escapeHtml(siteUrl)}">${escapeHtml(siteUrl)}</a></p>`,
+    "<p>Los premios están construidos alrededor de la lógica ABC: Asesoría y mentoría 1:1, Business connections y Colaboración HTC Ecosystem. Con esto, buscamos que esta experiencia les abra puertas, conexiones y acompañamiento para seguir desarrollando sus ideas más allá del evento.</p>",
+    "<p>Por ahora, les pedimos estar atentos a las próximas indicaciones del evento y a nuestras redes sociales. Muy pronto recibirán más detalles sobre dinámica, horarios y siguientes pasos.</p>",
     "<p>Cualquier consulta pueden responder a este correo.</p>",
-    "<p>C3 + Poliédrica</p>",
+    "<p>Nos vemos pronto en HTC Vol. 1.</p>",
+    "<p>Saludos,<br />C3 + Poliédrica</p>",
   ].join("");
 
   return { text, html };
@@ -101,7 +127,8 @@ export async function sendChallengeAssignedEmailForRegistration(input: {
     registration,
     challenges,
   );
-  const { to, cc } = buildTeamEmailRecipients(registration);
+  const { to, cc: teamCc } = buildTeamEmailRecipients(registration);
+  const cc = buildChallengeAndFinalEmailCc(teamCc);
   const body = buildBody(registration.teamName, assignedChallenge.name);
   const now = new Date().toISOString();
   const logBase = {

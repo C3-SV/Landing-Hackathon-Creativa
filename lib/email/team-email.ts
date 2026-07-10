@@ -3,6 +3,7 @@ import type { Challenge, TeamMember, TeamRegistrationDoc } from "@/lib/types/dom
 export const DEFAULT_BREVO_SENDER_NAME = "Hackathon de Turismo Creativo";
 export const DEFAULT_EMAIL_REPLY_TO = "competitivecodingclub.sv@gmail.com";
 export const TEAM_EMAIL_FIXED_CC = [] as const;
+export const CHALLENGE_AND_FINAL_EMAIL_CC = "carlosvalladares.sv@gmail.com";
 export const CHALLENGE_ASSIGNED_SUBJECT =
   "Reto asignado | Hackathon de Turismo Creativo Vol. 1";
 
@@ -32,6 +33,10 @@ export function parseReplyToEmails(value: string | undefined) {
 
 export function dedupeEmails(emails: readonly string[]) {
   return [...new Set(emails.map(normalizeEmail).filter(Boolean))];
+}
+
+export function buildChallengeAndFinalEmailCc(cc: readonly string[]) {
+  return dedupeEmails([...cc, CHALLENGE_AND_FINAL_EMAIL_CC]);
 }
 
 export function memberDisplayName(member: TeamMember) {
