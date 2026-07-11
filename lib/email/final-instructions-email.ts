@@ -1,3 +1,5 @@
+import { readFile } from "fs/promises";
+import path from "path";
 import { APP_ENV } from "@/lib/constants/env";
 import { getHackathonEmailStatusEntry } from "@/lib/email/allowed-types";
 import { sendBrevoEmail } from "@/lib/email/brevo";
@@ -17,6 +19,17 @@ import type {
 } from "@/lib/types/domain";
 
 export const FINAL_INSTRUCTIONS_SUBJECT = "Indicaciones finales – HTC Vol. 1";
+const KEY_INSTITUTE_RULES_ATTACHMENT = {
+  fileName: "NORMAS DE CONDUCTA - KEY INSTITUTE.pdf",
+  type: "application/pdf",
+  path: path.join(
+    process.cwd(),
+    "public",
+    "email-templates",
+    "final-instructions",
+    "normas-de-conducta-key-institute.pdf",
+  ),
+};
 
 type FinalInstructionsEmailResult = {
   registration: TeamRegistrationDoc;
@@ -27,10 +40,21 @@ type FinalInstructionsEmailResult = {
   errorMessage?: string | null;
 };
 
+async function getFinalInstructionsAttachments() {
+  const buffer = await readFile(KEY_INSTITUTE_RULES_ATTACHMENT.path);
+
+  return [
+    {
+      fileName: KEY_INSTITUTE_RULES_ATTACHMENT.fileName,
+      type: KEY_INSTITUTE_RULES_ATTACHMENT.type,
+      buffer,
+    },
+  ];
+}
+
 function buildFinalInstructionsBody(teamName: string) {
   const whatsappGroupLink = "https://chat.whatsapp.com/J8MxpKcISuAGKJErsCg107";
   const agendaUrl = "hackathon.c3.com.sv";
-  const keyRegulationsPlaceholder = "TODO_AGREGAR_REGLAMENTO_KEY";
 
   const text = [
     "Indicaciones finales – HTC Vol. 1",
@@ -46,7 +70,6 @@ function buildFinalInstructionsBody(teamName: string) {
     "1. Reglamento de Key Institute",
     "",
     "Adjuntamos el reglamento de uso de las instalaciones de Key Institute:",
-    keyRegulationsPlaceholder,
     "",
     "Les pedimos leerlo antes del evento para garantizar una buena convivencia durante toda la experiencia.",
     "",
@@ -98,7 +121,6 @@ function buildFinalInstructionsBody(teamName: string) {
     "<h2>Información importante</h2>",
     "<h3>1. Reglamento de Key Institute</h3>",
     "<p>Adjuntamos el reglamento de uso de las instalaciones de Key Institute:</p>",
-    `<p><strong>${escapeHtml(keyRegulationsPlaceholder)}</strong></p>`,
     "<p>Les pedimos leerlo antes del evento para garantizar una buena convivencia durante toda la experiencia.</p>",
     "<h3>2. Grupo de WhatsApp</h3>",
     "<p>Este será el canal principal para avisos rápidos, recordatorios y comunicación durante la hackathon:</p>",
@@ -187,6 +209,7 @@ export async function sendFinalInstructionsEmailForRegistration(input: {
   const { to, cc: teamCc } = buildTeamEmailRecipients(registration);
   const cc = buildChallengeAndFinalEmailCc(teamCc);
   const body = buildFinalInstructionsBody(registration.teamName);
+  const attachments = await getFinalInstructionsAttachments();
   const now = new Date().toISOString();
   const logBase = {
     teamRegistrationId: registration.id,
@@ -197,7 +220,10 @@ export async function sendFinalInstructionsEmailForRegistration(input: {
     cc,
     assignedChallengeId: assignedChallenge.id,
     assignedChallengeName: assignedChallenge.name,
-    attachments: [],
+    attachments: attachments.map((attachment) => ({
+      fileName: attachment.fileName,
+      type: attachment.type,
+    })),
     sentAt: now,
     sentBy,
   };
@@ -216,6 +242,10 @@ export async function sendFinalInstructionsEmailForRegistration(input: {
         text: body.text,
         html: body.html,
         replyTo: APP_ENV.email.replyTo,
+        attachments: attachments.map((attachment) => ({
+          name: attachment.fileName,
+          content: attachment.buffer.toString("base64"),
+        })),
       });
       status = "sent";
       brevoMessageId = result.messageId ?? null;
